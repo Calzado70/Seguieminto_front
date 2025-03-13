@@ -1,0 +1,112 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    font-family: 'Corbel';
+}
+
+@font-face {
+    font-family: 'Corbel';
+    src: url(../font/CORBEL.TTF);
+}
+
+.fondo {
+    height: 100vh;
+    width: 100%;
+    background: #0000003d;
+    z-index: 9999;
+}
+
+.caja_segundaria {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(../img/home.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.formulario {
+    height: 200px;
+    width: 50%;
+    background-color: transparent;
+    position: absolute;
+    z-index: 9999;
+    border-radius: 15px;
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 10px;
+}
+
+input {
+    margin: 10px;
+    width: 300px;
+    height: 10px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+}
+
+.password-container {
+    position: relative;
+    display: inline-block;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-password img {
+    width: 24px;
+    height: 24px;
+}
+
+.boton {
+    width: 320px;
+    height: 30px;
+    margin: 20px;
+    border-radius: 10px;
+    border: none;
+    padding: 1px;
+    transition: .2s;
+    cursor: pointer;
+    background-color: #13302E;
+    color: #E0FF00;
+    font-weight: bolder;
+}
+
+.boton:hover {
+    background: #000000;
+    transition: .2s;
+}
+
+.mensaje {
+    margin-top: 40%;
+    margin-left: 70%;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    position: absolute;
+}
+
+.mensaje.error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.mensaje.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}

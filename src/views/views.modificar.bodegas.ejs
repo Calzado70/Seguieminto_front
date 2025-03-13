@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/modificar.bodegas.css">
+    <title>Modificar-Bodegas</title>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            <div class="navbar-options">
+                <select class="select" id="adminUsuario">
+                    <option>Admin-usuario</option>
+                    <option value="/usuario">Crear usuarios</option>
+                </select>
+                <select class="select" id="bodegas">
+                    <option>Bodegas</option>
+                    <option value="/crear_bodega">Crear Bodegas</option>
+                    <option value="#">Seguimiento Bodega</option>
+                </select>
+                <select class="select" id="historial">
+                    <option>Historial</option>
+                    <option value="/historial">Lista de Historial</option>
+                </select>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <div class="content-segundario">
+            <div class="escrito">
+                <h2 class="h2">Modificar Bodegas</h2>
+                <div class="cont-segun-list">
+                    <!-- Formulario -->
+                    <div class="cont-segun-list-for">
+                        <input type="text" class="input" id="nombre" placeholder="Nombre de Bodega">
+                        <input type="text" class="input" id="capacidad" placeholder="Capacidad de Bodega">
+                        <!-- Botón debajo del formulario -->
+                        <div class="cont-segun-list-bot">
+                            <button class="button" id="guardar">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/modificar.bodegas.js"></script>
+</body>
+
+</html>

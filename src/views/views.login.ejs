@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="caja_segundaria">
+        <div class="fondo"></div>
+        <form class="formulario" id="loginForm" action="/user/login" method="POST">
+            <h1>BIENVENIDO</h1>
+            <input type="text" placeholder="Ingrese su usuario" id="usuario" required>
+            <div class="password-container">
+                <input type="password" placeholder="Ingrese su contraseña" id="contrasena" required>
+                <span class="toggle-password" onclick="togglePassword()">
+                    <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
+                </span>
+            </div>
+            <button class="boton" type="submit">Ingresar</button>
+        </form>
+        <div id="mensaje" class="mensaje"></div>
+    </div>
+    <script src="/js/login.js"></script>
+</body>
+
+</html>

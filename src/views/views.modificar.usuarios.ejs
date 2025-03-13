@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/modificar.usuario.css">
+    <title>Modificar-Usuarios</title>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            <div class="navbar-options">
+                <select class="select" id="adminUsuario">
+                    <option>Admin-usuario</option>
+                    <option value="/usuario">Crear usuarios</option> <!-- Ajustado -->
+                    <option value="/modificar">Modificar usuario</option>
+                </select>
+                <select class="select" id="bodegas">
+                    <option>Bodegas</option>
+                    <option value="/crear_bodega">Crear Bodegas</option>
+                    <option value="#">Seguimiento Bodega</option>
+                </select>
+                <select class="select" id="historial">
+                    <option>Historial</option>
+                    <option value="/historial">Lista de Historial</option>
+                    <option value="#">Item Y</option>
+                </select>
+            </div>
+        </nav>
+
+        <div class="content-segundario">
+            <div class="escrito">
+                <h2 class="h2">Modificar Usuario</h2>
+                <div class="cont-segun-list">
+                    <div class="cont-segun-list-for">
+                        <input type="text" class="input" id="nombre" placeholder="Nombre de usuario" readonly>
+                        <select class="desple" id="bodega">
+                            <option value="">Bodega</option>
+                            <option value="Corte">Corte</option>
+                            <option value="Inyeccion">Inyección</option> <!-- Corregido typo -->
+                            <option value="Preparada">Preparada</option>
+                            <option value="Montaje">Montaje</option>
+                            <option value="Terminada">Terminada</option>
+                        </select>
+                        <input type="text" class="input" id="descripcion" placeholder="Descripción">
+                        <div class="cont-segun-list-bot">
+                            <button class="button" id="guardar">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/modificar.usuario.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/reg.producto.css">
+    <title>Registro</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+        </nav>
+
+        <!-- Contenido principal -->
+        <div class="content-segundario">
+            <div class="escrito">
+                <h2 class="h2">Registro de Producto</h2>
+                <div class="cont-segun-list">
+                    <!-- Formulario -->
+                    <div class="cont-segun-list-for">
+                        <input type="text" class="input" id="codigo" placeholder="Scaneo de codigo">
+                        <input type="text" class="input" id="usuario" placeholder="usuario">
+                        <input type="text" class="input" id="bodega" placeholder="Bodega">
+                        <div class="cont-segun-list-bot">
+                            <button type="submit" class="button">Notificar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <div class="cont-segun-formu">
+                <div class="table-header">Productos Scaneados</div>
+                <div class="table-row1">
+                    <span>Codigo</span>
+                    <span>Bodega</span>
+                    <span>Cantidad</span>
+                    <span>Fecha</span>
+                </div>
+                <!-- Dynamic rows will be added here -->
+            </div>
+        </div>
+    </div>
+    <script src="/js/reg.producto.js"></script>
+</body>
+</html> 

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/historial.css">
+    <title>Usuario</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            <div class="navbar-options">
+                <select class="select" id="adminUsuario">
+                    <option>Admin-usuario</option>
+                    <option value="/usuario">Crear usuarios</option>
+                </select>
+                <select class="select" id="bodegas">
+                    <option>Bodegas</option>
+                    <option value="/crear_bodega">Crear Bodegas</option>
+                    <option value="#">Seguimiento Bodega</option>
+                </select>
+                <select class="select" id="historial">
+                    <option>Historial</option>
+                    <option value="/historial">Lista de Historial</option>
+                </select>
+                <div class="notification">
+                    <div class="bell-container">
+                        <button class="bell" aria-label="Ver alertas">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <div class="content-segundario">
+            <!-- Tabla -->
+            <div class="cont-segun-formu">
+                <div class="table-header">Filtros</div>
+
+                <div class="filtros">
+                    <select class="desple">
+                        <option>Seleccione la Bodega</option>
+                        <option>Corte</option>
+                        <option>Inyección</option>
+                        <option>Preparada</option>
+                        <option>Montaje</option>
+                        <option>Terminada</option>
+                    </select>
+                    <input type="date" class="date" placeholder="Fecha">
+                    <button type="button" class="export">Exportar Datos a Excel</button>
+                </div>
+
+                <div class="table-row1-1">
+                    <span>Historial De Bodegas</span>
+                </div>
+
+                <div class="table-row1">
+                    <span>Nombre</span>
+                    <span>Producto SKU</span>
+                    <span>Bodega</span>
+                    <span>Fecha</span>
+                    <span>Acción</span>
+                </div>
+                <div class="table-row2">
+                    <span>Producto 1</span>
+                    <span>SKU12345</span>
+                    <span>Corte</span>
+                    <span>2023-10-01</span>
+                    <span class="table-row2-bot" type="button">
+                        <img src="/img/borrar.png" alt="Borrar" class="borrar" href="#">
+                    </span>
+                </div>
+                <div class="table-row2">
+                    <span>Producto 2</span>
+                    <span>SKU67890</span>
+                    <span>MOntaje</span>
+                    <span>2023-10-02</span>
+                    <span class="table-row2-bot" type="button">
+                        <img src="/img/borrar.png" alt="Borrar" class="borrar" href="#">
+                    </span>
+                </div>
+                <!-- Añadir más filas según sea necesario -->
+            </div>
+        </div>
+    </div>
+    <script src="/js/historial.js"></script>
+</body>
+</html> 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/crear.bodega.css">
+    <title>Crear Bodegas</title>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            <div class="navbar-options">
+                <select class="select" id="adminUsuario">
+                    <option>Admin-usuario</option>
+                    <option value="/usuario">Crear usuarios</option>
+                </select>
+                <select class="select" id="bodegas">
+                    <option>Bodegas</option>
+                    <option value="/crear_bodega">Crear Bodegas</option>
+                    <option value="#">Seguimiento Bodega</option>
+                </select>
+                <select class="select" id="historial">
+                    <option>Historial</option>
+                    <option value="/historial">Lista de Historial</option>
+                </select>
+                <div class="notification">
+                    <div class="bell-container">
+                        <button class="bell" aria-label="Ver alertas">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </nav>
+
+        <!-- Contenido principal -->
+        <div class="content-segundario">
+            <div class="escrito">
+                <h2 class="h2">Crear Bodegas</h2>
+                <div class="cont-segun-list">
+                    <!-- Formulario -->
+                    <div class="cont-segun-list-for">
+                        <input type="text" class="input" placeholder="Nombre de Bodega">
+                        <input type="text" class="input" placeholder="Capacidad de Bodega">
+                        <!-- Botón debajo del formulario -->
+                        <div class="cont-segun-list-bot">
+                            <button class="button" id="agregarBodega">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <div class="cont-segun-formu">
+                <div class="table-header">Lista de Bodegas</div>
+                <div class="table-row1">
+                    <span>Nombre</span>
+                    <span>Capacidad</span>
+                    <span>Acciones</span>
+                </div>
+                <!-- Las filas de bodegas se añadirán dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+    <script src="/js/crear.bodegas.js"></script>
+</body>
+
+</html>

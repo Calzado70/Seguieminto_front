@@ -1,0 +1,121 @@
+/* Estilos existentes */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Corbel';
+}
+
+@font-face {
+  font-family: 'Corbel';
+  src: url(../font/CORBEL.TTF);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #b1b6b1;
+}
+
+.navbar {
+  width: 100%;
+  height: 10%;
+  background-color: #13302E;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+}
+
+.navbar-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.select {
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #000000;
+  color: #E0FF00;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 14px;
+  margin: 50px;
+}
+
+
+.content-segundario {
+  background-color: #383737;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px;
+  margin-block: auto;
+}
+
+.escrito {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 50px;
+  margin: 20px;
+}
+
+.h2 {
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Formulario */
+.cont-segun-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cont-segun-list-for {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+}
+
+.input{
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.cont-segun-list-bot {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button {
+  width: 150px;
+  height: 40px;
+  background-color: #13302E;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.button:hover {
+  background-color: #1a403d;
+}
