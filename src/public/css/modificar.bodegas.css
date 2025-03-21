@@ -25,31 +25,12 @@
   padding: 10px 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .logo {
   width: 150px;
   height: auto;
-}
-
-.navbar-options {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.select {
-  width: 150px;
-  height: 40px;
-  border-radius: 5px;
-  background-color: #000000;
-  color: #E0FF00;
-  border: none;
-  cursor: pointer;
-  padding: 0 10px;
-  font-size: 14px;
-  margin: 50px;
 }
 
 

@@ -115,6 +115,7 @@
   overflow-y: auto;
 }
 
+
 .cont-segun-formu::-webkit-scrollbar {
   width: 8px;
 }
@@ -132,9 +133,6 @@
 .cont-segun-formu::-webkit-scrollbar-thumb:hover {
   background: #1a403d;
 }
-
-
-
 
 .table-header {
   font-size: 18px;

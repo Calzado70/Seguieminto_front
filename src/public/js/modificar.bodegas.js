@@ -97,7 +97,6 @@ function cargaridbodega() {
 
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
-    cargaridbodega(); 
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');

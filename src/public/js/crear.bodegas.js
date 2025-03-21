@@ -122,7 +122,7 @@ function actualizarTablaBodegas(bodegas) {
             <span class="table-row2-bot" type="button">
                 <img src="/img/editar.png" alt="Editar" class="editar" data-id="${bodega.id_bodega}"> <!-- Usar data-id -->
                 <img src="/img/borrar.png" alt="Borrar" class="borrar" data-id="${bodega.id_bodega}">
-            </span>
+            </span> 
         `;
         tbody.appendChild(row);
     });

@@ -23,12 +23,15 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             localStorage.setItem('token', data.token); // Guardar el token
             localStorage.setItem('rol', data.usuario.rol); // Guardar el rol del usuario
             localStorage.setItem('bodega', data.usuario.bodega); // Guardar el nombre de la bodega
+            localStorage.setItem('nombre', data.usuario.nombre); // Guardar el nombre del usuario
 
             console.log("Token guardado:", data.token); // Verifica que el token se esté guardando correctamente
             console.log("Rol del usuario:", data.usuario.rol); // Verifica el rol del usuario
             console.log("Bodega del usuario:", data.usuario.bodega); // Verifica la bodega del usuario
+            console.log("Nombre del usuario:", data.usuario.nombre); // Verifica el nombre del usuario
+            
 
-            let tiempoRestante = 3; // Tiempo en segundos
+            let tiempoRestante = 3;
             mensaje.textContent = `Ingreso Exitoso en ${tiempoRestante} segundos...`;
             mensaje.classList.remove('error');
             mensaje.classList.add('success');
@@ -44,13 +47,13 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                     console.log("Rol del usuario:", rol);
 
                     switch (rol) {
-                        case 'operario':
+                        case 'Operario':
                             window.location.href = '/producto';
                             break;
                         case 'ADMIN':
                             window.location.href = '/usuario';
                             break;
-                        case 'supervisor':
+                        case 'Supervisor':
                             window.location.href = '/supervisor';
                             break;
                         default:

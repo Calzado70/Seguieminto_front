@@ -219,6 +219,27 @@
   border-radius: 10px;
   padding: 15px;
   color: #000000;
+  max-height: 500px; /* Ajusta esta altura según tus necesidades */
+  overflow-y: auto;
+}
+
+
+.cont-segun-formu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-thumb {
+  background: #13302E;
+  border-radius: 4px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-thumb:hover {
+  background: #1a403d;
 }
 
 .table-header {
