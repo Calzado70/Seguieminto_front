@@ -62,6 +62,7 @@
   background: transparent;
   display: block;
   position: relative;
+  cursor: pointer;
   top: -3px;
 }
 .bell::before,
@@ -274,4 +275,23 @@
 
 .borrar:hover, .editar:hover {
   transform: scale(1.2);
+}
+
+.password-container {
+  position: relative;
+  display: inline-block;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 60%;
+  left: 95%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-password img {
+  width: 24px;
+  height: 24px;
 }

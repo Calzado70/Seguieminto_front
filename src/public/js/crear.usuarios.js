@@ -195,6 +195,19 @@ function irAVistaAlertas() {
     window.location.href = '/alerta';
 }
 
+function togglePassword() {
+    const passwordInput = document.getElementById('contrasena');
+    const toggleIcon = document.getElementById('toggle-icon');
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.src = 'img/abierto.png';
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.src = 'img/cerrado.png';
+    }
+}
+
 // Event listeners
 redirigir('adminUsuario');
 redirigir('bodegas');

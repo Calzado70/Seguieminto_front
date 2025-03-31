@@ -135,6 +135,49 @@ function actualizarTablaProductos(productos) {
     
 }
 
+// Función para mostrar el modal
+function mostrarModalContrasena() {
+    return new Promise((resolve, reject) => {
+        const modal = document.getElementById('modalConfirmarContrasena');
+        const inputContrasena = document.getElementById('inputContrasena');
+        const confirmarButton = document.getElementById('confirmarEliminacion');
+        const cancelarButton = document.getElementById('cancelarEliminacion');
+
+        // Mostrar el modal
+        modal.style.display = 'flex';
+        inputContrasena.value = ''; // Limpiar el input
+
+        // Manejar el botón de confirmar
+        const confirmarHandler = () => {
+            const contrasena = inputContrasena.value.trim();
+            if (contrasena) {
+                modal.style.display = 'none';
+                resolve(contrasena); // Resuelve la promesa con la contraseña
+            } else {
+                alert('Por favor, ingresa una contraseña.');
+            }
+        };
+
+        // Manejar el botón de cancelar
+        const cancelarHandler = () => {
+            modal.style.display = 'none';
+            reject(new Error('Eliminación cancelada.')); // Rechaza la promesa
+        };
+
+        // Agregar los event listeners
+        confirmarButton.addEventListener('click', confirmarHandler);
+        cancelarButton.addEventListener('click', cancelarHandler);
+
+        // Permitir confirmar con la tecla Enter
+        inputContrasena.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                confirmarHandler();
+            }
+        });
+    });
+}
+
+// Modificar la función eliminarProducto
 async function eliminarProducto(event) {
     const ID = event.target.getAttribute('data-id');
     const token = localStorage.getItem('token');
@@ -145,33 +188,36 @@ async function eliminarProducto(event) {
         return;
     }
 
-    if (!confirm(`¿Estás seguro de eliminar este producto ${ID}?`)) {
-        return;
-    }
-
     try {
+        // Mostrar el modal y esperar la contraseña
+        const contrasena = await mostrarModalContrasena();
+
+        // Proceder con la eliminación
         const response = await fetch(`http://localhost:4000/product/producto`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ id_producto: ID }) // Cambia "id" por "id_producto"
+            body: JSON.stringify({
+                id_producto: ID,
+                contrasena: contrasena 
+            })
         });
 
         const data = await response.json();
-        console.log('Respuesta del backend:', data);
 
         if (response.ok) {
             alert('Producto eliminado correctamente');
-            await cargarProductosDeBodega(); // Recargar la lista de productos
+            await cargarProductosDeBodega(); // Recargar la tabla
         } else {
-            alert('No se pudo eliminar el producto');
-            console.error('Error:', data.message || 'No se pudo eliminar el producto');
+            throw new Error(data.message || "Error al eliminar el producto");
         }
     } catch (error) {
         console.error('Error al eliminar el producto:', error);
-        alert('Error al eliminar el producto. Verifica el servidor.');
+        if (error.message !== 'Eliminación cancelada.') {
+            alert(error.message || 'Error al eliminar el producto');
+        }
     }
 }
 

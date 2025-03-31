@@ -68,6 +68,7 @@
   background: transparent;
   display: block;
   position: relative;
+  cursor: pointer;
   top: -3px;
 }
 .bell::before,
@@ -178,39 +179,7 @@
   gap: 20px;
 }
 
-.desple {
-  width: 20%;
-  height: 40px;
-  border-radius: 5px;
-  background-color: #000000;
-  color: #ffffff;
-  border: none;
-  padding: 0 10px;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
 
-.desple:hover {
-  background-color: #333333;
-}
-
-.export {
-  width: 150px;
-  height: 40px;
-  background-color: #13302E;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: transform 0.2s, background-color 0.3s ease;
-  margin-left: auto;
-}
-
-.export:hover {
-  background-color: #1a3d3a;
-  transform: scale(1.05);
-}
 
 .date {
   width: 180px;

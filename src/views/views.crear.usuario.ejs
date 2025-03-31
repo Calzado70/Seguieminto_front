@@ -44,7 +44,12 @@
                     <!-- Formulario -->
                     <div class="cont-segun-list-for">
                         <input type="text" class="input" id="nombreUsuario" placeholder="Nombre de usuario">
-                        <input type="password" class="input" id="contrasena" placeholder="ingrese la contraseña">
+                        <div class="password-container">
+                            <input type="password" placeholder="Ingrese su contraseña" class="input" id="contrasena" required>
+                            <span class="toggle-password" onclick="togglePassword()">
+                                <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
+                            </span>
+                        </div>
                         <input type="text" class="input" id="descripcion" placeholder="Descripción">
                         <select class="desple" id="bodega">
                             <option value="">Bodega</option>

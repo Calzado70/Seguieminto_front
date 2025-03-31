@@ -58,8 +58,7 @@
   background-color: #333333;
 }
 
-/* From Uiverse.io by 3bdel3ziz-T */ 
-/*making bell shape with one div */
+
 .bell {
   border: 2.17px solid white;
   border-radius: 10px 10px 0 0;
@@ -68,6 +67,7 @@
   background: transparent;
   display: block;
   position: relative;
+  cursor: pointer;
   top: -3px;
 }
 .bell::before,
@@ -88,7 +88,8 @@
   top: calc(100% + 4px);
   width: 7px;
 }
-/*container main styling*/
+
+
 .notification {
   background: transparent;
   border: none;
@@ -101,7 +102,8 @@
   align-items: center;
   justify-content: center;
 }
-/*notifications number with before*/
+
+
 .notification::before {
   content: "1";
   color: white;
@@ -223,7 +225,7 @@
   font-size: 15px;
 }
 
-.table-row1, .table-row2 {
+.table-row1, .table-row2 { 
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
@@ -238,7 +240,7 @@
   font-weight: bold;
 }
 
-.borrar {
+/* .borrar {
   width: 25px;
   cursor: pointer;
   transition: transform 0.2s;
@@ -246,4 +248,4 @@
 
 .borrar:hover {
   transform: scale(1.1);
-}
+} */
