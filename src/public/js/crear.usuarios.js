@@ -38,11 +38,11 @@ async function crearUsuario() {
     }
 
     const usuarioData = {
-        nombre: document.querySelector('input[placeholder="Nombre de usuario"]').value,
-        contrasena: document.querySelector('input[placeholder="ingrese la contraseña"]').value,
-        descripcion: document.querySelector('input[placeholder="Descripción"]').value,
-        bodega: document.querySelector('.desple:nth-of-type(1)').value,
-        rol: document.querySelector('.desple:nth-of-type(2)').value
+        nombre: document.getElementById('nombreUsuario').value,
+        contrasena: document.getElementById('contrasena').value,
+        descripcion: document.getElementById('descripcion').value,
+        bodega: document.getElementById('bodega').value,
+        rol: document.getElementById('rol').value
     };
 
     try {

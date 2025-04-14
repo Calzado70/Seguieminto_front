@@ -42,7 +42,7 @@
   margin: 20px;
   flex-grow: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr;
 }
 
 .escrito {
@@ -145,15 +145,22 @@
 }
 
 .table-row1, .table-row2 {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr; /* Proporciones para cada columna */
   padding: 10px 0;
+  text-align: center; /* Centrar el texto en cada celda */
 }
-
 
 .table-row1 {
   font-weight: bold;
   border-bottom: 1px solid #ccc;
+}
+
+.table-row1 span, .table-row2 span {
+  display: flex;
+  justify-content: center; /* Centrar el contenido horizontalmente */
+  align-items: center; /* Centrar el contenido verticalmente */
+  padding: 5px;
 }
 
 .borrar{

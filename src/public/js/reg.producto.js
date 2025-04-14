@@ -20,6 +20,7 @@ function verificarTokenAlCargar() {
 }
 
 let productosScaneados = [];
+let nombreActual = ""; // Opcional, solo si necesitas persistir un nombre
 
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
@@ -28,55 +29,106 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.button').addEventListener('click', notificarProductos);
 });
 
-function cargarUsuarioYBodega() {
+// Obtener área desde el token
+function obtenerAreaDesdeToken() {
     const token = localStorage.getItem('token');
-    if (!token) {
-        console.error('No hay token en el localStorage');
-        return;
-    }
+    if (!token) return null;
 
     try {
-        // Decodificar el token JWT
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Payload del token:', payload);
-
-        // Asignar los valores a los inputs
-        document.getElementById('usuario').value = payload.nombre || 'Usuario no disponible';
-        document.getElementById('bodega').value = payload.bodega || 'Bodega no disponible';
-
+        return payload.bodega || null; // Asumimos que 'bodega' contiene el área
     } catch (error) {
         console.error('Error al decodificar el token:', error);
+        return null;
     }
 }
 
-function manejarEscaneo(event) {
-    const codigo = event.target.value;
-    if (!codigo) return;
+// Función para filtrar códigos por área (igual que en Android)
+function filtrarCodigoPorArea(codigo, area, posicionInicial = 4, posicionFinal = 10) {
+    // Obtener solo la parte del código que queremos procesar
+    const parteProcesar = codigo.substring(posicionInicial, posicionFinal);
+    const parteAnterior = codigo.substring(0, posicionInicial);
+    const partePosterior = codigo.substring(posicionFinal);
+    
+    let letrasArea = "";
+    switch (area) {
+        case "Corte":
+            letrasArea = "C";
+            break;
+        case "Montaje":
+            letrasArea = "M";
+            break;
+        case "Inyección":
+            letrasArea = "I";
+            break;
+        case "Cementada":
+            letrasArea = "E";
+            break;
+        case "Vulcanizada":
+            letrasArea = "V";
+            break;
+        case "Terminada":
+            letrasArea = "T";
+            break;
+        default:
+            return codigo;
+    }
+    
+    let codigoFiltrado = "";
+    for (let c of parteProcesar) {
+        if (letrasArea.includes(c) || !"CMIEVT".includes(c)) {
+            codigoFiltrado += c;
+        }
+    }
+    
+    // Devolver el código completo con la parte filtrada
+    return parteAnterior + codigoFiltrado + partePosterior;
+}
 
-    const productoExistente = productosScaneados.find(p => p.codigo === codigo);
+// Procesar la lectura del código
+function manejarEscaneo(event) {
+    const codigo = event.target.value.trim();
+    const area = obtenerAreaDesdeToken();
+
+    // Validaciones básicas
+    if (!codigo || !area) {
+        alert("Falta el código o el área no está disponible.");
+        return;
+    }
+
+    if (codigo.length < 10) {
+        alert("El código debe tener al menos 10 dígitos.");
+        event.target.value = "";
+        return;
+    }
+
+    // Filtrar el código según el área
+    const codigoFiltrado = filtrarCodigoPorArea(codigo, area);
+
+    // Obtener fecha y talla
+    const fecha = new Date().toISOString();
+    const talla = codigoFiltrado.length >= 2 ? codigoFiltrado.slice(0, 2) : "N/A"; // Extraer talla
+
+    // Verificar si el producto ya existe
+    const productoExistente = productosScaneados.find(p => p.codigo === codigoFiltrado);
     if (productoExistente) {
         productoExistente.cantidad += 1;
     } else {
         productosScaneados.push({
-            codigo: codigo,
+            codigo: codigoFiltrado,
             cantidad: 1,
-            fecha: new Date().toISOString()
+            fecha: fecha,
+            talla: talla, // Agregar talla al objeto
+            area: area
         });
     }
 
+    // Actualizar la interfaz
     actualizarTablaProductos(productosScaneados);
-    event.target.value = ''; // Limpiar el input después del escaneo
+    event.target.value = ""; // Limpiar el input del código
 }
 
-function formatearFecha(fechaISO) {
-    const fecha = new Date(fechaISO);
-    const dia = fecha.getDate().toString().padStart(2, '0');
-    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
-    const anio = fecha.getFullYear();
-
-    return `${dia}/${mes}/${anio}`;
-}
-
+// Actualizar la tabla
 function actualizarTablaProductos(productos) {
     const tbody = document.querySelector('.cont-segun-formu');
     const existingRows = tbody.querySelectorAll('.table-row2');
@@ -87,7 +139,8 @@ function actualizarTablaProductos(productos) {
         tr.classList.add('table-row2');
         tr.innerHTML = `
             <span>${producto.codigo}</span>
-            <span>${document.getElementById('bodega').value}</span>
+            <span>${producto.talla}</span> <!-- Mostrar la talla -->
+            <span>${producto.area}</span>
             <span>${producto.cantidad}</span>
             <span>${formatearFecha(producto.fecha)}</span>
         `;
@@ -95,6 +148,16 @@ function actualizarTablaProductos(productos) {
     });
 }
 
+// Formatear fecha
+function formatearFecha(fechaISO) {
+    const fecha = new Date(fechaISO);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+}
+
+// Notificar productos al backend
 async function notificarProductos() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -103,12 +166,8 @@ async function notificarProductos() {
         return;
     }
 
-    const id_bodega = obtenerIdBodega(); // Obtén el ID de la bodega
-    const idusuario = obtenerIdUsuario(); // Obtén el ID del usuario
-
-    console.log("ID de bodega:", id_bodega); // Log para depuración
-    console.log("ID de usuario:", idusuario); // Log para depuración
-
+    const id_bodega = obtenerIdBodega();
+    const idusuario = obtenerIdUsuario();
 
     if (!id_bodega || !idusuario || productosScaneados.length === 0) {
         alert('No hay productos para notificar o falta información de bodega/usuario.');
@@ -134,74 +193,61 @@ async function notificarProductos() {
             throw new Error(`Error del servidor: ${response.status} - ${errorData.message}`);
         }
 
-        const data = await response.json();
-        console.log("Respuesta del backend:", data);
         alert('Productos notificados correctamente');
-
-        // Limpiar la lista de productos escaneados
         productosScaneados = [];
         actualizarTablaProductos(productosScaneados);
-
     } catch (error) {
         console.error('Error al notificar productos:', error.message);
         alert('No se pudieron notificar los productos. Verifica el servidor.');
     }
 }
 
-function obtenerIdBodega() {
+// Resto de las funciones (sin cambios significativos)
+function cargarUsuarioYBodega() {
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('No hay token en el localStorage');
-        return null;
+        return;
     }
 
     try {
-        // Decodificar el token JWT
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Payload del token:', payload);
+        document.getElementById('usuario').value = payload.nombre || 'Usuario no disponible';
+        document.getElementById('bodega').value = payload.bodega || 'Bodega no disponible';
+    } catch (error) {
+        console.error('Error al decodificar el token:', error);
+    }
+}
 
-        // Extraer el nombre de la bodega desde el campo "bodega"
+function obtenerIdBodega() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
         const nombreBodega = payload.bodega || null;
-
-        // Mapear el nombre de la bodega a un ID
         const bodegas = {
             "Corte": 1,
-            "Inyeccion": 2, // Asegúrate de que el nombre coincida exactamente
+            "Inyeccion": 2,
             "Preparada": 3,
             "Montaje": 4,
             "Terminada": 5,
             "Vulcanizado": 6
         };
-
-        // Obtener el ID de la bodega
-        const idBodega = bodegas[nombreBodega] || null;
-
-        console.log("Nombre de la bodega:", nombreBodega); // Log para depuración
-        console.log("ID de la bodega:", idBodega); // Log para depuración
-
-        return idBodega;
-
+        return bodegas[nombreBodega] || null;
     } catch (error) {
         console.error('Error al decodificar el token:', error);
         return null;
     }
-}  
+}
 
 function obtenerIdUsuario() {
     const token = localStorage.getItem('token');
-    if (!token) {
-        console.error('No hay token en el localStorage');
-        return null;
-    }
+    if (!token) return null;
 
     try {
-        // Decodificar el token JWT
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Payload del token:', payload);
-
-        // Extraer el ID del usuario desde el campo "id"
-        return payload.id || null; // Cambia "id_usuario" por "id"
-
+        return payload.id || null;
     } catch (error) {
         console.error('Error al decodificar el token:', error);
         return null;
