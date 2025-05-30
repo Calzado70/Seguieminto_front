@@ -12,17 +12,35 @@
         <nav class="navbar">
             <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
         </nav>
-
-
+        
         <!-- Modal para confirmar la contraseña -->
         <div class="modal" id="modalConfirmarContrasena">
             <div class="modal-content">
                 <h3>Confirmar Eliminación</h3>
-                <p>ingresa tu contraseña para la eliminación del Registro:</p>
+                <p>Ingresa tu contraseña para la eliminación del Registro:</p>
                 <input type="password" id="inputContrasena" class="modal-input" placeholder="Contraseña">
                 <div class="modal-buttons">
                     <button class="modal-button modal-button-cancel" id="cancelarEliminacion">Cancelar</button>
                     <button class="modal-button modal-button-confirm" id="confirmarEliminacion">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para movimiento de productos -->
+        <div class="modal" id="modalMovimiento" style="display: none;">
+            <div class="modal-content">
+                <h3>Mover Producto</h3>
+                <p>Confirma el movimiento del producto:</p>
+                <div class="movimiento-info">
+                    <p><strong>Producto:</strong> <span id="productoMovimiento"></span></p>
+                    <p><strong>Desde:</strong> <span id="bodegaOrigen"></span></p>
+                    <p><strong>Hacia:</strong> <span id="bodegaDestinoSpan"></span></p>
+                    <p><strong>Tipo:</strong> <span id="tipoMovimiento"></span></p>
+                </div>
+                <textarea id="observaciones" class="modal-input" placeholder="Observaciones (opcional)" rows="3"></textarea>
+                <div class="modal-buttons">
+                    <button class="modal-button modal-button-cancel" id="cancelarMovimiento">Cancelar</button>
+                    <button class="modal-button modal-button-confirm" id="confirmarMovimiento">Confirmar Movimiento</button>
                 </div>
             </div>
         </div>
@@ -35,22 +53,24 @@
                     <!-- Formulario -->
                     <div class="cont-segun-list-for">
                         <input type="text" class="input" id="usuario" placeholder="usuario" disabled>
-                        <input type="text" class="input" id="bodega" placeholder="Bodega" disabled>
-                        <select class="desple" id="bodega">
+                        <input type="text" class="input" id="bodegaActual" placeholder="Bodega Actual" disabled>
+                        <select class="desple" id="bodegaDestino">
                             <option value="">Bodega a pasar</option>
-                            <option value="Corte">Corte</option>
-                            <option value="Inyección">Inyección</option>
-                            <option value="Preparada">Preparada</option>
-                            <option value="Montaje">Montaje</option>
-                            <option value="Terminada">Terminada</option>
+                            <option value="1">Corte</option>
+                            <option value="2">Inyección</option>
+                            <option value="3">Preparada</option>
+                            <option value="4">Montaje</option>
+                            <option value="5">Terminada</option>
+                            <option value="6">Vulcanizado</option>
                         </select>
-                        <select class="desple" id="rol">
+                        <select class="desple" id="tipoMovimientoSelect">
                             <option value="">Tipo de Movimiento</option>
                             <option value="En proceso">Proceso</option>
                             <option value="Enviado">Enviado</option>
+                            <option value="Transferencia">Transferencia</option>
                         </select>
                         <div class="cont-segun-list-bot">
-                            <button type="submit" class="button">Mover </button>
+                            <button type="button" class="button" id="btnMoverProductos">Mover Seleccionados</button>
                         </div>
                     </div>
                 </div>
@@ -59,17 +79,18 @@
             <div class="cont-segun-formu">
                 <div class="table-header">Productos registrados</div>
                 <div class="table-row1">
-                    <span>Codigo</span>
+                    <span>Seleccionar</span>
+                    <span>Código</span>
                     <span>Talla</span>
                     <span>Bodega</span>
                     <span>Cantidad</span>
-                    <span>fecha</span>
-                    <span>Accion</span>
+                    <span>Fecha</span>
+                    <span>Acción</span>
                 </div>
-                <!-- Dynamic rows will be added here -->
+                <!-- Se agregarán filas dinámicas aquí -->
             </div>
         </div>
     </div>
     <script src="/js/producto.js"></script>
 </body>
-</html> 
+</html>
