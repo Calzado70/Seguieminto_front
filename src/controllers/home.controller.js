@@ -34,3 +34,7 @@ export const historial = (req, res) => {
 export const alerta = (req, res) => {
     res.render("views.alerta.ejs");
 }
+
+export const seguimiento = (req, res) => {
+    res.render("views.seguimiento.ejs");
+}

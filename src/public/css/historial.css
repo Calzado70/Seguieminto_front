@@ -89,45 +89,6 @@
   width: 7px;
 }
 
-
-.notification {
-  background: transparent;
-  border: none;
-  padding: 15px 15px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: 300ms;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.notification::before {
-  content: "1";
-  color: white;
-  font-size: 10px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: red;
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-/*container background hover effect*/
-.notification:hover {
-  background: rgba(170, 170, 170, 0.062);
-}
-/*container animations*/
-.notification:hover > .bell-container {
-  animation: bell-animation 650ms ease-out 0s 1 normal both;
-}
 /*bell ring and scale animation*/
 @keyframes bell-animation {
   20% {

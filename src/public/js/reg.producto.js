@@ -107,7 +107,7 @@ function manejarEscaneo(event) {
 
     // Obtener fecha y talla
     const fecha = new Date().toISOString();
-    const talla = codigoFiltrado.length >= 2 ? codigoFiltrado.slice(0, 2) : "N/A"; // Extraer talla
+    // const talla = codigoFiltrado.length >= 2 ? codigoFiltrado.slice(0, 2) : "N/A"; // Extraer talla
 
     // Verificar si el producto ya existe
     const productoExistente = productosScaneados.find(p => p.codigo === codigoFiltrado);
@@ -118,7 +118,7 @@ function manejarEscaneo(event) {
             codigo: codigoFiltrado,
             cantidad: 1,
             fecha: fecha,
-            talla: talla, // Agregar talla al objeto
+            // talla: talla, // Agregar talla al objeto
             area: area
         });
     }
@@ -128,6 +128,7 @@ function manejarEscaneo(event) {
     event.target.value = ""; // Limpiar el input del código
 }
 
+// <span>${producto.talla}</span> <!-- Mostrar la talla -->
 // Actualizar la tabla
 function actualizarTablaProductos(productos) {
     const tbody = document.querySelector('.cont-segun-formu');
@@ -139,7 +140,6 @@ function actualizarTablaProductos(productos) {
         tr.classList.add('table-row2');
         tr.innerHTML = `
             <span>${producto.codigo}</span>
-            <span>${producto.talla}</span> <!-- Mostrar la talla -->
             <span>${producto.area}</span>
             <span>${producto.cantidad}</span>
             <span>${formatearFecha(producto.fecha)}</span>

@@ -196,7 +196,6 @@ redirigir('bodegas');
 redirigir('historial');
 
 // Luego usa esta función en el event listener:
-document.querySelector('.bell').addEventListener('click', irAVistaAlertas);
 
 
 document.querySelector('.button').addEventListener('click', crearBodega);

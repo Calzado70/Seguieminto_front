@@ -128,8 +128,8 @@ function actualizarTablaProductos(productos) {
     existingRows.forEach(row => row.remove());
 
     productos.forEach(producto => {
-        const talla = producto.SKU.length >= 2 ? producto.SKU.slice(0, 2) : "N/A";
-
+        // const talla = producto.SKU.length >= 2 ? producto.SKU.slice(0, 2) : "N/A";
+        // <span>${talla}</span>
         const tr = document.createElement('div');
         tr.classList.add('table-row2');
         tr.innerHTML = `
@@ -137,7 +137,7 @@ function actualizarTablaProductos(productos) {
                 <input type="checkbox" class="producto-checkbox" data-id="${producto.ID}" data-codigo="${producto.SKU}">
             </span>
             <span>${producto.SKU}</span>
-            <span>${talla}</span>
+
             <span>${producto.Bodega}</span>
             <span>${producto.Cantidad}</span>
             <span>${formatearFecha(producto.Fecha)}</span>
