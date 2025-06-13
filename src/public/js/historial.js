@@ -84,6 +84,14 @@ function actualizarTablaHistorial(historial) {
     const tbody = document.querySelector('#historialRows');
     tbody.innerHTML = ''; // Limpiar filas existentes
 
+    if (historial.length === 0) {
+        const tr = document.createElement('div');
+        tr.classList.add('table-row2');
+        tr.innerHTML = `<span colspan="7">No se encontraron registros.</span>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
     historial.forEach(item => {
         const tr = document.createElement('div');
         tr.classList.add('table-row2');
@@ -93,6 +101,7 @@ function actualizarTablaHistorial(historial) {
             <span>${item.Bodega || ''}</span>
             <span>${item.Bodega_entregada || ''}</span>
             <span>${item.Cantidad !== undefined ? item.Cantidad : 'N/A'}</span>
+            <span>${item.Tipo || 'N/A'}</span>
             <span>${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</span>
         `;
         tbody.appendChild(tr);
@@ -108,7 +117,7 @@ function exportarAExcel() {
 
     // Crear datos para Excel
     const datos = [
-        ["Nombre", "Producto SKU", "Bodega", "Bodega-entregada", "Cantidad", "Fecha"]
+        ["Nombre", "Producto SKU", "Bodega", "Bodega-entregada", "Cantidad", "Tipo", "Fecha"]
     ];
 
     filas.forEach(fila => {
@@ -154,6 +163,4 @@ document.addEventListener('DOMContentLoaded', function() {
     redirigir('bodegas');
     redirigir('historial');
 
-    // Botón de alertas
-    document.querySelector('.bell').addEventListener('click', irAVistaAlertas);
 });

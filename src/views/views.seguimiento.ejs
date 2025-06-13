@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="/css/seguimiento.css" />
     <title>Seguimiento de Movimientos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -35,14 +36,14 @@
 
             <!-- Filtros -->
             <form id="filtro-fechas" class="filtro-form">
-                <label for="fecha_inicio">Fecha Inicio:</label>
-                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" required />
+    <label for="fecha_inicio">Fecha Inicio:</label>
+    <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" />
 
-                <label for="fecha_fin">Fecha Fin:</label>
-                <input type="datetime-local" id="fecha_fin" name="fecha_fin" required />
+    <label for="fecha_fin">Fecha Fin:</label>
+    <input type="datetime-local" id="fecha_fin" name="fecha_fin" />
 
-                <button type="submit">Buscar</button>
-            </form>
+    <button type="submit">Buscar</button>
+</form>
 
             <!-- Tabla de movimientos -->
             <div class="table-container">
@@ -54,9 +55,10 @@
                             <th>Bodega Origen</th>
                             <th>Bodega Destino</th>
                             <th>Usuario</th>
-                            <th>Fecha</th>
+                            <th>Cantidad</th>
                             <th>Tipo</th>
                             <th>Observaciones</th>
+                            <th>Fecha</th>
                         </tr>
                     </thead>
                     <tbody>

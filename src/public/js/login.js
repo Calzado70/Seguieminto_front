@@ -58,6 +58,9 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                             break;
                         case 'Operario de Inyeccion':
                             window.location.href = '#';
+                        case 'Logistica':
+                            window.location.href = '/logistica';
+                            break;
                         default:
                             window.location.href = '/';
                     }

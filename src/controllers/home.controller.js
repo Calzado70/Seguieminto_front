@@ -38,3 +38,7 @@ export const alerta = (req, res) => {
 export const seguimiento = (req, res) => {
     res.render("views.seguimiento.ejs");
 }
+
+export const logistica = (req, res) => {
+    res.render("views.logistica.ejs");
+}

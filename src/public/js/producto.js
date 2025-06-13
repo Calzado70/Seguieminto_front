@@ -223,13 +223,13 @@ async function ejecutarMovimientoProductos(productosSeleccionados, bodegaDestino
         const movimientos = Array.from(productosSeleccionados).map(checkbox => ({
             id_producto: parseInt(checkbox.dataset.id),
             id_bodega_origen: bodegaOrigen,
-            id_bodega_destino: parseInt(bodegaDestino),
+            id_bodega_destino: parseInt(bodegaDestino), // Ensure this is a valid integer
             usuario_responsable: usuarioId,
             tipo_movimiento: tipoMovimiento,
             observaciones: observaciones || ''
         }));
 
-        console.log('Datos a enviar:', movimientos);
+        console.log('Datos a enviar (detallado):', JSON.stringify(movimientos, null, 2));
         console.log('Enviando solicitud a:', 'http://localhost:4000/product/registrar');
 
         const response = await fetch('http://localhost:4000/product/registrar', {
@@ -244,7 +244,6 @@ async function ejecutarMovimientoProductos(productosSeleccionados, bodegaDestino
         console.log('Respuesta del servidor:', response.status, response.statusText);
         const data = await response.json();
         console.log('Datos de respuesta:', data);
-
 
         if (response.ok) {
             alert(`${movimientos.length} producto(s) movido(s) correctamente.`);
@@ -356,7 +355,8 @@ function obtenerIdBodega() {
             "Preparada": 3,
             "Montaje": 4,
             "Terminada": 5,
-            "Vulcanizado": 6
+            "Vulcanizado": 6,
+            "Logistica": 8
         };
         const idBodega = bodegas[nombreBodega] || null;
         console.log("Nombre de la bodega:", nombreBodega, "ID de la bodega:", idBodega);
@@ -393,7 +393,8 @@ function obtenerNombreBodega(idBodega) {
         "3": "Preparada",
         "4": "Montaje",
         "5": "Terminada",
-        "6": "Vulcanizado"
+        "6": "Vulcanizado",
+        "8": "Logistica"
     };
     return bodegas[idBodega] || "Desconocida";
 }

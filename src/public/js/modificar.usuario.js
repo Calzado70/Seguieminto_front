@@ -94,8 +94,5 @@ function cargarNombreUsuario() {
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
     cargarNombreUsuario();
-    redirigir('adminUsuario');
-    redirigir('bodegas');
-    redirigir('historial');
     document.getElementById('guardar').addEventListener('click', modificarUsuario);
 });
