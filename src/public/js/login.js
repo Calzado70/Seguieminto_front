@@ -57,7 +57,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                             window.location.href = '/supervisor';
                             break;
                         case 'Operario de Inyeccion':
-                            window.location.href = '#';
+                            window.location.href = '/inyeccion';
+                            break;
                         case 'Logistica':
                             window.location.href = '/logistica';
                             break;

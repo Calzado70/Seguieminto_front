@@ -1,3 +1,8 @@
+// Variables globales para paginación
+let historialCompleto = [];
+let paginaActual = 1;
+const registrosPorPagina = 10;
+
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -73,11 +78,26 @@ async function cargarHistorial(id_bodega = null, fecha_inicio = null, fecha_fin 
             throw new Error('La respuesta del backend no contiene un array de historial');
         }
 
-        actualizarTablaHistorial(data.body);
+        // Guardar datos completos y resetear paginación
+        historialCompleto = data.body;
+        paginaActual = 1;
+        
+        // Mostrar datos paginados
+        mostrarPaginaActual();
+        crearControlesPaginacion();
+        
     } catch (error) {
         console.error('Error al cargar el historial:', error.message);
         alert(`No se pudo cargar el historial. Verifica el servidor. Detalle: ${error.message}`);
     }
+}
+
+function mostrarPaginaActual() {
+    const inicio = (paginaActual - 1) * registrosPorPagina;
+    const fin = inicio + registrosPorPagina;
+    const datosPagina = historialCompleto.slice(inicio, fin);
+    
+    actualizarTablaHistorial(datosPagina);
 }
 
 function actualizarTablaHistorial(historial) {
@@ -108,9 +128,68 @@ function actualizarTablaHistorial(historial) {
     });
 }
 
+function crearControlesPaginacion() {
+    const totalPaginas = Math.ceil(historialCompleto.length / registrosPorPagina);
+    
+    // Eliminar controles existentes si los hay
+    const controlesExistentes = document.querySelector('.controles-paginacion');
+    if (controlesExistentes) {
+        controlesExistentes.remove();
+    }
+    
+    // Crear nuevo contenedor de controles
+    const controles = document.createElement('div');
+    controles.className = 'controles-paginacion';
+    
+    // Información de registros
+    const inicio = (paginaActual - 1) * registrosPorPagina + 1;
+    const fin = Math.min(paginaActual * registrosPorPagina, historialCompleto.length);
+    
+    controles.innerHTML = `
+        <div class="info-paginacion">
+            Mostrando ${inicio}-${fin} de ${historialCompleto.length} registros
+        </div>
+        <div class="botones-paginacion">
+            <button class="btn-paginacion" id="btnPrimera" ${paginaActual === 1 ? 'disabled' : ''}>
+                ««
+            </button>
+            <button class="btn-paginacion" id="btnAnterior" ${paginaActual === 1 ? 'disabled' : ''}>
+                ‹
+            </button>
+            <span class="pagina-actual">Página ${paginaActual} de ${totalPaginas}</span>
+            <button class="btn-paginacion" id="btnSiguiente" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+                ›
+            </button>
+            <button class="btn-paginacion" id="btnUltima" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+                »»
+            </button>
+        </div>
+    `;
+    
+    // Insertar controles después de la tabla
+    const contenedorTabla = document.querySelector('.cont-segun-formu');
+    contenedorTabla.appendChild(controles);
+    
+    // Agregar event listeners
+    document.getElementById('btnPrimera').addEventListener('click', () => cambiarPagina(1));
+    document.getElementById('btnAnterior').addEventListener('click', () => cambiarPagina(paginaActual - 1));
+    document.getElementById('btnSiguiente').addEventListener('click', () => cambiarPagina(paginaActual + 1));
+    document.getElementById('btnUltima').addEventListener('click', () => cambiarPagina(totalPaginas));
+}
+
+function cambiarPagina(nuevaPagina) {
+    const totalPaginas = Math.ceil(historialCompleto.length / registrosPorPagina);
+    
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+        paginaActual = nuevaPagina;
+        mostrarPaginaActual();
+        crearControlesPaginacion();
+    }
+}
+
 function exportarAExcel() {
-    const filas = document.querySelectorAll('#historialRows .table-row2');
-    if (filas.length === 0) {
+    // Exportar todos los datos, no solo la página actual
+    if (historialCompleto.length === 0) {
         alert('No hay datos para exportar');
         return;
     }
@@ -120,9 +199,16 @@ function exportarAExcel() {
         ["Nombre", "Producto SKU", "Bodega", "Bodega-entregada", "Cantidad", "Tipo", "Fecha"]
     ];
 
-    filas.forEach(fila => {
-        const columnas = fila.querySelectorAll('span');
-        const datosFila = Array.from(columnas).map(col => col.textContent.trim());
+    historialCompleto.forEach(item => {
+        const datosFila = [
+            item.Nombre || 'N/A',
+            item.SKU || 'N/A',
+            item.Bodega || '',
+            item.Bodega_entregada || '',
+            item.Cantidad !== undefined ? item.Cantidad : 'N/A',
+            item.Tipo || 'N/A',
+            item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'
+        ];
         datos.push(datosFila);
     });
 
@@ -162,5 +248,4 @@ document.addEventListener('DOMContentLoaded', function() {
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');
-
 });

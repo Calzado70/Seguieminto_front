@@ -138,7 +138,7 @@ function actualizarTablaProductos(productos) {
             <span>${formatearFecha(producto.Fecha)}</span>
             <span class="table-row2-bot">
                 <img src="/img/borrar.png" alt="Borrar" class="borrar" data-id="${producto.ID}">
-                <img src="/img/editar.png" alt="Editar" class="editar" data-id="${producto.ID}" data-codigo="${producto.SKU}" data-cantidad="${producto.Cantidad}">
+                <img src="/img/editar.png" alt="Editar" class="editar" data-id="${producto.ID}" data-codigo="${producto.SKU}" data-cantidad="${producto.Cantidad}" data-talla="${producto.talla}">
             </span>
         `;
         tbody.appendChild(tr);
@@ -356,8 +356,7 @@ function obtenerIdBodega() {
             "Montaje": 4,
             "Terminada": 5,
             "Vulcanizado": 6,
-            "Logistica": 8,
-            "Cementada": 9
+            "Logistica": 8
         };
         const idBodega = bodegas[nombreBodega] || null;
         console.log("Nombre de la bodega:", nombreBodega, "ID de la bodega:", idBodega);
@@ -395,21 +394,23 @@ function obtenerNombreBodega(idBodega) {
         "4": "Montaje",
         "5": "Terminada",
         "6": "Vulcanizado",
-        "8": "Logistica",
-        "9": "Cementada"
+        "8": "Logistica"
     };
     return bodegas[idBodega] || "Desconocida";
 }
+
 function mostrarFormularioEdicion(event) {
     const idProducto = event.target.getAttribute('data-id');
     const codigo = event.target.getAttribute('data-codigo');
     const cantidad = event.target.getAttribute('data-cantidad');
+    const talla = event.target.getAttribute('data-talla') || ''; // Default to empty if undefined
 
-    console.log('Datos para edición:', { idProducto, codigo, cantidad }); // Debug log
+    console.log('Datos para edición:', { idProducto, codigo, cantidad, talla });
 
     document.getElementById('editIdProducto').value = idProducto;
     document.getElementById('editCodigo').value = codigo;
     document.getElementById('editCantidad').value = cantidad;
+    document.getElementById('editCaracteristica').value = talla; // Set dropdown to current talla
 
     const modal = document.getElementById('modalEditarProducto');
     modal.style.display = 'flex';
@@ -444,13 +445,16 @@ async function actualizarProducto() {
     const id_producto = document.getElementById('editIdProducto').value;
     const codigo = document.getElementById('editCodigo').value;
     const cantidad = document.getElementById('editCantidad').value;
+    const talla = document.getElementById('editCaracteristica').value; // Get selected talla from dropdown
 
     if (!codigo || isNaN(cantidad) || cantidad <= 0) {
         alert('Por favor, ingresa un código válido y una cantidad numérica positiva.');
         return;
     }
 
-    console.log('Enviando datos al servidor:', { id_producto, codigo, cantidad });
+    // Convert talla to integer or null if no value selected
+    const tallaValue = talla ? parseInt(talla) : null;
+    console.log('Enviando datos al servidor:', { id_producto, codigo, cantidad, talla: tallaValue });
 
     try {
         const response = await fetch(`http://localhost:4000/product/actualizar`, {
@@ -459,7 +463,7 @@ async function actualizarProducto() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ id_producto, codigo, cantidad: parseInt(cantidad) })
+            body: JSON.stringify({ id_producto, codigo, cantidad: parseInt(cantidad), talla: tallaValue })
         });
 
         console.log('Respuesta del servidor:', response.status, response.statusText);

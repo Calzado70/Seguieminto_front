@@ -1,3 +1,7 @@
+let currentPage = 1;
+const recordsPerPage = 5;
+let allUsers = [];
+
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -70,6 +74,7 @@ async function crearUsuario() {
     }
 }
 
+
 async function cargarUsuarios() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -94,28 +99,78 @@ async function cargarUsuarios() {
         const data = await response.json();
         console.log('Respuesta completa del backend:', data);
 
-        const usuarios = data.body;
-        if (!usuarios || !Array.isArray(usuarios)) {
+        allUsers = data.body || [];
+        if (!Array.isArray(allUsers)) {
             throw new Error('Los datos de usuarios no están en el formato esperado');
         }
 
-        actualizarTablaUsuarios(usuarios);
+        updatePaginationControls();
+        displayCurrentPage();
     } catch (error) {
         console.error('Error al cargar usuarios:', error.message);
         alert('No se pudieron cargar los usuarios. Verifica el servidor.');
     }
 }
 
+// Función para mostrar los usuarios de la página actual
+function displayCurrentPage() {
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+    const usersToDisplay = allUsers.slice(startIndex, endIndex);
+    
+    actualizarTablaUsuarios(usersToDisplay);
+    updatePageInfo();
+    updatePaginationControls();
+}
+
+// Función para actualizar la información de la página
+function updatePageInfo() {
+    const totalPages = Math.ceil(allUsers.length / recordsPerPage);
+    document.getElementById('page-info').textContent = `Página ${currentPage} de ${totalPages}`;
+}
+
+// Función para actualizar los controles de paginación
+function updatePaginationControls() {
+    const totalPages = Math.ceil(allUsers.length / recordsPerPage);
+    const prevButton = document.getElementById('prev-page');
+    const nextButton = document.getElementById('next-page');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages || totalPages === 0;
+    
+    console.log(`Estado actual: Página ${currentPage} de ${totalPages}`);
+    console.log(`Anterior deshabilitado: ${prevButton.disabled}`);
+    console.log(`Siguiente deshabilitado: ${nextButton.disabled}`);
+}
+
+// Event listeners para los botones de paginación
+document.getElementById('prev-page').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayCurrentPage();
+    }
+});
+
+document.getElementById('next-page').addEventListener('click', () => {
+    const totalPages = Math.ceil(allUsers.length / recordsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        displayCurrentPage();
+    }
+});
+
+// Modifica la función actualizarTablaUsuarios para que no elimine los encabezados
 function actualizarTablaUsuarios(usuarios) {
     const tbody = document.querySelector('.cont-segun-formu');
-    const existingRows = tbody.querySelectorAll('.table-row2');
-    existingRows.forEach(row => row.remove());
+    const existingDataRows = tbody.querySelectorAll('.table-row2');
+    existingDataRows.forEach(row => row.remove());
 
     if (!usuarios || !Array.isArray(usuarios)) {
         console.error('Usuarios no es un array válido:', usuarios);
         return;
     }
 
+    // Resto de la función permanece igual...
     usuarios.forEach(usuario => {
         const row = document.createElement('div');
         row.className = 'table-row2';
@@ -132,20 +187,20 @@ function actualizarTablaUsuarios(usuarios) {
         tbody.appendChild(row);
     });
 
-    // Evento para eliminar
+    // Eventos para eliminar y editar (mantén estos como están)
     document.querySelectorAll('.borrar').forEach(button => {
         button.addEventListener('click', eliminarUsuario);
     });
 
-    // Evento para editar (redirección con nombre)
     document.querySelectorAll('.editar').forEach(button => {
         button.addEventListener('click', (event) => {
             const nombreUsuario = event.target.getAttribute('data-nombre');
-            window.location.href = `/modificar?nombre=${encodeURIComponent(nombreUsuario)}`; // Usar nombre en la URL
+            window.location.href = `/modificar?nombre=${encodeURIComponent(nombreUsuario)}`;
         });
     });
 }
 
+// Modifica la función eliminarUsuario para resetear la paginación después de eliminar
 async function eliminarUsuario(event) {
     const idUsuario = event.target.getAttribute('data-id');
     const token = localStorage.getItem('token');
@@ -157,7 +212,7 @@ async function eliminarUsuario(event) {
     }
 
     if (!confirm(`¿Estás seguro de que quieres eliminar al usuario con ID ${idUsuario}?`)) {
-        return; // Cancelar si el usuario no confirma
+        return;
     }
 
     try {
@@ -174,7 +229,9 @@ async function eliminarUsuario(event) {
 
         if (response.ok) {
             alert('Usuario eliminado correctamente');
-            await cargarUsuarios(); // Recargar la lista de usuarios
+            // Resetear a la primera página después de eliminar
+            currentPage = 1;
+            await cargarUsuarios();
         } else {
             alert(`Error: ${data.message || 'No se pudo eliminar el usuario'}`);
         }
@@ -213,7 +270,6 @@ redirigir('adminUsuario');
 redirigir('bodegas');
 redirigir('historial');
 
-// Luego usa esta función en el event listener:
 
 
 document.querySelector('.button').addEventListener('click', crearUsuario);

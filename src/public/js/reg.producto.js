@@ -58,7 +58,7 @@ function filtrarCodigoPorArea(codigo, area, posicionInicial = 4, posicionFinal =
         case "Montaje":
             letrasArea = "M";
             break;
-        case "Inyección":
+        case "Inyeccion":
             letrasArea = "I";
             break;
         case "Cementada":
@@ -232,7 +232,8 @@ function obtenerIdBodega() {
             "Preparada": 3,
             "Montaje": 4,
             "Terminada": 5,
-            "Vulcanizado": 6
+            "Vulcanizado": 6,
+            "Cementada": 9
         };
         return bodegas[nombreBodega] || null;
     } catch (error) {

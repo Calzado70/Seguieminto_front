@@ -42,3 +42,7 @@ export const seguimiento = (req, res) => {
 export const logistica = (req, res) => {
     res.render("views.logistica.ejs");
 }
+
+export const producto_inyec = (req, res) => {
+    res.render("views.producto.inyec.ejs");
+}

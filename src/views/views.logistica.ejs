@@ -1,97 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/logistica.css">
-    <title>Supervisor</title>
+    <title>Productos en Logística</title>
 </head>
 <body>
     <div class="container">
         <!-- Navbar -->
         <nav class="navbar">
             <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            <div class="navbar-options">
+                <select class="select" id="adminUsuario" >
+                    <option>Admin-usuario</option>
+                    <option value="/usuario">Crear usuarios</option>
+                </select>
+                <select class="select" id="bodegas" >
+                    <option>Bodegas</option>
+                    <option value="/crear_bodega">Crear Bodegas</option>
+                    <option value="/seguimiento">Seguimiento Bodega</option>
+                </select>
+                <select class="select" id="historial" >
+                    <option>Historial</option>
+                    <option value="/historial">Lista de Historial</option>
+                    <option value="/logistica" selected>Producto en Logística</option>
+                </select>
+            </div>
         </nav>
-        
-        <!-- Modal para confirmar la contraseña -->
-        <div class="modal" id="modalConfirmarContrasena">
-            <div class="modal-content">
-                <h3>Confirmar Eliminación</h3>
-                <p>Ingresa tu contraseña para la eliminación del Registro:</p>
-                <input type="password" id="inputContrasena" class="modal-input" placeholder="Contraseña">
-                <div class="modal-buttons">
-                    <button class="modal-button modal-button-cancel" id="cancelarEliminacion">Cancelar</button>
-                    <button class="modal-button modal-button-confirm" id="confirmarEliminacion">Confirmar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal para movimiento de productos -->
-        <div class="modal" id="modalMovimiento" style="display: none;">
-            <div class="modal-content">
-                <h3>Mover Producto</h3>
-                <p>Confirma el movimiento del producto:</p>
-                <div class="movimiento-info">
-                    <p><strong>Producto:</strong> <span id="productoMovimiento"></span></p>
-                    <p><strong>Desde:</strong> <span id="bodegaOrigen"></span></p>
-                    <p><strong>Hacia:</strong> <span id="bodegaDestinoSpan"></span></p>
-                    <p><strong>Tipo:</strong> <span id="tipoMovimiento"></span></p>
-                </div>
-                <textarea id="observaciones" class="modal-input" placeholder="Observaciones (opcional)" rows="3"></textarea>
-                <div class="modal-buttons">
-                    <button class="modal-button modal-button-cancel" id="cancelarMovimiento">Cancelar</button>
-                    <button class="modal-button modal-button-confirm" id="confirmarMovimiento">Confirmar Movimiento</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Contenido principal -->
         <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Registro de Producto</h2>
-                <div class="cont-segun-list">
-                    <!-- Formulario -->
-                    <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="usuario" placeholder="usuario" disabled>
-                        <input type="text" class="input" id="bodegaActual" placeholder="Bodega Actual" disabled>
-                        <select class="desple" id="bodegaDestino">
-                            <option value="">Bodega a pasar</option>
-                            <option value="1">Corte</option>
-                            <option value="2">Inyección</option>
-                            <option value="3">Preparada</option>
-                            <option value="4">Montaje</option>
-                            <option value="5">Terminada</option>
-                            <option value="6">Vulcanizado</option>
-                            <option value="8">Logistica</option>
-                        </select>
-                        <select class="desple" id="tipoMovimientoSelect">
-                            <option value="">Tipo de Movimiento</option>
-                            <option value="En proceso">Proceso</option>
-                            <option value="Enviado">Enviado</option>
-                            <option value="Terminado">Terminado</option>
-                        </select>
-                        <div class="cont-segun-list-bot">
-                            <button type="button" class="button" id="btnMoverProductos">Mover Seleccionados</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Tabla -->
-            <div class="cont-segun-formu">
-                <div class="table-header">Productos registrados</div>
-                <div class="table-row1">
-                    <span>Seleccionar</span>
-                    <span>Código</span>
-                    <!-- <span>Talla</span> -->
-                    <span>Bodega</span>
-                    <span>Cantidad</span>
-                    <span>Fecha</span>
-                    <span>Acción</span>
-                </div>
-                <!-- Se agregarán filas dinámicas aquí -->
-            </div>
+    <div class="cont-segun-formu">
+        <div class="table-header">Filtros</div>
+
+        <div class="filtros">
+            <!-- <select class="desple" id="filtroBodega">
+                <option value="">Seleccione la Bodega</option>
+                <option value="1">Corte</option>
+                <option value="2">Inyeccion</option>
+                <option value="3">Preparada</option>
+                <option value="4">Montaje</option>
+                <option value="5">Terminada</option>
+                <option value="6">Vulcanizado</option>
+                <option value="8" selected>Logística</option>
+            </select> -->
+            <input type="date" class="date" id="filtroFechaInicio" placeholder="Fecha Inicio">
+            <input type="date" class="date" id="filtroFechaFin" placeholder="Fecha Fin">
+            <button type="button" class="export" id="aplicarFiltros">Aplicar Filtros</button>
+            <button type="button" class="export" id="exportarExcel">Exportar Datos a Excel</button>
         </div>
+
+        <div class="table-row1-1">
+            <span>Productos en Logística</span>
+        </div>
+
+        <div class="table-row1">
+            <span>Nombre</span>
+            <span>Producto SKU</span>
+            <span>Bodega</span>
+            <span>Bodega-entregada</span>
+            <span>Cantidad</span>
+            <span>Tipo</span>
+            <span>Fecha</span>
+        </div>
+        <div id="historialRows"></div>
     </div>
+</div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="/js/logistica.js"></script>
 </body>
 </html>

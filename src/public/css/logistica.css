@@ -1,0 +1,286 @@
+/* Estilos existentes */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Corbel';
+}
+
+@font-face {
+  font-family: 'Corbel';
+  src: url(../font/CORBEL.TTF);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.navbar {
+  width: 100%;
+  height: 10%;
+  background-color: #13302E;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+}
+
+.navbar-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.select {
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #000000;
+  color: #E0FF00;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 14px;
+  margin: 50px;
+  transition: background-color 0.3s ease;
+}
+
+.select:hover {
+  background-color: #333333;
+}
+
+
+.bell {
+  border: 2.17px solid white;
+  border-radius: 10px 10px 0 0;
+  width: 15px;
+  height: 17px;
+  background: transparent;
+  display: block;
+  position: relative;
+  cursor: pointer;
+  top: -3px;
+}
+.bell::before,
+.bell::after {
+  content: "";
+  background: white;
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2.17px;
+}
+.bell::before {
+  top: 100%;
+  width: 20px;
+}
+.bell::after {
+  top: calc(100% + 4px);
+  width: 7px;
+}
+
+/*bell ring and scale animation*/
+@keyframes bell-animation {
+  20% {
+    transform: rotate(15deg);
+  }
+
+  40% {
+    transform: rotate(-15deg);
+    scale: 1.1;
+  }
+  60% {
+    transform: rotate(10deg);
+    scale: 1.1;
+  }
+  80% {
+    transform: rotate(-10deg);
+  }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.content-segundario {
+  background-color: #444343;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px;
+  flex-grow: 1;
+}
+
+/* Tabla */
+.cont-segun-formu {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  color: #000000; 
+}
+
+.table-header {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  padding-bottom: 10px;
+}
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.desple {
+  width: 20%;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 0 10px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.desple:hover {
+  background-color: #333333;
+}
+
+.export {
+  width: 150px;
+  height: 40px;
+  background-color: #13302E;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s, background-color 0.3s ease;
+  margin-left: auto;
+}
+
+.export:hover {
+  background-color: #1a3d3a;
+  transform: scale(1.05);
+}
+
+.date {
+  width: 180px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #646464;
+  color: white;
+  border: none;
+  padding: 0 10px;
+  font-size: 15px;
+}
+
+.table-row1, .table-row2 { 
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.table-row1-1 {
+  display: flex;
+  padding: 20px;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+/* Estilos para la paginación */
+.controles-paginacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.info-paginacion {
+    font-size: 14px;
+    color: #666;
+    font-weight: bold;
+}
+
+.botones-paginacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-paginacion {
+    width: 40px;
+    height: 35px;
+    background-color: #13302E;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+    background-color: #1a3d3a;
+    transform: scale(1.05);
+}
+
+.btn-paginacion:disabled {
+    background-color: #ccc;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagina-actual {
+    margin: 0 15px;
+    font-weight: bold;
+    color: #13302E;
+    font-size: 14px;
+}
+
+/* Responsive para dispositivos móviles */
+@media (max-width: 768px) {
+    .controles-paginacion {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .botones-paginacion {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .info-paginacion {
+        text-align: center;
+    }
+}
+
+/* .borrar {
+  width: 25px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.borrar:hover {
+  transform: scale(1.1);
+} */

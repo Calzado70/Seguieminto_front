@@ -144,7 +144,6 @@
   }
 }
 
-
 .content-segundario {
   background-color: #383737;
   padding: 20px;
@@ -222,8 +221,9 @@
   color: #000000;
   max-height: 500px; /* Ajusta esta altura según tus necesidades */
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
-
 
 .cont-segun-formu::-webkit-scrollbar {
   width: 8px;
@@ -294,4 +294,52 @@
 .toggle-password img {
   width: 24px;
   height: 24px;
+}
+
+/* Estilos para la paginación */
+.pagination-container {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+  position: absolute;
+  margin-top: 28%;
+  margin-left: 12%;
+}
+
+.pagination-button {
+  padding: 8px 16px;
+  background-color: #13302E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover {
+  background-color: #1a403d;
+}
+
+.pagination-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+#page-info {
+  font-weight: bold;
+  color: #13302E;
+}
+
+/* Contenedor para las filas de la tabla */
+.table-rows-container {
+  flex-grow: 1;
+  overflow-y: auto;
 }

@@ -260,11 +260,27 @@
     transform: scale(1.2);
 }
 
-/* Ajustes para el modal de edición */
 #modalEditarProducto .modal-content {
     max-width: 450px;
 }
 
-#modalEditarProducto .modal-input {
+#modalEditarProducto .modal-input,
+#modalEditarProducto .desple {
+    width: 100%;
     margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#modalEditarProducto .desple {
+    appearance: none; /* Remove default arrow in some browsers */
+    background-image: url('/img/arrow-down.png'); /* Optional: custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+#modalEditarProducto .modal-buttons {
+    display: flex;
+    justify-content: space-between;
 }

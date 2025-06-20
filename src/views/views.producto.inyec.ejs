@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/producto.css">
+    <link rel="stylesheet" href="/css/producto.inyec.css">
     <title>Supervisor</title>
 </head>
 <body>
@@ -53,6 +53,16 @@
                 <input type="number" id="editIdProducto" class="modal-input" placeholder="ID Producto" readonly disabled>
                 <input type="text" id="editCodigo" class="modal-input" placeholder="Nuevo Código" required>
                 <input type="number" id="editCantidad" class="modal-input" placeholder="Nueva Cantidad" required>
+                <select class="desple" id="editCaracteristica" class="model-select">
+                            <option value="">Caracteristica</option>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                            <option value="32">32</option>
+                            <option value="33">33</option>
+                            <option value="34">34</option>
+                    </select>
                 <div class="modal-buttons">
                     <button class="modal-button modal-button-cancel" id="cancelarEdicion">Cancelar</button>
                     <button class="modal-button modal-button-confirm" id="confirmarEdicion">Confirmar Edición</button>
@@ -106,6 +116,6 @@
             </div>
         </div>
     </div>
-    <script src="/js/producto.js"></script>
+    <script src="/js/producto.inyec.js"></script>
 </body>
 </html>
