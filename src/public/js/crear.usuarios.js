@@ -2,6 +2,21 @@ let currentPage = 1;
 const recordsPerPage = 5;
 let allUsers = [];
 
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asignar evento al botón correctamente
+    const btnGuardar = document.getElementById('btnGuardar');
+    if (btnGuardar) {
+        btnGuardar.addEventListener('click', crearUsuario);
+    } else {
+        console.error('No se encontró el botón con ID btnGuardar');
+    }
+
+    await cargarBodegas();
+});
+
+
+
+
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -34,23 +49,34 @@ function redirigir(selectId) {
 }
 
 async function crearUsuario() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión.');
-        window.location.href = '/';
-        return;
-    }
-
-    const usuarioData = {
-        nombre: document.getElementById('nombreUsuario').value,
-        contrasena: document.getElementById('contrasena').value,
-        descripcion: document.getElementById('descripcion').value,
-        bodega: document.getElementById('bodega').value,
-        rol: document.getElementById('rol').value
-    };
+    const btnGuardar = document.getElementById('btnGuardar');
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = 'Creando...';
 
     try {
-        const response = await fetch('http://localhost:4000/user/usuario', {
+        const usuarioData = {
+            id_bodega: parseInt(document.getElementById('bodega').value),
+            nombre: document.getElementById('nombreUsuario').value.trim(),
+            correo: document.getElementById('correo').value.trim(),
+            contrasena: document.getElementById('contrasena').value,
+            rol: document.getElementById('rol').value,
+            estado: document.getElementById('estado').value
+        };
+
+        // Validación frontend
+        if (!usuarioData.id_bodega || !usuarioData.nombre || !usuarioData.correo || 
+            !usuarioData.contrasena || !usuarioData.rol) {
+            throw new Error('Todos los campos son obligatorios');
+        }
+
+        if (!usuarioData.correo.includes('@')) {
+            throw new Error('Ingrese un correo válido');
+        }
+
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Debe iniciar sesión primero');
+
+        const response = await fetch('http://localhost:4000/user/insertarusuario', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,18 +85,23 @@ async function crearUsuario() {
             body: JSON.stringify(usuarioData)
         });
 
-        const responseData = await response.json();
-        if (response.ok) {
-            alert('Usuario creado correctamente');
-            document.querySelectorAll('.input').forEach(input => input.value = '');
-            document.querySelectorAll('.desple').forEach(select => select.selectedIndex = 0);
-            await cargarUsuarios(); // Refresh user list after creation
-        } else {
-            alert(`Error: ${responseData.message}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al crear usuario');
         }
+
+        alert('Usuario creado exitosamente!');
+        // Limpiar formulario
+        document.querySelectorAll('input').forEach(i => i.value = '');
+        document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        
     } catch (error) {
-        console.error('Error al crear usuario:', error);
-        alert('Error al crear el usuario');
+        console.error('Error:', error);
+        alert(error.message);
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar';
     }
 }
 
@@ -265,13 +296,47 @@ function togglePassword() {
     }
 }
 
+async function cargarBodegas() {
+    const selectBodega = document.getElementById('bodega');
+    
+    try {
+        const response = await fetch('http://localhost:4000/bode/mostrar');
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Limpiar select
+        selectBodega.innerHTML = '<option value="">Bodega</option>';
+        
+        // Verificar estructura de respuesta
+        if (result.success && Array.isArray(result.data)) {
+            result.data.forEach(bodega => {
+                const option = document.createElement('option');
+                // Ajusta según los campos reales que devuelve tu procedimiento
+                option.value = bodega.id_bodega || bodega.ID_BODEGA;
+                option.textContent = bodega.nombre || bodega.NOMBRE;
+                selectBodega.appendChild(option);
+            });
+        } else {
+            console.error('Estructura de respuesta inesperada:', result);
+            selectBodega.innerHTML = '<option value="">Error cargando bodegas</option>';
+        }
+    } catch (error) {
+        console.error('Error al cargar bodegas:', error);
+        selectBodega.innerHTML = '<option value="">Error al cargar bodegas</option>';
+    }
+}
+
 // Event listeners
 redirigir('adminUsuario');
 redirigir('bodegas');
 redirigir('historial');
 
 
-
+document.addEventListener('DOMContentLoaded', cargarBodegas);
 document.querySelector('.button').addEventListener('click', crearUsuario);
 
 // Load users when page loads

@@ -28,7 +28,6 @@
                     <option value="/historial">Lista de Historial</option>
                     <option value="/logistica">Producto en Logistica</option>
                 </select>
-                
             </div>
         </nav>
 
@@ -39,58 +38,63 @@
                 <div class="cont-segun-list">
                     <!-- Formulario -->
                     <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="nombreUsuario" placeholder="Nombre de usuario">
+                        <input type="text" class="input" id="nombreUsuario" placeholder="Nombre de usuario" required>
+                        
                         <div class="password-container">
                             <input type="password" placeholder="Ingrese su contraseña" class="input" id="contrasena" required>
                             <span class="toggle-password" onclick="togglePassword()">
                                 <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
                             </span>
                         </div>
-                        <input type="text" class="input" id="descripcion" placeholder="Descripción">
-                        <select class="desple" id="bodega">
-                            <option value="">Bodega</option>
-                            <option value="Corte">Corte</option>
-                            <option value="Inyeccion">Inyeccion</option>        
-                            <option value="Preparada">Preparada</option>
-                            <option value="Montaje">Montaje</option>
-                            <option value="Terminada">Terminada</option>
-                            <option value="Vulcanizado">Vulcanizado</option>  
-                            <option value="Logistica">Logistica</option>   
-                            <option value="Cementada">Cementada</option>   
+                        
+                        <input type="email" class="input" id="correo" placeholder="Correo electrónico" required>
+                        
+                        <select class="desple" id="bodega" required>
+                            <option value="">Cargando bodegas...</option>
                         </select>
-                        <select class="desple" id="rol">
-                            <option value="">Rol</option>
+                        
+                        <select class="desple" id="rol" required>
+                            <option value="">Seleccione rol</option>
                             <option value="Supervisor">Supervisor</option>
                             <option value="Operario">Operario</option>
                             <option value="Operario de Inyeccion">Operario de Inyeccion</option>
                             <option value="Logistica">Logistica</option>
+                            <option value="ADMINISTRADOR">Administrador</option>
                         </select>
+                        
+                        <select class="desple" id="estado" required>
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                        </select>
+                        
                         <div class="cont-segun-list-bot">
-                            <button type="submit" class="button">Guardar</button>
+                            <button type="button" class="button" id="btnGuardar">Guardar</button>
                         </div>
                     </div>
                 </div>
             </div>
+            
             <!-- Tabla -->
             <div class="cont-segun-formu">
                 <div class="table-header">Lista de Usuarios</div>
-<div class="table-row1">
-    <span>Nombre</span>
-    <span>Rol</span>
-    <span>Bodega</span>
-    <span>Accion</span>
-</div>
-<!-- Dynamic rows will be added here -->
-
-<!-- Agrega esto al final, después de la tabla -->
-<div class="pagination-controls">
-    <button id="prev-page" class="pagination-button">Anterior</button>
-    <span id="page-info">Página 1</span>
-    <button id="next-page" class="pagination-button">Siguiente</button>
-</div>
+                <div class="table-row1">
+                    <span>Nombre</span>
+                    <span>Rol</span>
+                    <span>Bodega</span>
+                    <span>Accion</span>
+                </div>
+                <!-- Las filas de usuarios se insertarán aquí dinámicamente -->
+                
+                <!-- Paginación -->
+                <div class="pagination-controls">
+                    <button id="prev-page" class="pagination-button">Anterior</button>
+                    <span id="page-info">Página 1</span>
+                    <button id="next-page" class="pagination-button">Siguiente</button>
+                </div>
             </div>
         </div>
     </div>
+
     <script src="/js/crear.usuarios.js"></script>
 </body>
 
