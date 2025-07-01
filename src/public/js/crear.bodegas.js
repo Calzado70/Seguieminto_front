@@ -30,20 +30,41 @@ function redirigir(selectId) {
 }
 
 async function crearBodega() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión.');
-        window.location.href = '/';
-        return;
-    }
-
-    const bodegaData = {
-        nombre: document.querySelector('input[placeholder="Nombre de Bodega"]').value,
-        capacidad: document.querySelector('input[placeholder="Capacidad de Bodega"]').value
-    };
+    const btnAgregar = document.getElementById('agregarBodega');
+    const originalText = btnAgregar.textContent;
+    btnAgregar.disabled = true;
+    btnAgregar.textContent = 'Creando...';
 
     try {
-        const response = await fetch('http://localhost:4000/bode/bodega', {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No hay sesión activa. Por favor, inicia sesión.');
+        }
+
+        // Obtener valores
+        const nombre = document.querySelector('input[placeholder="Nombre de Bodega"]').value.trim();
+        const capacidad = parseFloat(document.querySelector('input[placeholder="Capacidad de Bodega"]').value);
+
+        // Validaciones
+        if (!nombre || nombre.length < 3) {
+            throw new Error('El nombre debe tener al menos 3 caracteres');
+        }
+
+        if (isNaN(capacidad)) {
+            throw new Error('La capacidad debe ser un número');
+        }
+
+        if (capacidad <= 0) {
+            throw new Error('La capacidad debe ser mayor a 0');
+        }
+
+        const bodegaData = {
+            nombre,
+            capacidad,
+            estado: 'ACTIVA' // Coincide con el ENUM del procedimiento
+        };
+
+        const response = await fetch('http://localhost:4000/bode/crear', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,18 +74,24 @@ async function crearBodega() {
         });
 
         const responseData = await response.json();
-        if (response.ok) {
-            alert('Bodega creada correctamente');
-            document.querySelectorAll('.input').forEach(input => input.value = '');
-            await cargarBodegas(); // Refresh bodega list after creation
-        } else {
-            alert(`Error: ${responseData.message}`);
+
+        if (!response.ok) {
+            throw new Error(responseData.message || 'Error al crear bodega');
         }
+
+        alert('Bodega creada correctamente');
+        document.querySelectorAll('.input').forEach(input => input.value = '');
+        await cargarBodegas();
+        
     } catch (error) {
         console.error('Error al crear bodega:', error);
-        alert('Error al crear la bodega');
+        alert(`Error: ${error.message}`);
+    } finally {
+        btnAgregar.disabled = false;
+        btnAgregar.textContent = originalText;
     }
 }
+
 
 async function cargarBodegas() {
     const token = localStorage.getItem('token');
@@ -74,7 +101,7 @@ async function cargarBodegas() {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/bode/bodega', {
+        const response = await fetch('http://localhost:4000/bode/mostrar', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -87,18 +114,19 @@ async function cargarBodegas() {
             throw new Error(`Error del servidor: ${response.status} - ${errorData.message}`);
         }
 
-        const data = await response.json();
-        console.log('Respuesta completa del backend:', data);
-
-        const bodegas = data.body;
-        if (!bodegas || !Array.isArray(bodegas)) {
-            throw new Error('Los datos de bodegas no están en el formato esperado');
+        const result = await response.json();
+        
+        // Validación mejorada de la respuesta
+        if (!result.success || !Array.isArray(result.data)) {
+            console.error('Formato de respuesta inesperado:', result);
+            throw new Error('Formato de datos incorrecto del servidor');
         }
 
-        actualizarTablaBodegas(bodegas);
+        actualizarTablaBodegas(result.data);
+        
     } catch (error) {
-        console.error('Error al cargar bodegas:', error.message);
-        alert('No se pudieron cargar las bodegas. Verifica el servidor.');
+        console.error('Error al cargar bodegas:', error);
+        alert(`Error al cargar bodegas: ${error.message}`);
     }
 }
 
@@ -156,7 +184,7 @@ async function eliminarBodega(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/bode/bodega', {
+        const response = await fetch('http://localhost:4000/bode/eliminar', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -198,9 +226,14 @@ redirigir('historial');
 // Luego usa esta función en el event listener:
 
 
-document.querySelector('.button').addEventListener('click', crearBodega);
+document.addEventListener('DOMContentLoaded', () => {
+    // Vincular correctamente el evento al botón
+    document.getElementById('agregarBodega').addEventListener('click', crearBodega);
+    cargarBodegas();
+});
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
-    cargarBodegas();
 });

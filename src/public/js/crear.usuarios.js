@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-
-
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -54,28 +52,27 @@ async function crearUsuario() {
     btnGuardar.textContent = 'Creando...';
 
     try {
+        // Obtener valores del formulario
         const usuarioData = {
             id_bodega: parseInt(document.getElementById('bodega').value),
             nombre: document.getElementById('nombreUsuario').value.trim(),
             correo: document.getElementById('correo').value.trim(),
             contrasena: document.getElementById('contrasena').value,
             rol: document.getElementById('rol').value,
-            estado: document.getElementById('estado').value
+            estado: document.getElementById('estado').value || 'ACTIVO' // Valor por defecto
         };
 
-        // Validación frontend
-        if (!usuarioData.id_bodega || !usuarioData.nombre || !usuarioData.correo || 
-            !usuarioData.contrasena || !usuarioData.rol) {
-            throw new Error('Todos los campos son obligatorios');
-        }
-
-        if (!usuarioData.correo.includes('@')) {
-            throw new Error('Ingrese un correo válido');
-        }
+        // Validación mejorada
+        if (!usuarioData.id_bodega) throw new Error('Seleccione una bodega válida');
+        if (!usuarioData.nombre || usuarioData.nombre.length < 3) throw new Error('Nombre debe tener al menos 3 caracteres');
+        if (!usuarioData.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(usuarioData.correo)) throw new Error('Ingrese un correo válido');
+        if (!usuarioData.contrasena || usuarioData.contrasena.length < 6) throw new Error('Contraseña debe tener al menos 6 caracteres');
+        if (!usuarioData.rol) throw new Error('Seleccione un rol válido');
 
         const token = localStorage.getItem('token');
         if (!token) throw new Error('Debe iniciar sesión primero');
 
+        // Enviar la solicitud
         const response = await fetch('http://localhost:4000/user/insertarusuario', {
             method: 'POST',
             headers: {
@@ -87,17 +84,24 @@ async function crearUsuario() {
 
         const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.message || 'Error al crear usuario');
+        // Manejar respuesta del backend
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || data.error || 'Error al crear usuario');
         }
 
         alert('Usuario creado exitosamente!');
         // Limpiar formulario
-        document.querySelectorAll('input').forEach(i => i.value = '');
-        document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        document.getElementById('nombreUsuario').value = '';
+        document.getElementById('correo').value = '';
+        document.getElementById('contrasena').value = '';
+        document.getElementById('bodega').selectedIndex = 0;
+        document.getElementById('rol').selectedIndex = 0;
+        
+        // Recargar lista de usuarios
+        await cargarUsuarios();
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error en crearUsuario:', error);
         alert(error.message);
     } finally {
         btnGuardar.disabled = false;
@@ -114,7 +118,7 @@ async function cargarUsuarios() {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/user/usuario', {
+        const response = await fetch('http://localhost:4000/user/mostrar', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -201,34 +205,34 @@ function actualizarTablaUsuarios(usuarios) {
         return;
     }
 
-    // Resto de la función permanece igual...
     usuarios.forEach(usuario => {
         const row = document.createElement('div');
         row.className = 'table-row2';
-        row.dataset.nombre = usuario.nombre;
+        row.dataset.id = usuario.id_usuario;
         row.innerHTML = `
             <span>${usuario.nombre || 'N/A'}</span>
             <span>${usuario.rol || 'N/A'}</span>
-            <span>${usuario.bodega || 'N/A'}</span>
-            <span class="table-row2-bot" type="button">
-                <img src="/img/editar.png" alt="Editar" class="editar" data-nombre="${usuario.nombre}">
+            <span>${usuario.nombre_bodega || 'N/A'}</span> <!-- Cambiado de usuario.bodega a usuario.nombre_bodega -->
+            <span class="table-row2-bot">
+                <img src="/img/editar.png" alt="Editar" class="editar" data-id="${usuario.id_usuario}">
                 <img src="/img/borrar.png" alt="Borrar" class="borrar" data-id="${usuario.id_usuario}">
             </span>
         `;
         tbody.appendChild(row);
     });
 
-    // Eventos para eliminar y editar (mantén estos como están)
+    // Eventos para los botones
     document.querySelectorAll('.borrar').forEach(button => {
         button.addEventListener('click', eliminarUsuario);
     });
 
     document.querySelectorAll('.editar').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const nombreUsuario = event.target.getAttribute('data-nombre');
-            window.location.href = `/modificar?nombre=${encodeURIComponent(nombreUsuario)}`;
-        });
+    button.addEventListener('click', (event) => {
+        const idUsuario = event.target.getAttribute('data-id');
+        const nombreUsuario = event.target.closest('.table-row2').querySelector('span:first-child').textContent;
+        window.location.href = `/modificar?id=${idUsuario}&nombre=${encodeURIComponent(nombreUsuario)}`;
     });
+});
 }
 
 // Modifica la función eliminarUsuario para resetear la paginación después de eliminar
@@ -247,7 +251,7 @@ async function eliminarUsuario(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/user/usuario', {
+        const response = await fetch('http://localhost:4000/user/eliminar', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -308,16 +312,14 @@ async function cargarBodegas() {
         
         const result = await response.json();
         
-        // Limpiar select
-        selectBodega.innerHTML = '<option value="">Bodega</option>';
-        
-        // Verificar estructura de respuesta
+        // Verificación de estructura mejorada
         if (result.success && Array.isArray(result.data)) {
+            selectBodega.innerHTML = '<option value="">Seleccione bodega</option>';
+            
             result.data.forEach(bodega => {
                 const option = document.createElement('option');
-                // Ajusta según los campos reales que devuelve tu procedimiento
-                option.value = bodega.id_bodega || bodega.ID_BODEGA;
-                option.textContent = bodega.nombre || bodega.NOMBRE;
+                option.value = bodega.id_bodega;
+                option.textContent = bodega.nombre;
                 selectBodega.appendChild(option);
             });
         } else {

@@ -18,15 +18,13 @@
                     <div class="cont-segun-list-for">
                         <input type="text" class="input" id="nombre" placeholder="Nombre de usuario" readonly>
                         <select class="desple" id="bodega">
-                            <option value="">Bodega</option>
-                            <option value="Corte">Corte</option>
-                            <option value="Inyeccion">Inyeccion</option> <!-- Corregido typo -->
-                            <option value="Preparada">Preparada</option>
-                            <option value="Montaje">Montaje</option>
-                            <option value="Terminada">Terminada</option>
-                            <option value="Logistica">Logistica</option>
+                            <option value="">Seleccione bodega</option>
+                            <!-- Las opciones se cargarán dinámicamente desde JavaScript -->
                         </select>
-                        <input type="text" class="input" id="descripcion" placeholder="Descripción">
+                        <div class="password-container">
+                            <input type="password" class="input" id="contrasena" placeholder="Nueva contraseña">
+                            <img src="/img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon" onclick="togglePassword()">
+                        </div>
                         <div class="cont-segun-list-bot">
                             <button class="button" id="guardar">Guardar</button>
                         </div>
