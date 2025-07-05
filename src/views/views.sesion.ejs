@@ -1,0 +1,68 @@
+<!-- vista_iniciar_sesion.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar Sesión de Escaneo</title>
+  <link rel="stylesheet" href="/css/sesion.css"> <!-- Enlace al archivo de estilos -->
+</head>
+
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      <div class="navbar-options">
+        <select class="select" id="consultas">
+          <option>Consultas</option>
+          <option value="#">invetario</option>
+          <option value="#">Stock por Producto</option>
+        </select>
+        <select class="select" id="sesion">
+          <option>Sesion de Scaneo</option>
+          <option value="#">Iniciar sesion</option>
+        </select>
+        <button class="select" id="Tranferencia">
+          Transferencia o Consumos
+        </button>
+      </div>
+    </nav>
+
+    <main class="content-segundario">
+      <section class="escrito">
+        <h2 class="h2">Iniciar Sesión</h2>
+      </section>
+
+      <section class="cont-segun-list">
+        <form id="formSesion" class="cont-segun-list-for">
+          <div class="input-group">
+            <label for="id_bodega">Nombre de bodega</label>
+            <select id="id_bodega" required class="input">
+              <option value="">Seleccione bodega</option>
+              <!-- Las opciones se cargarán desde JS -->
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="id_usuario">Nombre del usuario</label>
+            <input type="text" id="id_usuario" required class="input">
+          </div>
+
+          <div class="input-group">
+            <label for="observaciones">Observaciones</label>
+            <textarea id="observaciones" rows="3" class="input"></textarea>
+          </div>
+
+          <div class="cont-segun-list-bot">
+            <button type="submit" class="button" value="/producto">Iniciar</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/sesion.js"></script>
+</body>
+
+</html>

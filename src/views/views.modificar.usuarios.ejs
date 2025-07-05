@@ -22,8 +22,10 @@
                             <!-- Las opciones se cargarán dinámicamente desde JavaScript -->
                         </select>
                         <div class="password-container">
-                            <input type="password" class="input" id="contrasena" placeholder="Nueva contraseña">
-                            <img src="/img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon" onclick="togglePassword()">
+                            <input type="password" placeholder="Ingrese su contraseña" class="input" id="contrasena" required>
+                            <span class="toggle-password" onclick="togglePassword()">
+                                <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
+                            </span>
                         </div>
                         <div class="cont-segun-list-bot">
                             <button class="button" id="guardar">Guardar</button>

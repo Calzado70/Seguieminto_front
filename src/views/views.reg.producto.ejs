@@ -1,48 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/reg.producto.css">
-    <title>Registro</title>
+  <meta charset="UTF-8">
+  <title>Agregar Producto Escaneado</title>
+  <link rel="stylesheet" href="/css/reg.producto.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-        </nav>
+  <div class="container">
+    <header class="navbar">
+      <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      <img src="/img/cerrar.png" alt="cerrar" class="cerrar-sesion" onclick="location.href='#'">
+    </header>
 
-        <!-- Contenido principal -->
-        <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Movimientos</h2>
-                <div class="cont-segun-list">
-                    <!-- Formulario -->
-                    <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="codigo" placeholder="Scaneo de codigo">
-                        <input type="text" class="input" id="usuario" placeholder="usuario" disabled>
-                        <input type="text" class="input" id="bodega" placeholder="Bodega" disabled>
-                        <div class="cont-segun-list-bot">
-                            <button type="submit" class="button">Notificar</button>
-                        </div>
-                    </div>
-                </div>
+    <main class="content-segundario">
+      <section class="escrito">
+        <h2 class="h2">Agregar Producto</h2>
+      </section>
+
+      <section class="cont-segun-list">
+        <form id="formProducto" class="cont-segun-list-for">
+          <div class="input-group">
+            <label for="id_sesion">ID de Sesión</label>
+            <input type="number" id="id_sesion" required class="input">
+          </div>
+
+          <div class="input-group">
+            <label for="codigo_producto">Código de producto (SKU)</label>
+            <input type="text" id="codigo_producto" required class="input" autofocus>
+          </div>
+
+          <div class="input-group">
+            <label for="cantidad">Cantidad manual</label>
+            <input type="number" id="cantidad" class="input">
+          </div>
+
+          <div class="cont-segun-list-bot">
+            <button type="submit" class="button">Agregar</button>
+          </div>
+        </form>
+
+        <div class="cont-segun-formu">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr class="table-row1">
+                  <th>ID</th>
+                  <th>Código</th>
+                  <th>Cantidad</th>
+                  <th>Bodega</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="tablaProductos">
+                <!-- Aquí se mostrarán los productos agregados -->
+              </tbody>
+            </table>
+
+            <!-- ✅ Contador total de productos -->
+            <div class="contador-productos">
+              <strong>Total productos únicos:</strong> <span id="totalProductos">0</span>
             </div>
-            <!-- Tabla -->
-            <div class="cont-segun-formu">
-                <div class="table-header">Productos Scaneados</div>
-                <div class="table-row1">
-                    <span>Codigo</span>
-                    <!-- <span>Talla</span> -->
-                    <span>Bodega</span>
-                    <span>Cantidad</span>
-                    <span>Fecha</span>
-                </div>
-                <!-- Dynamic rows will be added here -->
-            </div>
+          </div>
         </div>
-    </div>
-    <script src="/js/reg.producto.js"></script>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/reg.producto.js"></script>
 </body>
-</html> 
+</html>

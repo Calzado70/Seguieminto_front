@@ -1,4 +1,4 @@
-/* Estilos existentes */
+/* Estilos globales */
 * {
   margin: 0;
   padding: 0;
@@ -11,11 +11,16 @@
   src: url(../font/CORBEL.TTF);
 }
 
+body {
+  background-color: #b1b6b1;
+  color: #ffffff;
+  font-family: 'Corbel';
+}
+
 .container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #b1b6b1;
 }
 
 .navbar {
@@ -25,7 +30,7 @@
   padding: 10px 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .logo {
@@ -52,7 +57,6 @@
   margin: 50px;
 }
 
-
 .content-segundario {
   background-color: #383737;
   padding: 20px;
@@ -65,8 +69,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 50px;
-  margin: 20px;
+  gap: 20px;
 }
 
 .h2 {
@@ -86,23 +89,34 @@
 .cont-segun-list-for {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  width: 100%;
+  gap: 15px;
+  width: 100%; /* Ocupa todo el ancho disponible */
 }
 
-.input, .desple {
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input {
   width: 100%;
   height: 40px;
   border-radius: 5px;
   border: 1px solid #ccc;
   padding: 0 10px;
   font-size: 14px;
+  background-color: white;
+}
+
+textarea.input {
+  height: 80px; /* Altura personalizada para el textarea */
 }
 
 .cont-segun-list-bot {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  justify-content: center; /* Centra el botón */
+  margin-top: 10px; /* Espacio entre el formulario y el botón */
 }
 
 .button {
@@ -118,24 +132,4 @@
 
 .button:hover {
   background-color: #1a403d;
-}
-
-
-.password-container {
-  position: relative;
-  display: inline-block;
-}
-
-.toggle-password {
-  position: absolute;
-  top: 60%;
-  left: 97.5%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  user-select: none;
-}
-
-.toggle-password img {
-  width: 24px;
-  height: 24px;
 }
