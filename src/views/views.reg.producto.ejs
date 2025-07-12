@@ -1,71 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Agregar Producto Escaneado</title>
-  <link rel="stylesheet" href="/css/reg.producto.css">
-</head>
-<body>
-  <div class="container">
-    <header class="navbar">
-      <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-      <img src="/img/cerrar.png" alt="cerrar" class="cerrar-sesion" onclick="location.href='#'">
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agregar Producto Escaneado</title>
+    <link rel="stylesheet" href="/css/reg.producto.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="navbar">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo" />
+        <img
+          src="/img/cerrar.png"
+          alt="cerrar"
+          class="cerrar-sesion"
+          id="cerrarSesion"
+        />
+      </header>
 
-    <main class="content-segundario">
-      <section class="escrito">
-        <h2 class="h2">Agregar Producto</h2>
-      </section>
+      <main class="content-segundario">
+        <section class="escrito">
+          <h2 class="h2">Agregar Producto</h2>
+        </section>
 
-      <section class="cont-segun-list">
-        <form id="formProducto" class="cont-segun-list-for">
-          <div class="input-group">
-            <label for="id_sesion">ID de Sesión</label>
-            <input type="number" id="id_sesion" required class="input">
-          </div>
+        <section class="cont-segun-list">
+          <form id="formProducto" class="cont-segun-list-for">
+            <div class="input-group">
+              <label for="id_sesion">ID de Sesión</label>
+              <input type="number" id="id_sesion" required class="input" />
+            </div>
 
-          <div class="input-group">
-            <label for="codigo_producto">Código de producto (SKU)</label>
-            <input type="text" id="codigo_producto" required class="input" autofocus>
-          </div>
+            <div class="input-group">
+              <label for="codigo_producto">Código de producto (SKU)</label>
+              <input
+                type="text"
+                id="codigo_producto"
+                required
+                class="input"
+                autofocus
+              />
+            </div>
 
-          <div class="input-group">
-            <label for="cantidad">Cantidad manual</label>
-            <input type="number" id="cantidad" class="input">
-          </div>
+            <div class="input-group">
+              <label for="cantidad">Cantidad manual</label>
+              <input type="number" id="cantidad" class="input" />
+            </div>
 
-          <div class="cont-segun-list-bot">
-            <button type="submit" class="button">Agregar</button>
-          </div>
-        </form>
+            <label for="caracteristicas">Características</label>
+            <select class="input" id="caracteristicas">
+              <option value="N/A">Selecciona</option>
+              <option value="50">50</option>
+              <option value="51">51</option>
+              <option value="52">52</option>
+              <option value="53">53</option>
+              <option value="54">54</option>
+              <option value="55">55</option>
+              <option value="56">56</option>
+            </select>
 
-        <div class="cont-segun-formu">
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr class="table-row1">
-                  <th>ID</th>
-                  <th>Código</th>
-                  <th>Cantidad</th>
-                  <th>Bodega</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody id="tablaProductos">
-                <!-- Aquí se mostrarán los productos agregados -->
-              </tbody>
-            </table>
+            <div class="cont-segun-list-bot">
+              <button type="submit" class="button">Agregar</button>
+            </div>
+          </form>
 
-            <!-- ✅ Contador total de productos -->
-            <div class="contador-productos">
-              <strong>Total productos únicos:</strong> <span id="totalProductos">0</span>
+          <div class="cont-segun-formu">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr class="table-row1">
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Cantidad</th>
+                    <th>Bodega</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                  <!-- Aquí se mostrarán los productos agregados -->
+                </tbody>
+              </table>
+
+              <!-- ✅ Contador total de productos -->
+              <div class="contador-productos">
+                <strong>Total productos únicos:</strong>
+                <span id="totalProductos">0</span>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
-  </div>
+        </section>
+      </main>
+    </div>
 
-  <script src="/js/reg.producto.js"></script>
-</body>
+    <script src="/js/reg.producto.js"></script>
+  </body>
 </html>

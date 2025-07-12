@@ -43,17 +43,19 @@ export const logistica = (req, res) => {
     res.render("views.logistica.ejs");
 }
 
-export const producto_inyec = (req, res) => {
-    res.render("views.producto.inyec.ejs");
-}
-
 
 export const inventario_view = (req, res) => {
     res.render("views.inventario.ejs");
 }
 
 
-
 export const session = (req, res) => {
     res.render("views.sesion.ejs");
 }
+
+
+
+
+// export const producto_inyec = (req, res) => {
+//     res.render("views.producto.inyec.ejs");
+// }
