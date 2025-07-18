@@ -49,17 +49,14 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                     console.log("Rol del usuario:", rol);
 
                     switch (rol) {
-                        case 'Operario':
-                            window.location.href = '/producto';
+                        case 'OPERADOR':
+                            window.location.href = '/supervisor';
                             break;
                         case 'ADMINISTRADOR':
                             window.location.href = '/usuario';
                             break;
                         case 'Supervisor':
                             window.location.href = '/supervisor';
-                            break;
-                        case 'Operario de Inyeccion':
-                            window.location.href = '/inyeccion';
                             break;
                         case 'Logistica':
                             window.location.href = '/logistica';

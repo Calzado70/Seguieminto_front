@@ -39,8 +39,6 @@
   border-radius: 10px;
   margin: 20px;
   flex-grow: 1;
-  display: grid;
-  grid-template-columns: 0.5fr 1fr;
 }
 
 .escrito {
@@ -101,62 +99,6 @@
 
 .button:hover {
   background-color: #1a403d;
-}
-
-/* Tabla */
-.cont-segun-formu {
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-  padding: 15px;
-  color: #000000;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.cont-segun-formu::-webkit-scrollbar {
-  width: 8px;
-}
-
-.cont-segun-formu::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.cont-segun-formu::-webkit-scrollbar-thumb {
-  background: #13302E;
-  border-radius: 4px;
-}
-
-.cont-segun-formu::-webkit-scrollbar-thumb:hover {
-  background: #1a403d;
-}
-
-.table-header {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ffffff;
-}
-
-/* Ajustes para alinear las columnas */
-.table-row1, .table-row2 {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; /* Proporciones para cada columna */
-  padding: 10px 0;
-  text-align: center; /* Centrar el texto en cada celda */
-}
-
-.table-row1 {
-  font-weight: bold;
-  border-bottom: 1px solid #ccc;
-}
-
-.table-row1 span, .table-row2 span {
-  display: flex;
-  justify-content: center; /* Centrar el contenido horizontalmente */
-  align-items: center; /* Centrar el contenido verticalmente */
-  padding: 5px;
 }
 
 .borrar {
@@ -267,4 +209,90 @@
 
 #modalEditarProducto .modal-input {
     margin-bottom: 15px;
+}
+
+
+
+/* Tabla con scroll - Estilos mejorados */
+.cont-segun-formu {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  color: #000000;
+  max-height: 400px; /* Altura ajustada para scroll */
+  overflow-y: auto;
+  border: none;
+  margin-top: 15px;
+}
+
+/* Encabezado fijo al hacer scroll */
+.cont-segun-formu thead th {
+  position: sticky;
+  top: 0;
+  background-color: #13302e;
+  color: white;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+/* Estilos del scrollbar */
+.cont-segun-formu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-thumb {
+  background: #13302E;
+  border-radius: 4px;
+}
+
+.cont-segun-formu::-webkit-scrollbar-thumb:hover {
+  background: #1a403d;
+}
+
+/* Estilos de la tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.table-row1 {
+  font-weight: bold;
+  background-color: #f1f1f1;
+}
+
+/* Filas alternas para mejor legibilidad */
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Efecto hover en filas */
+table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Estilos para los spans dentro de las celdas */
+.table-row1 span, .table-row2 span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.contador-productos {
+  font-size: 18px;
+  text-align: center;
+  padding-right: 20px;
+  color: #000000;
+  font-weight: bold;
 }

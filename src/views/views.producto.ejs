@@ -8,40 +8,10 @@
   </head>
   <body>
     <div class="container">
-      <!-- Navbar -->
       <nav class="navbar">
         <img src="/img/Trost_blanco.png" alt="Logo" class="logo" />
       </nav>
 
-      <!-- Modal para confirmar la contraseña -->
-      <div class="modal" id="modalConfirmarContrasena">
-        <div class="modal-content">
-          <h3>Confirmar Eliminación</h3>
-          <p>Ingresa tu contraseña para la eliminación del Registro:</p>
-          <input
-            type="password"
-            id="inputContrasena"
-            class="modal-input"
-            placeholder="Contraseña"
-          />
-          <div class="modal-buttons">
-            <button
-              class="modal-button modal-button-cancel"
-              id="cancelarEliminacion"
-            >
-              Cancelar
-            </button>
-            <button
-              class="modal-button modal-button-confirm"
-              id="confirmarEliminacion"
-            >
-              Confirmar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal para movimiento de productos -->
       <div class="modal" id="modalMovimiento" style="display: none">
         <div class="modal-content">
           <h3>Mover Producto</h3>
@@ -77,62 +47,16 @@
         </div>
       </div>
 
-      <!-- Modal para editar producto -->
-      <div class="modal" id="modalEditarProducto" style="display: none">
-        <div class="modal-content">
-          <h3>Editar Producto</h3>
-          <p>Modifica los detalles del producto:</p>
-          <input
-            type="number"
-            id="editIdProducto"
-            class="modal-input"
-            placeholder="ID Producto"
-            readonly
-            disabled
-          />
-          <input
-            type="text"
-            id="editCodigo"
-            class="modal-input"
-            placeholder="Nuevo Código"
-            required
-          />
-          <input
-            type="number"
-            id="editCantidad"
-            class="modal-input"
-            placeholder="Nueva Cantidad"
-            required
-          />
-          <div class="modal-buttons">
-            <button
-              class="modal-button modal-button-cancel"
-              id="cancelarEdicion"
-            >
-              Cancelar
-            </button>
-            <button
-              class="modal-button modal-button-confirm"
-              id="confirmarEdicion"
-            >
-              Confirmar Edición
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contenido principal -->
       <div class="content-segundario">
         <div class="escrito">
           <h2 class="h2">Movimientos</h2>
           <div class="cont-segun-list">
-            <!-- Formulario -->
             <div class="cont-segun-list-for">
               <input
                 type="text"
                 class="input"
                 id="usuario"
-                placeholder="usuario"
+                placeholder="Usuario"
                 disabled
               />
               <input
@@ -142,32 +66,54 @@
                 placeholder="Bodega Actual"
                 disabled
               />
-              <div class="input-group">
-                <select id="id_bodega" required class="input">
-                  <option value="">Seleccione bodega</option>
-                  <!-- Las opciones se cargarán desde JS -->
-                </select>
-              </div>
+              <input
+                type="text"
+                class="input"
+                id="codigo_producto"
+                placeholder="Código del Producto"
+              />
+              <select id="id_bodega" required class="input">
+                <option value="">Seleccione bodega</option>
+              </select>
               <select class="desple" id="tipoMovimientoSelect">
                 <option value="">Tipo de Movimiento</option>
-                <option value="En proceso">Proceso</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Terminado">Terminado</option>
+                <option value="En proceso">ENTRADA</option>
+                <option value="Enviado">TRANSFERENCIA</option>
+                <option value="Terminado">SALIDA</option>    'ENTRADA','SALIDA','TRANSFERENCIA','AJUSTE'
               </select>
+              <div class="cont-segun-list-bot">
+                <button class="button" id="btnMoverProducto">
+                  Mover Producto
+                </button>
+              </div>
+              <div class="cont-segun-formu">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr class="table-row1">
+                    <th>Usuario</th>
+                    <th>Bodega origen</th>
+                    <th>Bodega a Consumir</th>
+                    <th>Cantidad</th>
+                    <th>Código</th>
+                    <th>Tipo de movieminto</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                  <!-- Aquí se mostrarán los productos agregados -->
+                </tbody>
+              </table>
+
+              <!-- ✅ Contador total de productos -->
+              <div class="contador-productos">
+                <strong>Total productos únicos:</strong>
+                <span id="totalProductos">0</span>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Tabla -->
-        <div class="cont-segun-formu">
-          <div class="table-header">Productos registrados</div>
-          <div class="table-row1">
-            <span>Código</span>
-            <span>Bodega</span>
-            <span>Cantidad</span>
-            <span>Fecha</span>
-            <span>Acción</span>
+            </div>
           </div>
-          <!-- FILAS DINÁMICAS -->
         </div>
       </div>
     </div>

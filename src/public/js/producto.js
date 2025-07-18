@@ -19,161 +19,180 @@ function verificarTokenAlCargar() {
   }
 }
 
-async function cargarBodegas() {
-  const selectBodega = document.getElementById("id_bodega");
-
-  try {
-    const response = await fetch("http://localhost:4000/bode/mostrar");
-    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-
-    const result = await response.json();
-
-    if (result.success && Array.isArray(result.data)) {
-      selectBodega.innerHTML = '<option value="">Seleccione bodega</option>';
-      result.data.forEach((bodega) => {
-        const option = document.createElement("option");
-        option.value = bodega.id_bodega;
-        option.textContent = bodega.nombre;
-        selectBodega.appendChild(option);
-      });
-    } else {
-      console.error("Estructura de respuesta inesperada:", result);
-      selectBodega.innerHTML =
-        '<option value="">Error cargando bodegas</option>';
+function redirigir(selectId) {
+  const selectElement = document.getElementById(selectId);
+  selectElement.addEventListener("change", function () {
+    const selectedOption =
+      selectElement.options[selectElement.selectedIndex].value;
+    if (selectedOption) {
+      window.location.href = selectedOption;
     }
-  } catch (error) {
-    console.error("Error al cargar bodegas:", error);
-    selectBodega.innerHTML =
-      '<option value="">Error al cargar bodegas</option>';
-  }
+  });
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
-  verificarTokenAlCargar();
-  cargarBodegas();
+  const usuarioInput = document.getElementById("usuario");
+  const bodegaActualInput = document.getElementById("bodegaActual");
 
-  const usuario = localStorage.getItem("usuario_nombre");
-  const bodega = localStorage.getItem("usuario_bodega");
+  // Obtener datos del localStorage
+  const nombreUsuario = localStorage.getItem("nombre");
+  const nombreBodega = localStorage.getItem("nombre_bodega");
+  const idBodega = localStorage.getItem("bodega");
 
-  if (usuario) {
-    document.getElementById("usuario").value = usuario;
+  // Asignar valores a los campos si existen
+  if (nombreUsuario && usuarioInput) {
+    usuarioInput.value = nombreUsuario;
   }
-  if (bodega) {
-    document.getElementById("bodegaActual").value = bodega;
-    mostrarInventarioPorNombre(bodega); // ✅ Llama a la función correctamente
+
+  if (nombreBodega && bodegaActualInput) {
+    bodegaActualInput.value = nombreBodega;
+    bodegaActualInput.setAttribute("data-id", idBodega);
   }
-
-  document
-    .getElementById("id_bodega")
-    .addEventListener("change", (e) => {
-      const nombreBodega = e.target.options[e.target.selectedIndex].text;
-      mostrarInventarioPorNombre(nombreBodega);
-    });
-
-  document
-    .getElementById("confirmarMovimiento")
-    .addEventListener("click", transferirProducto);
 });
 
-// ✅ Define la función antes de usarla
-async function mostrarInventarioPorNombre(nombreBodega) {
-  console.log("📦 Nombre de bodega recibido:", nombreBodega);
+
+async function cargarBodegas() {
+  const select = document.getElementById('id_bodega'); // este ID es correcto según tu HTML
 
   try {
-    const response = await fetch(
-      `http://localhost:4000/product/inventario?nombre_bodega=${encodeURIComponent(nombreBodega)}`
-    );
+    const res = await fetch('http://localhost:4000/bode/mostrar'); // Ajusta si es necesario
+    const data = await res.json();
 
-    const result = await response.json();
-
-    console.log("🧾 Resultado del inventario:", result);
-
-    const inventario = result.body;
-
-    const contenedor = document.querySelector(".cont-segun-formu");
-    const filasAnteriores = contenedor.querySelectorAll(".table-row");
-    filasAnteriores.forEach((row) => row.remove());
-
-    if (Array.isArray(inventario) && inventario.length > 0) {
-      inventario.forEach((producto) => {
-        const row = document.createElement("div");
-        row.classList.add("table-row");
-
-        row.innerHTML = `
-          <span>${producto.codigo}</span>
-          <span>${nombreBodega}</span>
-          <span>${producto.cantidad_disponible}</span>
-          <span>${new Date(producto.fecha_actualizacion).toLocaleDateString()}</span>
-          <span>
-            <button onclick="abrirModalTransferencia('${producto.codigo}', '${nombreBodega}')">Mover</button>
-          </span>
-        `;
-        contenedor.appendChild(row);
+    if (data.success && Array.isArray(data.data)) {
+      data.data.forEach(bodega => {
+        const option = document.createElement('option');
+        option.value = bodega.bodega_id; // aquí se usa el ID
+        option.textContent = bodega.nombre; // nombre visible
+        select.appendChild(option);
       });
     } else {
-      alert("No se encontró inventario para la bodega.");
+      console.warn('No se encontraron bodegas');
     }
   } catch (error) {
-    console.error("❗ Error al consultar inventario:", error);
-    alert("Error al consultar inventario.");
+    console.error('Error al cargar bodegas:', error);
   }
 }
+document.addEventListener("DOMContentLoaded", function () {
+  verificarTokenAlCargar(); 
+  cargarBodegas();
 
-async function mostrarInventarioBodega() {
-  const select = document.getElementById("id_bodega");
-  const bodegaNombre = select.options[select.selectedIndex].textContent;
-  if (!bodegaNombre) return;
-  mostrarInventarioPorNombre(bodegaNombre); // usa la función que sí está definida
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const inputCodigo = document.getElementById("codigo_producto");
+  const tablaProductos = document.getElementById("tablaProductos");
+  const totalProductos = document.getElementById("totalProductos");
+
+  const productos = {}; // clave: código, valor: objeto con info (cantidad, etc.)
+
+  function formatearFecha(fechaISO) {
+    const fecha = new Date(fechaISO);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
 }
 
+  inputCodigo.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const codigo = inputCodigo.value.trim();
+      if (!codigo) return;
 
-// Abre modal para mover producto
-function abrirModalTransferencia(codigo, idBodegaOrigen) {
-  document.getElementById("productoMovimiento").textContent = codigo;
-  document.getElementById("bodegaOrigen").textContent = idBodegaOrigen;
-  document.getElementById("modalMovimiento").style.display = "block";
-}
-
-// Ejecuta la transferencia
-async function transferirProducto() {
-  const codigo = document.getElementById("productoMovimiento").textContent;
-  const bodegaOrigen = document.getElementById("bodegaOrigen").textContent;
-  const bodegaDestino = document.getElementById("id_bodega").value;
-  const observaciones = document.getElementById("observaciones").value;
-  const usuario = document.getElementById("usuario").value;
-  const tipo = document.getElementById("tipoMovimientoSelect").value;
-
-  if (!codigo || !bodegaOrigen || !bodegaDestino || !usuario || !tipo) {
-    alert("Todos los campos son obligatorios para mover producto");
-    return;
-  }
-
-  try {
-    const response = await fetch("http://localhost:4000/product/transferencia", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        id_bodega_origen: bodegaOrigen,
-        id_bodega_destino: bodegaDestino,
-        codigo_producto: codigo,
-        cantidad: 1, // Aquí puedes hacerlo dinámico si necesitas
-        id_usuario: usuario,
-        observaciones: observaciones || tipo // puedes concatenar tipo
-      })
-    });
-
-    const result = await response.json();
-    if (result.mensaje) {
-      alert(result.mensaje);
-      document.getElementById("modalMovimiento").style.display = "none";
-      mostrarInventarioBodega(); // Recargar inventario
-    } else {
-      alert("Error al mover producto");
+      agregarProductoATabla(codigo);
+      inputCodigo.value = "";
     }
-  } catch (err) {
-    console.error("Error al transferir:", err);
-    alert("Error en el servidor al mover el producto");
+  });
+
+  function agregarProductoATabla(codigo) {
+    const usuario = document.getElementById("usuario").value || "Desconocido";
+    const bodegaOrigen = document.getElementById("bodegaActual").value || "No asignada";
+    const bodegaDestino = document.getElementById("id_bodega").selectedOptions[0]?.text || "N/A";
+    const tipoMovimiento = document.getElementById("tipoMovimientoSelect").value || "N/A";
+
+    const fecha = formatearFecha(new Date().toISOString());
+
+    // Si ya existe el producto, solo actualizamos cantidad
+    if (productos[codigo]) {
+      productos[codigo].cantidad += 1;
+
+      // Actualizamos la fila en la tabla
+      const fila = document.querySelector(`tr[data-codigo="${codigo}"]`);
+      if (fila) {
+        fila.querySelector(".cantidad").textContent = productos[codigo].cantidad;
+      }
+    } else {
+      // Si es nuevo, lo agregamos
+      productos[codigo] = {
+        usuario,
+        bodegaOrigen,
+        bodegaDestino,
+        cantidad: 1,
+        codigo,
+        tipoMovimiento,
+        fecha,
+      };
+
+      const fila = document.createElement("tr");
+      fila.setAttribute("data-codigo", codigo);
+      fila.innerHTML = `
+        <td>${usuario}</td>
+        <td>${bodegaOrigen}</td>
+        <td>${bodegaDestino}</td>
+        <td class="cantidad">1</td>
+        <td>${codigo}</td>
+        <td>${tipoMovimiento}</td>
+        <td>${fecha}</td>
+      `;
+      tablaProductos.appendChild(fila);
+    }
+
+    // Actualizar total de productos únicos
+    totalProductos.textContent = Object.keys(productos).length;
   }
-}
+});
+
+
+document.getElementById("btnMoverProducto").addEventListener("click", () => {
+  const filas = document.querySelectorAll("#tablaProductos tr");
+  const productos = [];
+
+  filas.forEach(fila => {
+    const columnas = fila.querySelectorAll("td");
+    const producto = {
+      id_usuario: localStorage.getItem("usuario_id"), // o el valor desde otro input oculto
+      id_bodega_origen: document.getElementById("bodegaActual").dataset.id, // asegúrate que lo tengas
+      id_bodega_destino: document.getElementById("id_bodega").value,
+      codigo_producto: columnas[4].textContent,
+      cantidad: parseInt(columnas[3].textContent),
+      observaciones: document.getElementById("observaciones").value,
+      tipo_movimiento: columnas[5].textContent
+    };
+    productos.push(producto);
+  });
+
+  fetch('http://localhost:4000/product/transferencia', {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ productos })
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.mensaje || "Transferencia realizada con éxito");
+      // limpiar tabla o redirigir si es necesario
+    })
+    .catch(err => {
+      console.error("Error en la transferencia:", err);
+      alert("Ocurrió un error al transferir los productos.");
+    });
+});
+
+
+
+
+
+
