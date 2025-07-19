@@ -25,6 +25,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             localStorage.setItem('bodega', data.usuario.id_bodega); // Guardar el nombre de la bodega
             localStorage.setItem('nombre_bodega', data.usuario.nombre_bodega); // Guardar el nombre de la bodega
             localStorage.setItem('nombre', data.usuario.nombre); // Guardar el nombre del usuario
+            localStorage.setItem('id_usuario', data.usuario.id_usuario ); // Guardar el ID del usuario
 
             console.log("Token guardado:", data.token); // Verifica que el token se esté guardando correctamente
             console.log("Rol del usuario:", data.usuario.rol); // Verifica el rol del usuario
@@ -49,7 +50,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                     console.log("Rol del usuario:", rol);
 
                     switch (rol) {
-                        case 'OPERADOR':
+                        case 'OPERARIO':
                             window.location.href = '/supervisor';
                             break;
                         case 'ADMINISTRADOR':

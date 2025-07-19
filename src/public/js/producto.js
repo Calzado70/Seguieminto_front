@@ -12,6 +12,11 @@ function verificarTokenAlCargar() {
       localStorage.removeItem("token");
       window.location.href = "/";
     }
+    // Guardar el ID del usuario si no está ya en localStorage
+    if (!localStorage.getItem("id_usuario") && payload.id_usuario) {
+      localStorage.setItem("id_usuario", payload.id_usuario);
+    }
+
   } catch (error) {
     console.error("Error al verificar el token:", error);
     localStorage.removeItem("token");
@@ -62,7 +67,7 @@ async function cargarBodegas() {
     if (data.success && Array.isArray(data.data)) {
       data.data.forEach(bodega => {
         const option = document.createElement('option');
-        option.value = bodega.bodega_id; // aquí se usa el ID
+        option.value = bodega.id_bodega; // aquí se usa el ID
         option.textContent = bodega.nombre; // nombre visible
         select.appendChild(option);
       });
@@ -76,6 +81,22 @@ async function cargarBodegas() {
 document.addEventListener("DOMContentLoaded", function () {
   verificarTokenAlCargar(); 
   cargarBodegas();
+  
+  // Guardar la bodega destino seleccionada en localStorage
+const selectBodegaDestino = document.getElementById("id_bodega");
+
+selectBodegaDestino.addEventListener("change", function () {
+  const selectedOption = this.options[this.selectedIndex];
+  const id_bodega = selectedOption.value;
+  const bodegaNombre = selectedOption.textContent;
+
+  if (id_bodega) {
+    localStorage.setItem("bodega_destino_id", id_bodega);
+    localStorage.setItem("bodega_destino_nombre", bodegaNombre);
+    console.log(`✅ Bodega destino guardada: ${bodegaNombre} (ID: ${id_bodega})`);
+  }
+});
+
 
 });
 
@@ -155,41 +176,73 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-document.getElementById("btnMoverProducto").addEventListener("click", () => {
-  const filas = document.querySelectorAll("#tablaProductos tr");
-  const productos = [];
+document.getElementById('mover-productos').addEventListener('click', async () => {
+  const tabla = document.getElementById('tablaProductos');
+  const filas = tabla.querySelectorAll('tbody tr');
 
-  filas.forEach(fila => {
-    const columnas = fila.querySelectorAll("td");
-    const producto = {
-      id_usuario: localStorage.getItem("usuario_id"), // o el valor desde otro input oculto
-      id_bodega_origen: document.getElementById("bodegaActual").dataset.id, // asegúrate que lo tengas
-      id_bodega_destino: document.getElementById("id_bodega").value,
-      codigo_producto: columnas[4].textContent,
-      cantidad: parseInt(columnas[3].textContent),
-      observaciones: document.getElementById("observaciones").value,
-      tipo_movimiento: columnas[5].textContent
+  const id_bodega_origen = parseInt(localStorage.getItem('bodega'));
+  const id_bodega_destino = parseInt(localStorage.getItem('bodega_destino_id'));
+  const tipo_movimiento = document.getElementById('tipoMovimientoSelect').value;
+  const observaciones = document.getElementById('observaciones').value || '';
+  const id_usuario = parseInt(localStorage.getItem('id_usuario'));
+
+  if (!id_bodega_origen || !id_bodega_destino || !tipo_movimiento || !id_usuario) {
+    alert('Faltan datos requeridos.');
+    return;
+  }
+
+  let huboError = false;
+
+  for (const fila of filas) {
+    const codigo_producto = fila.cells[4].textContent;
+    const cantidad = parseInt(fila.cells[3].textContent);
+
+    const data = {
+      id_bodega_origen,
+      id_bodega_destino,
+      codigo_producto,
+      cantidad,
+      id_usuario,
+      observaciones,
+      tipo_movimiento
     };
-    productos.push(producto);
-  });
 
-  fetch('http://localhost:4000/product/transferencia', {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ productos })
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.mensaje || "Transferencia realizada con éxito");
-      // limpiar tabla o redirigir si es necesario
-    })
-    .catch(err => {
-      console.error("Error en la transferencia:", err);
-      alert("Ocurrió un error al transferir los productos.");
-    });
+    try {
+      const response = await fetch('http://localhost:4000/product/transferencia', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      // 🔍 Verificamos el mensaje del SP
+      const mensaje = result?.mensaje?.toLowerCase?.() || '';
+
+      if (mensaje.includes('stock insuficiente')) {
+        document.getElementById('mensajeErrorStock').textContent = `Error: ${mensaje}`;
+        document.getElementById('modalErrorStock').style.display = 'flex';
+        huboError = true;
+        break; // Detenemos el resto del procesamiento
+      }
+
+    } catch (error) {
+      console.error('Error al transferir producto:', error);
+      alert('Error en la solicitud');
+    }
+  }
+
+  if (!huboError) {
+    alert('Todos los productos han sido transferidos correctamente.');
+  }
 });
+
+document.getElementById("cerrarModalErrorStock").addEventListener("click", () => {
+  document.getElementById("modalErrorStock").style.display = "none";
+});
+
+
+
 
 
 
