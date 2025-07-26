@@ -2,44 +2,67 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/inventario.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/inventario.css">
   <title>Gestión de Inventario</title>
 </head>
 <body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="fas fa-boxes"></i> Panel de Gestión de Inventario</h1>
+    </header>
 
-  <h2>Panel de Gestión de Inventario</h2>
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" onclick="openTab('inventario')">
+          <i class="fas fa-warehouse"></i> Inventario por Bodega
+        </div>
+      </div>
 
-  <div class="tabs">
-    <div class="tab active" onclick="openTab('inventario')">Inventario por Bodega</div>
+      <!-- Inventario -->
+      <div id="inventario" class="tab-content active">
+        <h2><i class="fas fa-search"></i> Consultar Inventario</h2>
+        
+        <div class="form-group">
+          <label for="nombre_bodega">Seleccione una bodega:</label>
+          <div class="select-container">
+            <select id="nombre_bodega" class="form-control">
+              <option value="">-- Seleccione --</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+        
+        <button class="btn-primary" onclick="consultarInventario()">
+          <i class="fas fa-search"></i> Consultar
+        </button>
+
+        <div class="table-container">
+          <table id="tablaInventario" class="data-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-barcode"></i> Código</th>
+                <th><i class="fas fa-info-circle"></i> Característica</th>
+                <th><i class="fas fa-box-open"></i> Disponible</th>
+                <th><i class="fas fa-lock"></i> Reservado</th>
+                <th><i class="fas fa-calendar-alt"></i> Actualización</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          
+          <div id="empty-state" class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>Seleccione una bodega y haga clic en Consultar para ver el inventario</p>
+          </div>
+        </div>
+
+        <div id="mensajeInventario" class="message"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Inventario -->
-<div id="inventario" class="tab-content active">
-  <h3>Consultar Inventario</h3>
-  <select id="nombre_bodega">
-  <option value="">Seleccione una bodega</option>
-</select>
-<button onclick="consultarInventario()">Consultar</button>
-
-  <table id="tablaInventario" border="1" style="margin-top: 20px; display: none;">
-    <thead>
-      <tr>
-        <th>Código</th>
-        <th>Característica</th>
-        <th>Cantidad Disponible</th>
-        <th>Cantidad Reservada</th>
-        <th>Fecha Actualización</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <p id="mensajeInventario" style="margin-top: 10px; color: red;"></p>
-</div>
-
-
   <script src="/js/inventario.js"></script>
-
 </body>
 </html>

@@ -19,18 +19,26 @@ function verificarTokenAlCargar() {
   }
 }
 
-function redirigir(selectId) {
-  const selectElement = document.getElementById(selectId);
-  selectElement.addEventListener("change", function () {
-    const selectedOption =
-      selectElement.options[selectElement.selectedIndex].value;
-    if (selectedOption) {
-      window.location.href = selectedOption;
-    }
-  });
+function redirigir(elementId) {
+  const element = document.getElementById(elementId);
+  
+  if (element.tagName === 'SELECT') {
+    element.addEventListener("change", function() {
+      const selectedOption = element.options[element.selectedIndex].value;
+      if (selectedOption) {
+        window.location.href = selectedOption;
+      }
+    });
+  } else if (element.tagName === 'BUTTON') {
+    element.addEventListener("click", function() {
+      window.location.href = element.value;
+    });
+  }
 }
 
 redirigir("transferencia");
+redirigir("sesion");
+
 
 async function cargarBodegas() {
   const selectBodega = document.getElementById("id_bodega");

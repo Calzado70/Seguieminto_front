@@ -48,16 +48,19 @@
       </div>
 
       <div class="modal" id="modalErrorStock" style="display: none">
-  <div class="modal-content">
-    <h3>Error de Stock</h3>
-    <p id="mensajeErrorStock">No hay suficiente stock disponible.</p>
-    <div class="modal-buttons">
-      <button class="modal-button modal-button-confirm" id="cerrarModalErrorStock">
-        Cerrar
-      </button>
-    </div>
-  </div>
-</div>
+        <div class="modal-content">
+          <h3>Error de Stock</h3>
+          <p id="mensajeErrorStock">No hay suficiente stock disponible.</p>
+          <div class="modal-buttons">
+            <button
+              class="modal-button modal-button-confirm"
+              id="cerrarModalErrorStock"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div class="content-segundario">
         <div class="escrito">
@@ -94,37 +97,65 @@
                 <option value="SALIDA">SALIDA</option>
                 <option value="AJUSTE">AJUSTE</option>
               </select>
+
+              <select class="input" id="caracteristicas">
+                <option value="">Seleciona la caracteristicas</option>
+                <option value="40">Caucho</option>
+                <option value="41">Caucho dielectrica</option>
+                <option value="42">Mono sin inserto N</option>
+                <option value="43">Mono con inserto G</option>
+                <option value="44">Bi N con inserto</option>
+                <option value="45">Mono Ncon inserto gris Kevlar</option>
+                <option value="46">Bi N/G con inserto kevlar</option>
+                <option value="47">Bi G con inserto kevlar</option>
+                <option value="48">Mono N valeta</option>
+                <option value="49">Bi N/G sin inserto</option>
+                <option value="50">Mono G valeta</option>
+                <option value="51">Mono sin inserto G</option>
+                <option value="52">Bi N/N sin inserto kevlar</option>
+                <option value="53">Bi N/N sin inserto</option>
+                <option value="54">Bi G/G sin inserto</option>
+                <option value="55">Bi G/G sin inserto Antiestatica</option>
+                <option value="56">Bi N/G sin inserto kevlar</option>
+                <option value="57">Bi N/G sin inserto Antiestatica</option>
+                <option value="58">Bi C/N sin inserto GN</option>
+                <option value="59">Bi C/N sin inserto kevlar</option>
+              </select>
+
               <div class="cont-segun-list-bot">
                 <button class="button" id="mover-productos">
-                  Mover Producto
+                  Realizar Consumo
                 </button>
               </div>
               <div class="cont-segun-formu">
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr class="table-row1">
-                    <th>Usuario</th>
-                    <th>Bodega origen</th>
-                    <th>Bodega a Consumir</th>
-                    <th>Cantidad</th>
-                    <th>Código</th>
-                    <th>Tipo de movieminto</th>
-                    <th>Fecha</th>
-                  </tr>
-                </thead>
-                <tbody id="tablaProductos">
-                  <!-- Aquí se mostrarán los productos agregados -->
-                </tbody>
-              </table>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr class="table-row1">
+                        <th>Usuario</th>
+                        <th>Bodega origen</th>
+                        <th>Bodega a Consumir</th>
+                        <th>Cantidad</th>
+                        <th>Código</th>
+                        <th>Tipo de movieminto</th>
+                        <th>Características</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                        <!-- ✅ NUEVA COLUMNA -->
+                      </tr>
+                    </thead>
+                    <tbody id="tablaProductos">
+                      <!-- Aquí se mostrarán los productos agregados -->
+                    </tbody>
+                  </table>
 
-              <!-- ✅ Contador total de productos -->
-              <div class="contador-productos">
-                <strong>Total productos únicos:</strong>
-                <span id="totalProductos">0</span>
+                  <!-- ✅ Contador total de productos -->
+                  <div class="contador-productos">
+                    <strong>Total productos únicos:</strong>
+                    <span id="totalProductos">0</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
             </div>
           </div>
         </div>

@@ -35,6 +35,31 @@ function redirigir(selectId) {
   });
 }
 
+/**
+ * Función que habilita o deshabilita el campo de características
+ * según si el usuario está en la bodega de inyección (ID 3)
+ */
+function gestionarCampoCaracteristicas() {
+  const idBodega = localStorage.getItem("bodega"); // Cambiado a "bodega" para coincidir con tu localStorage
+  const caracteristicasInput = document.getElementById("caracteristicas");
+  
+  // Verificamos si el campo existe para evitar errores
+  if (!caracteristicasInput) {
+    console.warn("El campo 'caracteristicas' no fue encontrado en el DOM");
+    return;
+  }
+
+  // Bodega 3 = Inyección (habilitar campo), otras bodegas = deshabilitar
+  if (idBodega === "3") {
+    caracteristicasInput.disabled = false;
+    caracteristicasInput.placeholder = "Ingrese características del producto";
+    caracteristicasInput.value = ""; // Limpiar valor por defecto si estaba en N/A
+  } else {
+    caracteristicasInput.disabled = true;
+    caracteristicasInput.placeholder = "No disponible para esta bodega";
+    caracteristicasInput.value = "N/A"; // Valor por defecto para otras bodegas
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const usuarioInput = document.getElementById("usuario");
@@ -54,6 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
     bodegaActualInput.value = nombreBodega;
     bodegaActualInput.setAttribute("data-id", idBodega);
   }
+
+  // Gestionar el campo de características según la bodega
+  gestionarCampoCaracteristicas();
 });
 
 
@@ -78,33 +106,29 @@ async function cargarBodegas() {
     console.error('Error al cargar bodegas:', error);
   }
 }
+
 document.addEventListener("DOMContentLoaded", function () {
   verificarTokenAlCargar(); 
   cargarBodegas();
   
   // Guardar la bodega destino seleccionada en localStorage
-const selectBodegaDestino = document.getElementById("id_bodega");
+  const selectBodegaDestino = document.getElementById("id_bodega");
 
-selectBodegaDestino.addEventListener("change", function () {
-  const selectedOption = this.options[this.selectedIndex];
-  const id_bodega = selectedOption.value;
-  const bodegaNombre = selectedOption.textContent;
+  selectBodegaDestino.addEventListener("change", function () {
+    const selectedOption = this.options[this.selectedIndex];
+    const id_bodega = selectedOption.value;
+    const bodegaNombre = selectedOption.textContent;
 
-  if (id_bodega) {
-    localStorage.setItem("bodega_destino_id", id_bodega);
-    localStorage.setItem("bodega_destino_nombre", bodegaNombre);
-    console.log(`✅ Bodega destino guardada: ${bodegaNombre} (ID: ${id_bodega})`);
-  }
+    if (id_bodega) {
+      localStorage.setItem("bodega_destino_id", id_bodega);
+      localStorage.setItem("bodega_destino_nombre", bodegaNombre);
+      console.log(`✅ Bodega destino guardada: ${bodegaNombre} (ID: ${id_bodega})`);
+    }
+  });
 });
-
-
-});
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputCodigo = document.getElementById("codigo_producto");
-  const tablaProductos = document.getElementById("tablaProductos");
   const totalProductos = document.getElementById("totalProductos");
 
   const productos = {}; // clave: código, valor: objeto con info (cantidad, etc.)
@@ -115,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
     const anio = fecha.getFullYear();
     return `${dia}/${mes}/${anio}`;
-}
+  }
 
   inputCodigo.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -128,53 +152,71 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function agregarProductoATabla(codigo) {
-    const usuario = document.getElementById("usuario").value || "Desconocido";
-    const bodegaOrigen = document.getElementById("bodegaActual").value || "No asignada";
-    const bodegaDestino = document.getElementById("id_bodega").selectedOptions[0]?.text || "N/A";
-    const tipoMovimiento = document.getElementById("tipoMovimientoSelect").value || "N/A";
+  const usuario = document.getElementById("usuario").value || "Desconocido";
+  const bodegaOrigen = document.getElementById("bodegaActual").value || "No asignada";
+  const bodegaDestino = document.getElementById("id_bodega").selectedOptions[0]?.text || "N/A";
+  const tipoMovimiento = document.getElementById("tipoMovimientoSelect").value || "N/A";
+  const caracteristicas = document.getElementById("caracteristicas").value || "N/A";
+  const fecha = formatearFecha(new Date().toISOString());
 
-    const fecha = formatearFecha(new Date().toISOString());
-
-    // Si ya existe el producto, solo actualizamos cantidad
-    if (productos[codigo]) {
-      productos[codigo].cantidad += 1;
-
-      // Actualizamos la fila en la tabla
-      const fila = document.querySelector(`tr[data-codigo="${codigo}"]`);
-      if (fila) {
-        fila.querySelector(".cantidad").textContent = productos[codigo].cantidad;
-      }
-    } else {
-      // Si es nuevo, lo agregamos
-      productos[codigo] = {
-        usuario,
-        bodegaOrigen,
-        bodegaDestino,
-        cantidad: 1,
-        codigo,
-        tipoMovimiento,
-        fecha,
-      };
-
-      const fila = document.createElement("tr");
-      fila.setAttribute("data-codigo", codigo);
-      fila.innerHTML = `
-        <td>${usuario}</td>
-        <td>${bodegaOrigen}</td>
-        <td>${bodegaDestino}</td>
-        <td class="cantidad">1</td>
-        <td>${codigo}</td>
-        <td>${tipoMovimiento}</td>
-        <td>${fecha}</td>
-      `;
-      tablaProductos.appendChild(fila);
+  if (productos[codigo]) {
+    productos[codigo].cantidad += 1;
+    const fila = document.querySelector(`tr[data-codigo="${codigo}"]`);
+    if (fila) {
+      fila.querySelector(".cantidad").textContent = productos[codigo].cantidad;
     }
+  } else {
+    productos[codigo] = {
+      usuario,
+      bodegaOrigen,
+      bodegaDestino,
+      cantidad: 1,
+      codigo,
+      tipoMovimiento,
+      caracteristicas,
+      fecha,
+    };
 
-    // Actualizar total de productos únicos
-    totalProductos.textContent = Object.keys(productos).length;
+    const fila = document.createElement("tr");
+    fila.setAttribute("data-codigo", codigo);
+    fila.innerHTML = `
+      <td>${usuario}</td>
+      <td>${bodegaOrigen}</td>
+      <td>${bodegaDestino}</td>
+      <td class="cantidad">1</td>
+      <td>${codigo}</td>
+      <td>${tipoMovimiento}</td>
+      <td>${caracteristicas}</td>
+      <td>${fecha}</td>
+      <td><button class="btn-eliminar" data-codigo="${codigo}">🗑️ Eliminar</button></td>
+    `;
+
+    document.getElementById("tablaProductos").appendChild(fila);
+  }
+
+  document.getElementById("totalProductos").textContent = Object.keys(productos).length;
+}
+
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.classList.contains("btn-eliminar")) {
+    const codigo = e.target.getAttribute("data-codigo");
+
+    const confirmar = confirm(`¿Estás seguro de que deseas eliminar el producto con código ${codigo}?`);
+    if (!confirmar) return;
+
+    // Eliminar del objeto
+    delete productos[codigo];
+
+    // Eliminar del DOM
+    const fila = document.querySelector(`tr[data-codigo="${codigo}"]`);
+    if (fila) fila.remove();
+
+    // Actualizar contador
+    document.getElementById("totalProductos").textContent = Object.keys(productos).length;
   }
 });
 
+});
 
 document.getElementById('mover-productos').addEventListener('click', async () => {
   const tabla = document.getElementById('tablaProductos');
@@ -194,9 +236,41 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
   let huboError = false;
 
   for (const fila of filas) {
-    const codigo_producto = fila.cells[4].textContent;
+    const codigo_producto = fila.cells[4].textContent.trim();
     const cantidad = parseInt(fila.cells[3].textContent);
+    const caracteristicas = fila.cells[6].textContent.trim();
 
+    // 🟡 Si es bodega de inyección (ID 3) y hay una característica válida, actualizarla primero
+    if (id_bodega_origen === 3 && caracteristicas !== 'N/A' && caracteristicas !== '') {
+      try {
+        const actualizarResp = await fetch('http://localhost:4000/product/actualizar', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codigo_producto,
+            nueva_caracteristica: caracteristicas
+          })
+        });
+
+        const actualizarResult = await actualizarResp.json();
+
+        if (!actualizarResp.ok) {
+          alert(`Error al actualizar característica del producto ${codigo_producto}: ${actualizarResult.error || 'Desconocido'}`);
+          huboError = true;
+          break;
+        }
+
+        console.log(`✅ Característica actualizada: ${actualizarResult.mensaje}`);
+
+      } catch (error) {
+        console.error('Error al actualizar característica:', error);
+        alert(`Error de red al actualizar característica del producto ${codigo_producto}`);
+        huboError = true;
+        break;
+      }
+    }
+
+    // 🟢 Transferencia
     const data = {
       id_bodega_origen,
       id_bodega_destino,
@@ -204,7 +278,8 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
       cantidad,
       id_usuario,
       observaciones,
-      tipo_movimiento
+      tipo_movimiento,
+      caracteristicas
     };
 
     try {
@@ -216,36 +291,46 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
 
       const result = await response.json();
 
-      // 🔍 Verificamos el mensaje del SP
-      const mensaje = result?.mensaje?.toLowerCase?.() || '';
+      // Manejo de errores del backend
+      if (!response.ok) {
+        const errorMensaje = result?.error?.toLowerCase?.() || '';
+        if (errorMensaje.includes('stock insuficiente')) {
+          document.getElementById('mensajeErrorStock').textContent = `Error: ${result.error}`;
+          document.getElementById('modalErrorStock').style.display = 'flex';
+          huboError = true;
+          break;
+        }
 
-      if (mensaje.includes('stock insuficiente')) {
-        document.getElementById('mensajeErrorStock').textContent = `Error: ${mensaje}`;
-        document.getElementById('modalErrorStock').style.display = 'flex';
+        alert(`Error en la transferencia: ${result.error || 'Desconocido'}`);
         huboError = true;
-        break; // Detenemos el resto del procesamiento
+        break;
       }
+
+      console.log(`✅ Transferencia exitosa: ${result.mensaje}`);
 
     } catch (error) {
       console.error('Error al transferir producto:', error);
-      alert('Error en la solicitud');
+      alert('Error en la solicitud al transferir producto');
+      huboError = true;
+      break;
     }
   }
 
+  // ✅ Si todo fue bien, limpiar la tabla
   if (!huboError) {
-    alert('Todos los productos han sido transferidos correctamente.');
+    alert('✅ Todos los productos han sido transferidos correctamente.');
+
+    // Limpiar tabla
+    const tablaBody = document.querySelector('#tablaProductos');
+    tablaBody.innerHTML = '';
+
+    // Reset contador
+    document.getElementById('totalProductos').textContent = '0';
   }
 });
+
+
 
 document.getElementById("cerrarModalErrorStock").addEventListener("click", () => {
   document.getElementById("modalErrorStock").style.display = "none";
 });
-
-
-
-
-
-
-
-
-
