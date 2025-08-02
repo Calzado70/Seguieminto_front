@@ -1,101 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/crear.usuario.css">
-    <title>Usuario</title>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-            <div class="navbar-options">
-                <select class="select" id="adminUsuario">
-                    <option>Admin-usuario</option>
-                    <option value="/usuario">Crear usuarios</option>
-                </select>
-                <select class="select" id="bodegas">
-                    <option>Bodegas</option>
-                    <option value="/crear_bodega">Crear Bodegas</option>
-                    <option value="/seguimiento">Seguimiento Bodega</option>
-                    <option value="#">Inventarios</option>
-                </select>
-                <select class="select" id="historial">
-                    <option>Historial</option>
-                    <option value="/historial">Lista de Historial</option>
-                    <option value="/logistica">Producto en Logistica</option>
-                </select>
-            </div>
-        </nav>
-
-        <!-- Contenido principal -->
-        <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Crear Usuario</h2>
-                <div class="cont-segun-list">
-                    <!-- Formulario -->
-                    <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="nombreUsuario" placeholder="Nombre de usuario" required>
-                        
-                        <div class="password-container">
-                            <input type="password" placeholder="Ingrese su contraseña" class="input" id="contrasena" required>
-                            <span class="toggle-password" onclick="togglePassword()">
-                                <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
-                            </span>
-                        </div>
-                        
-                        <input type="email" class="input" id="correo" placeholder="Correo electrónico" required>
-                        
-                        <select class="desple" id="bodega" required>
-                            <option value="">Cargando bodegas...</option>
-                        </select>
-                        
-                        <select class="desple" id="rol" required>
-                            <option value="">Seleccione rol</option>
-                            <option value="SUPERVISOR">Supervisor</option>
-                            <option value="OPERARIO">Operario</option>
-                            <option value="LOGISTICA">Logistica</option>
-                            <option value="ADMINISTRADOR">Administrador</option>
-                        </select>
-                        
-                        <select class="desple" id="estado" required>
-                            <option value="ACTIVO">Activo</option>
-                            <option value="INACTIVO">Inactivo</option>
-                        </select>
-                        
-                        <div class="cont-segun-list-bot">
-                            <button type="button" class="button" id="btnGuardar">Guardar</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
             </div>
             
-            <!-- Tabla -->
-            <div class="cont-segun-formu">
-                <div class="table-header">Lista de Usuarios</div>
-                <div class="table-row1">
-                    <span>Nombre</span>
-                    <span>Rol</span>
-                    <span>Bodega</span>
-                    <span>Accion</span>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">USUARIOS</h3>
+                    <select class="nav-select" id="adminUsuario">
+                        <option value="/usuario">Admin-usuario</option>
+                    </select>
                 </div>
-                <!-- Las filas de usuarios se insertarán aquí dinámicamente -->
                 
-                <!-- Paginación -->
-                <div class="pagination-controls">
-                    <button id="prev-page" class="pagination-button">Anterior</button>
-                    <span id="page-info">Página 1</span>
-                    <button id="next-page" class="pagination-button">Siguiente</button>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">BODEGAS</h3>
+                    <select class="nav-select" id="bodegas">
+                        <option value="">Bodegas</option>
+                        <option value="/crear_bodega">Crear Bodegas</option>
+                        <option value="/seguimiento">Seguimiento Bodega</option>
+                        <option value="#">Inventarios</option>
+                    </select>
+                </div>
+                
+                <div class="nav-section">
+                    <h3 class="nav-section-title">HISTORIAL</h3>
+                    <select class="nav-select" id="historial">
+                        <option value="">Historial</option>
+                        <option value="/historial">Lista de Historial</option>
+                        <option value="/logistica">Producto en Logistica</option>
+                    </select>
+                </div>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="currentUserName">Nombre Usuario</span>
+                    <span class="user-role" id="currentUserRole">Rol</span>
                 </div>
             </div>
-        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1><i class="fas fa-users-cog"></i> Gestión de Usuarios</h1>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="irAVistaAlertas()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">1</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Form Section -->
+                <section class="form-section card">
+                    <h2 class="section-title"><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h2>
+                    
+                    <form id="userForm" class="user-form">
+                        <div class="form-group">
+                            <label for="nombreUsuario">Nombre de usuario</label>
+                            <input type="text" id="nombreUsuario" placeholder="Ej: juan.perez" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña</label>
+                            <div class="password-input-container">
+                                <input type="password" id="contrasena" placeholder="Mínimo 6 caracteres" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="toggle-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="correo">Correo electrónico</label>
+                            <input type="email" id="correo" placeholder="Ej: usuario@empresa.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bodega">Bodega asignada</label>
+                            <select id="bodega" required>
+                                <option value="">Cargando bodegas...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="rol">Rol del usuario</label>
+                                <select id="rol" required>
+                                    <option value="">Seleccione rol</option>
+                                    <option value="SUPERVISOR">Supervisor</option>
+                                    <option value="OPERARIO">Operario</option>
+                                    <option value="LOGISTICA">Logística</option>
+                                    <option value="ADMINISTRADOR">Administrador</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group half-width">
+                                <label for="estado">Estado</label>
+                                <select id="estado" required>
+                                    <option value="ACTIVO">Activo</option>
+                                    <option value="INACTIVO">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-primary" id="btnGuardar">
+                                <i class="fas fa-save"></i> Guardar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Users Table Section -->
+                <section class="table-section card">
+                    <div class="table-header">
+                        <h2 class="section-title"><i class="fas fa-list"></i> Listado de Usuarios</h2>
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Buscar usuario..." id="userSearch">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Rol</th>
+                                    <th>Bodega</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Las filas de usuarios se insertarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-footer">
+                        <div class="pagination-info" id="page-info">
+                            Mostrando 1-5 de 15 usuarios
+                        </div>
+                        
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prev-page" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="page-numbers" id="page-numbers"></div>
+                            <button class="pagination-btn" id="next-page">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
 
     <script src="/js/crear.usuarios.js"></script>
 </body>
-
 </html>

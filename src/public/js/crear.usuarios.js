@@ -3,15 +3,24 @@ const recordsPerPage = 5;
 let allUsers = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Asignar evento al botón correctamente
-    const btnGuardar = document.getElementById('btnGuardar');
-    if (btnGuardar) {
-        btnGuardar.addEventListener('click', crearUsuario);
-    } else {
-        console.error('No se encontró el botón con ID btnGuardar');
+    // Cargar información del usuario actual
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            document.getElementById('currentUserName').textContent = payload.nombre || 'Usuario';
+            document.getElementById('currentUserRole').textContent = payload.rol || 'Rol';
+        } catch (error) {
+            console.error('Error al parsear token:', error);
+        }
     }
 
-    await cargarBodegas();
+    // Asignar eventos
+    document.getElementById('btnGuardar').addEventListener('click', crearUsuario);
+    document.getElementById('userSearch').addEventListener('input', filterUsers);
+    
+    // Cargar datos iniciales
+    await Promise.all([cargarBodegas(), cargarUsuarios()]);
 });
 
 
@@ -48,9 +57,12 @@ function redirigir(selectId) {
 
 async function crearUsuario() {
     const btnGuardar = document.getElementById('btnGuardar');
+    const originalText = btnGuardar.innerHTML;
+    
+    // Mostrar estado de carga
     btnGuardar.disabled = true;
-    btnGuardar.textContent = 'Creando...';
-
+    btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+    
     try {
         // Obtener valores del formulario
         const usuarioData = {
@@ -59,20 +71,40 @@ async function crearUsuario() {
             correo: document.getElementById('correo').value.trim(),
             contrasena: document.getElementById('contrasena').value,
             rol: document.getElementById('rol').value,
-            estado: document.getElementById('estado').value || 'ACTIVO' // Valor por defecto
+            estado: document.getElementById('estado').value || 'ACTIVO'
         };
 
-        // Validación mejorada
-        if (!usuarioData.id_bodega) throw new Error('Seleccione una bodega válida');
-        if (!usuarioData.nombre || usuarioData.nombre.length < 3) throw new Error('Nombre debe tener al menos 3 caracteres');
-        if (!usuarioData.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(usuarioData.correo)) throw new Error('Ingrese un correo válido');
-        if (!usuarioData.contrasena || usuarioData.contrasena.length < 6) throw new Error('Contraseña debe tener al menos 6 caracteres');
-        if (!usuarioData.rol) throw new Error('Seleccione un rol válido');
+        // Validaciones mejoradas
+        if (!usuarioData.id_bodega || isNaN(usuarioData.id_bodega)) {
+            throw new Error('Seleccione una bodega válida');
+        }
+        
+        if (!usuarioData.nombre || usuarioData.nombre.length < 3) {
+            throw new Error('El nombre debe tener al menos 3 caracteres');
+        }
+        
+        if (!usuarioData.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(usuarioData.correo)) {
+            throw new Error('Ingrese un correo electrónico válido');
+        }
+        
+        if (!usuarioData.contrasena || usuarioData.contrasena.length < 6) {
+            throw new Error('La contraseña debe tener al menos 6 caracteres');
+        }
+        
+        if (!usuarioData.rol) {
+            throw new Error('Seleccione un rol válido');
+        }
 
+        // Verificar token
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('Debe iniciar sesión primero');
+        if (!token) {
+            throw new Error('Sesión expirada. Por favor, inicie sesión nuevamente');
+        }
 
-        // Enviar la solicitud
+        // Mostrar carga mientras se hace la petición
+        showToast('Creando usuario...', 'info');
+
+        // Enviar la solicitud al servidor
         const response = await fetch('http://localhost:4000/user/insertarusuario', {
             method: 'POST',
             headers: {
@@ -84,12 +116,15 @@ async function crearUsuario() {
 
         const data = await response.json();
 
-        // Manejar respuesta del backend
+        // Manejar respuesta del servidor
         if (!response.ok || !data.success) {
-            throw new Error(data.message || data.error || 'Error al crear usuario');
+            const errorMsg = data.message || data.error || 'Error al crear usuario';
+            throw new Error(errorMsg);
         }
 
-        alert('Usuario creado exitosamente!');
+        // Éxito - mostrar feedback y limpiar formulario
+        showToast('Usuario creado exitosamente!', 'success');
+        
         // Limpiar formulario
         document.getElementById('nombreUsuario').value = '';
         document.getElementById('correo').value = '';
@@ -102,10 +137,26 @@ async function crearUsuario() {
         
     } catch (error) {
         console.error('Error en crearUsuario:', error);
-        alert(error.message);
+        
+        // Mostrar error al usuario
+        showToast(error.message, 'error');
+        
+        // Resaltar campos con error (opcional)
+        if (error.message.includes('nombre')) {
+            document.getElementById('nombreUsuario').focus();
+        } else if (error.message.includes('correo')) {
+            document.getElementById('correo').focus();
+        } else if (error.message.includes('contraseña')) {
+            document.getElementById('contrasena').focus();
+        } else if (error.message.includes('bodega')) {
+            document.getElementById('bodega').focus();
+        } else if (error.message.includes('rol')) {
+            document.getElementById('rol').focus();
+        }
     } finally {
+        // Restaurar estado normal del botón
         btnGuardar.disabled = false;
-        btnGuardar.textContent = 'Guardar';
+        btnGuardar.innerHTML = originalText;
     }
 }
 
@@ -196,9 +247,8 @@ document.getElementById('next-page').addEventListener('click', () => {
 
 // Modifica la función actualizarTablaUsuarios para que no elimine los encabezados
 function actualizarTablaUsuarios(usuarios) {
-    const tbody = document.querySelector('.cont-segun-formu');
-    const existingDataRows = tbody.querySelectorAll('.table-row2');
-    existingDataRows.forEach(row => row.remove());
+    const tbody = document.getElementById('usersTableBody');
+    tbody.innerHTML = '';
 
     if (!usuarios || !Array.isArray(usuarios)) {
         console.error('Usuarios no es un array válido:', usuarios);
@@ -206,33 +256,44 @@ function actualizarTablaUsuarios(usuarios) {
     }
 
     usuarios.forEach(usuario => {
-        const row = document.createElement('div');
-        row.className = 'table-row2';
-        row.dataset.id = usuario.id_usuario;
+        const row = document.createElement('tr');
+        
         row.innerHTML = `
-            <span>${usuario.nombre || 'N/A'}</span>
-            <span>${usuario.rol || 'N/A'}</span>
-            <span>${usuario.nombre_bodega || 'N/A'}</span> <!-- Cambiado de usuario.bodega a usuario.nombre_bodega -->
-            <span class="table-row2-bot">
-                <img src="/img/editar.png" alt="Editar" class="editar" data-id="${usuario.id_usuario}">
-                <img src="/img/borrar.png" alt="Borrar" class="borrar" data-id="${usuario.id_usuario}">
-            </span>
+            <td>${usuario.nombre || 'N/A'}</td>
+            <td>${usuario.rol || 'N/A'}</td>
+            <td>${usuario.nombre_bodega || 'N/A'}</td>
+            <td>
+                <span class="status-badge ${usuario.estado === 'ACTIVO' ? 'status-active' : 'status-inactive'}">
+                    ${usuario.estado || 'N/A'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn edit" data-id="${usuario.id_usuario}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" data-id="${usuario.id_usuario}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
         `;
+        
         tbody.appendChild(row);
     });
 
-    // Eventos para los botones
-    document.querySelectorAll('.borrar').forEach(button => {
-        button.addEventListener('click', eliminarUsuario);
+    // Asignar eventos a los botones
+    document.querySelectorAll('.action-btn.delete').forEach(btn => {
+        btn.addEventListener('click', eliminarUsuario);
     });
-
-    document.querySelectorAll('.editar').forEach(button => {
-    button.addEventListener('click', (event) => {
-        const idUsuario = event.target.getAttribute('data-id');
-        const nombreUsuario = event.target.closest('.table-row2').querySelector('span:first-child').textContent;
-        window.location.href = `/modificar?id=${idUsuario}&nombre=${encodeURIComponent(nombreUsuario)}`;
+    
+    document.querySelectorAll('.action-btn.edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idUsuario = e.currentTarget.getAttribute('data-id');
+            const nombreUsuario = e.currentTarget.closest('tr').querySelector('td:first-child').textContent;
+            window.location.href = `/modificar?id=${idUsuario}&nombre=${encodeURIComponent(nombreUsuario)}`;
+        });
     });
-});
 }
 
 // Modifica la función eliminarUsuario para resetear la paginación después de eliminar
@@ -332,6 +393,43 @@ async function cargarBodegas() {
     }
 }
 
+// Función para filtrar usuarios
+function filterUsers() {
+    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+    if (!searchTerm) {
+        displayCurrentPage();
+        return;
+    }
+    
+    const filteredUsers = allUsers.filter(user => 
+        user.nombre.toLowerCase().includes(searchTerm) ||
+        user.rol.toLowerCase().includes(searchTerm) ||
+        (user.nombre_bodega && user.nombre_bodega.toLowerCase().includes(searchTerm))
+    );
+    
+    actualizarTablaUsuarios(filteredUsers);
+}
+
+// Función para mostrar notificaciones toast
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
 // Event listeners
 redirigir('adminUsuario');
 redirigir('bodegas');
@@ -339,7 +437,6 @@ redirigir('historial');
 
 
 document.addEventListener('DOMContentLoaded', cargarBodegas);
-document.querySelector('.button').addEventListener('click', crearUsuario);
 
 // Load users when page loads
 document.addEventListener('DOMContentLoaded', () => {

@@ -19,17 +19,6 @@ function verificarTokenAlCargar() {
   }
 }
 
-function redirigir(selectId) {
-  const selectElement = document.getElementById(selectId);
-  selectElement.addEventListener("change", function () {
-    const selectedOption =
-      selectElement.options[selectElement.selectedIndex].value;
-    if (selectedOption) {
-      window.location.href = selectedOption;
-    }
-  });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   verificarTokenAlCargar();
 
@@ -38,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const tablaProductos = document.getElementById("tablaProductos");
   const totalProductosSpan = document.getElementById("totalProductos");
   const idSesionInput = document.getElementById("id_sesion");
-  const caracteristicasInput = document.getElementById("caracteristicas");
+  const nombre_bodega = localStorage.getItem("nombre_bodega");
 
   const idSesionGuardado = localStorage.getItem("id_sesion");
   if (idSesionGuardado) {
@@ -46,14 +35,21 @@ document.addEventListener("DOMContentLoaded", function () {
     idSesionInput.readOnly = true;
   }
 
-  const idBodega = localStorage.getItem("id_bodega");
-if (idBodega !== "3") { // Suponiendo que la bodega 1 es la de inyección
-  caracteristicasInput.disabled = true;
-} else {
-  caracteristicasInput.disabled = false;
-}
-
   let productosAgregados = {};
+
+  // Cargar productos guardados si existen
+  const productosGuardados = localStorage.getItem("productosAgregados");
+  if (productosGuardados) {
+    productosAgregados = JSON.parse(productosGuardados);
+    for (const codigo in productosAgregados) {
+      agregarFilaTabla(productosAgregados[codigo]);
+    }
+    actualizarContadorTotal();
+  }
+
+  function guardarEnLocalStorage() {
+    localStorage.setItem("productosAgregados", JSON.stringify(productosAgregados));
+  }
 
   function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -72,8 +68,9 @@ if (idBodega !== "3") { // Suponiendo que la bodega 1 es la de inyección
       <td>${producto.id || "N/A"}</td>
       <td>${producto.codigo}</td>
       <td>${producto.cantidad}</td>
-      <td>${producto.bodega || "N/A"}</td>
+      <td>${producto.nombre_bodega || "N/A"}</td>
       <td>${producto.fecha}</td>
+      <td><button class="btn-eliminar" data-codigo="${producto.codigo}">❌</button></td>
     `;
     tablaProductos.appendChild(fila);
   }
@@ -87,88 +84,79 @@ if (idBodega !== "3") { // Suponiendo que la bodega 1 es la de inyección
     }
   }
 
-  async function guardarProductoYAgregarASesion(codigo, cantidad, caracteristica) {
-  const id_sesion = parseInt(idSesionInput.value);
+  async function guardarProductoYAgregarASesion(codigo, cantidad) {
+    const id_sesion = parseInt(idSesionInput.value);
+    const bodyData = { codigo: codigo };
 
-  const bodyData = {
-    codigo: codigo,
-    caracteristica:
-      !caracteristicasInput.disabled && caracteristica !== "N/A"
-        ? caracteristica
-        : "N/A",
-  };
-
-  try {
-    // 1. Crear el producto
-    await fetch("http://localhost:4000/product/crear", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(bodyData),
-    });
-  } catch (error) {
-    console.warn("Producto posiblemente ya existe:", error.message);
-  }
-
-  try {
-    // 2. Agregar a la sesión
-    const response = await fetch("http://localhost:4000/product/agregar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        id_sesion,
-        codigo_producto: codigo,
-        cantidad,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      const esNuevo = !productosAgregados[codigo];
-      if (esNuevo) {
-        productosAgregados[codigo] = {
-          codigo,
-          cantidad,
-          fecha: obtenerFechaFormateada(),
-        };
-        agregarFilaTabla(productosAgregados[codigo]);
-        actualizarContadorTotal();
-      } else {
-        productosAgregados[codigo].cantidad += cantidad;
-        productosAgregados[codigo].fecha = obtenerFechaFormateada();
-        actualizarFilaTabla(codigo);
-      }
-
-      codigoProductoInput.value = "";
-      cantidadInput.value = "";
-      caracteristicasInput.value = "N/A";
-      codigoProductoInput.focus();
-    } else {
-      alert(result?.mensaje || "Error al agregar producto a la sesión");
+    try {
+      await fetch("http://localhost:4000/product/crear", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(bodyData),
+      });
+    } catch (error) {
+      console.warn("Producto posiblemente ya existe:", error.message);
     }
-  } catch (error) {
-    console.error("Error agregando producto a la sesión:", error);
-    alert("Error interno del servidor.");
+
+    try {
+      const response = await fetch("http://localhost:4000/product/agregar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          id_sesion,
+          codigo_producto: codigo,
+          cantidad,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        const esNuevo = !productosAgregados[codigo];
+        if (esNuevo) {
+          productosAgregados[codigo] = {
+            codigo,
+            cantidad,
+            fecha: obtenerFechaFormateada(),
+            nombre_bodega,
+          };
+          agregarFilaTabla(productosAgregados[codigo]);
+          actualizarContadorTotal();
+        } else {
+          productosAgregados[codigo].cantidad += cantidad;
+          productosAgregados[codigo].fecha = obtenerFechaFormateada();
+          actualizarFilaTabla(codigo);
+        }
+
+        guardarEnLocalStorage();
+        codigoProductoInput.value = "";
+        cantidadInput.value = "";
+        codigoProductoInput.focus();
+      } else {
+        alert(result?.mensaje || "Error al agregar producto a la sesión");
+      }
+    } catch (error) {
+      console.error("Error agregando producto a la sesión:", error);
+      alert("Error interno del servidor.");
+    }
   }
-}
 
   function manejarAgregarProducto() {
     const codigo = codigoProductoInput.value.trim();
     const cantidad = parseInt(cantidadInput.value.trim()) || 1;
-    const caracteristica = caracteristicasInput.value;
 
-    if (!codigo || !caracteristica || caracteristica === "Selecciona") {
+    if (!codigo) {
       alert("Todos los campos son obligatorios.");
       return;
     }
 
-    guardarProductoYAgregarASesion(codigo, cantidad, caracteristica);
+    guardarProductoYAgregarASesion(codigo, cantidad);
   }
 
   codigoProductoInput.addEventListener("keypress", function (e) {
@@ -189,6 +177,20 @@ if (idBodega !== "3") { // Suponiendo que la bodega 1 es la de inyección
     e.preventDefault();
     manejarAgregarProducto();
   });
+
+  // 🧹 Eliminar producto de la tabla y localStorage
+  tablaProductos.addEventListener("click", function (e) {
+    if (e.target.classList.contains("btn-eliminar")) {
+      const codigo = e.target.dataset.codigo;
+      const confirmar = confirm(`¿Eliminar el producto con código ${codigo}?`);
+      if (confirmar) {
+        delete productosAgregados[codigo];
+        guardarEnLocalStorage();
+        e.target.closest("tr").remove();
+        actualizarContadorTotal();
+      }
+    }
+  });
 });
 
 document.getElementById("cerrarSesion").addEventListener("click", async function () {
@@ -208,7 +210,7 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       },
       body: JSON.stringify({ id_sesion: parseInt(id_sesion) })
     });
@@ -217,8 +219,9 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
 
     if (response.ok) {
       alert(data.mensaje || "Sesión finalizada correctamente.");
-      localStorage.removeItem("id_sesion"); // Limpia la sesión actual
-      window.location.href = "/sesion";     // Redirige después
+      localStorage.removeItem("id_sesion");
+      localStorage.removeItem("productosAgregados"); // Limpia productos también
+      window.location.href = "/sesion";
     } else {
       alert(data.error || "No se pudo finalizar la sesión.");
     }
@@ -227,5 +230,4 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
     alert("Ocurrió un error al finalizar la sesión.");
   }
 });
-
 

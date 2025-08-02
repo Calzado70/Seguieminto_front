@@ -40,24 +40,32 @@ function redirigir(selectId) {
  * según si el usuario está en la bodega de inyección (ID 3)
  */
 function gestionarCampoCaracteristicas() {
-  const idBodega = localStorage.getItem("bodega"); // Cambiado a "bodega" para coincidir con tu localStorage
-  const caracteristicasInput = document.getElementById("caracteristicas");
+  const idBodega = localStorage.getItem("bodega");
+  console.log('ID Bodega:', idBodega);
   
-  // Verificamos si el campo existe para evitar errores
-  if (!caracteristicasInput) {
+  const caracteristicasSelect = document.getElementById("caracteristicas");
+  console.log('Elemento select:', caracteristicasSelect);
+  
+  if (!caracteristicasSelect) {
     console.warn("El campo 'caracteristicas' no fue encontrado en el DOM");
     return;
   }
 
-  // Bodega 3 = Inyección (habilitar campo), otras bodegas = deshabilitar
   if (idBodega === "3") {
-    caracteristicasInput.disabled = false;
-    caracteristicasInput.placeholder = "Ingrese características del producto";
-    caracteristicasInput.value = ""; // Limpiar valor por defecto si estaba en N/A
+    console.log('Habilitando campo para bodega 3');
+    caracteristicasSelect.disabled = false;
+    caracteristicasSelect.style.display = "block";
   } else {
-    caracteristicasInput.disabled = true;
-    caracteristicasInput.placeholder = "No disponible para esta bodega";
-    caracteristicasInput.value = "N/A"; // Valor por defecto para otras bodegas
+    console.log('Deshabilitando campo para otras bodegas');
+    caracteristicasSelect.disabled = true;
+    caracteristicasSelect.style.display = "none";
+    // Opcional: agregar un elemento que muestre el mensaje
+    const mensajeContainer = document.getElementById("mensaje-caracteristicas") || document.createElement("div");
+    mensajeContainer.id = "mensaje-caracteristicas";
+    mensajeContainer.textContent = "No disponible para esta bodega";
+    mensajeContainer.style.color = "#888";
+    mensajeContainer.style.marginTop = "5px";
+    caracteristicasSelect.after(mensajeContainer);
   }
 }
 
@@ -82,6 +90,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gestionar el campo de características según la bodega
   gestionarCampoCaracteristicas();
+  // También cuando cambia la bodega
+  document.getElementById('id_bodega').addEventListener('change', function() {
+    localStorage.setItem("bodega", this.value);
+    gestionarCampoCaracteristicas();
+  });
 });
 
 

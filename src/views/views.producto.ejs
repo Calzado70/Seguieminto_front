@@ -3,14 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/producto.css" />
     <title>Supervisor</title>
   </head>
   <body>
     <div class="container">
       <nav class="navbar">
-        <img src="/img/Trost_blanco.png" alt="Logo" class="logo" />
-      </nav>
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-options">
+          <div class="dropdown">
+            <select class="dropdown-select" id="consultas">
+              <option value="" selected disabled>Consultas</option>
+              <option value="#">Inventario</option>
+              <option value="#">Stock por Producto</option>
+            </select>
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+          </div>
+          <button class="nav-button" id="sesion" value="/sesion">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+          </button>
+          <button class="nav-button" id="transferencia" value="/supervisor">
+            <i class="fas fa-exchange-alt"></i> Transferencia/Consumos
+          </button>
+        </div>
+      </div>
+    </nav>
 
       <div class="modal" id="modalMovimiento" style="display: none">
         <div class="modal-content">
@@ -98,8 +119,8 @@
                 <option value="AJUSTE">AJUSTE</option>
               </select>
 
-              <select class="input" id="caracteristicas">
-                <option value="">Seleciona la caracteristicas</option>
+              <select class="desple" id="caracteristicas">
+                <option value="">Selecciona la caracteristicas</option>
                 <option value="40">Caucho</option>
                 <option value="41">Caucho dielectrica</option>
                 <option value="42">Mono sin inserto N</option>

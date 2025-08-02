@@ -1,66 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Bodegas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/crear.bodega.css" />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/crear.bodega.css">
-    <title>Crear Bodegas</title>
-</head>
+  <body>
+    <div class="admin-container">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="logo-container">
+          <img src="/img/Trost_blanco.png" alt="Logo" class="logo" />
+        </div>
 
-<body>
-    <div class="container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-            <div class="navbar-options">
-                <select class="select" id="adminUsuario">
-                    <option>Admin-usuario</option>
-                    <option value="/usuario">Crear usuarios</option>
-                </select>
-                <select class="select" id="bodegas">
-                    <option>Bodegas</option>
-                    <option value="/crear_bodega">Crear Bodegas</option>
-                    <option value="/seguimiento">Seguimiento Bodega</option>
-                </select>
-                <select class="select" id="historial">
-                    <option>Historial</option>
-                    <option value="/historial">Lista de Historial</option>
-                    <option value="/logistica">Producto en Logistica</option>
-                </select>
-            </div>
-            
+        <nav class="sidebar-nav">
+          <div class="nav-section">
+            <h3 class="nav-section-title">USUARIOS</h3>
+            <select class="nav-select" id="adminUsuario">
+              <option value="">Admin-usuario</option>
+              <option value="/usuario">Crear usuarios</option>
+            </select>
+          </div>
+
+          <div class="nav-section">
+            <h3 class="nav-section-title">BODEGAS</h3>
+            <select class="nav-select" id="bodegas">
+              <option value="">Bodegas</option>
+              <option value="/crear_bodega">Crear Bodegas</option>
+              <option value="/seguimiento">Seguimiento Bodega</option>
+            </select>
+          </div>
+
+          <div class="nav-section">
+            <h3 class="nav-section-title">HISTORIAL</h3>
+            <select class="nav-select" id="historial">
+              <option value="">Historial</option>
+              <option value="/historial">Lista de Historial</option>
+              <option value="/logistica">Producto en Logistica</option>
+            </select>
+          </div>
         </nav>
 
-        <!-- Contenido principal -->
-        <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Crear Bodegas</h2>
-                <div class="cont-segun-list">
-                    <!-- Formulario -->
-                    <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="nombreBodega" placeholder="Nombre de Bodega">
-                        <input type="number" class="input" id="capacidadBodega" placeholder="Capacidad de Bodega" min="1">
-                        <!-- Botón debajo del formulario -->
-                        <div class="cont-segun-list-bot">
-                            <button class="button" id="agregarBodega">Agregar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Tabla -->
-            <div class="cont-segun-formu">
-                <div class="table-header">Lista de Bodegas</div>
-                <div class="table-row1">
-                    <span>Nombre</span>
-                    <span>Capacidad</span>
-                    <span>Acciones</span>
-                </div>
-                <!-- Las filas de bodegas se añadirán dinámicamente aquí -->
-            </div>
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="currentUserName">Nombre Usuario</span>
+            <span class="user-role" id="currentUserRole">Rol</span>
+          </div>
         </div>
-    </div>
-    <script src="/js/crear.bodegas.js"></script>
-</body>
+      </aside>
 
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="content-header">
+          <h1><i class="fas fa-warehouse"></i> Gestión de Bodegas</h1>
+          <div class="header-actions">
+            <button class="notification-btn" onclick="irAVistaAlertas()">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge">1</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="content-grid">
+          <!-- Form Section -->
+          <section class="form-section card">
+            <h2 class="section-title">
+              <i class="fas fa-plus-circle"></i> Crear Nueva Bodega
+            </h2>
+
+            <form id="bodegaForm" class="bodega-form">
+              <div class="form-group">
+                <label for="nombreBodega">Nombre de Bodega</label>
+                <input
+                  type="text"
+                  id="nombreBodega"
+                  placeholder="Ej: Bodega Principal"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="capacidadBodega">Capacidad</label>
+                <input
+                  type="number"
+                  id="capacidadBodega"
+                  placeholder="Ej: 500"
+                  min="1"
+                  step="0.01"
+                  required
+                />
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-primary" id="agregarBodega">
+                  <i class="fas fa-save"></i> Guardar Bodega
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Bodegas Table Section -->
+          <section class="table-section card">
+            <div class="table-header">
+              <h2 class="section-title">
+                <i class="fas fa-list"></i> Listado de Bodegas
+              </h2>
+              <div class="table-controls">
+                <div class="search-box">
+                  <i class="fas fa-search"></i>
+                  <input
+                    type="text"
+                    placeholder="Buscar bodega..."
+                    id="bodegaSearch"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="bodegas-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Capacidad</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="bodegasTableBody">
+                  <!-- Las filas de bodegas se insertarán aquí dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <div class="pagination-info" id="page-info">
+                Mostrando 1-5 de 15 bodegas
+              </div>
+
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="prev-page" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="page-numbers" id="page-numbers"></div>
+                <button class="pagination-btn" id="next-page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/js/crear.bodegas.js"></script>
+  </body>
 </html>

@@ -1,3 +1,56 @@
+// Variables globales
+let currentPage = 1;
+const recordsPerPage = 5;
+let allBodegas = [];
+
+// Cargar información al iniciar
+document.addEventListener('DOMContentLoaded', async () => {
+    verificarTokenAlCargar();
+    await cargarBodegas();
+    setupEventListeners();
+    
+    // Cargar información del usuario actual
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            document.getElementById('currentUserName').textContent = payload.nombre || 'Usuario';
+            document.getElementById('currentUserRole').textContent = payload.rol || 'Rol';
+        } catch (error) {
+            console.error('Error al parsear token:', error);
+        }
+    }
+});
+
+function setupEventListeners() {
+    // Botón de agregar
+    document.getElementById('agregarBodega').addEventListener('click', crearBodega);
+    
+    // Búsqueda
+    document.getElementById('bodegaSearch').addEventListener('input', filterBodegas);
+    
+    // Paginación
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayCurrentPage();
+        }
+    });
+    
+    document.getElementById('next-page').addEventListener('click', () => {
+        const totalPages = Math.ceil(allBodegas.length / recordsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayCurrentPage();
+        }
+    });
+    
+    // Redirecciones
+    redirigir('adminUsuario');
+    redirigir('bodegas');
+    redirigir('historial');
+}
+
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -31,10 +84,12 @@ function redirigir(selectId) {
 
 async function crearBodega() {
     const btnAgregar = document.getElementById('agregarBodega');
-    const originalText = btnAgregar.textContent;
+    const originalText = btnAgregar.innerHTML;
+    
+    // Mostrar estado de carga
     btnAgregar.disabled = true;
-    btnAgregar.textContent = 'Creando...';
-
+    btnAgregar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+    
     try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -42,8 +97,8 @@ async function crearBodega() {
         }
 
         // Obtener valores
-        const nombre = document.querySelector('input[placeholder="Nombre de Bodega"]').value.trim();
-        const capacidad = parseFloat(document.querySelector('input[placeholder="Capacidad de Bodega"]').value);
+        const nombre = document.getElementById('nombreBodega').value.trim();
+        const capacidad = parseFloat(document.getElementById('capacidadBodega').value);
 
         // Validaciones
         if (!nombre || nombre.length < 3) {
@@ -61,8 +116,11 @@ async function crearBodega() {
         const bodegaData = {
             nombre,
             capacidad,
-            estado: 'ACTIVA' // Coincide con el ENUM del procedimiento
+            estado: 'ACTIVA'
         };
+
+        // Mostrar notificación de carga
+        showToast('Creando bodega...', 'info');
 
         const response = await fetch('http://localhost:4000/bode/crear', {
             method: 'POST',
@@ -79,19 +137,34 @@ async function crearBodega() {
             throw new Error(responseData.message || 'Error al crear bodega');
         }
 
-        alert('Bodega creada correctamente');
-        document.querySelectorAll('.input').forEach(input => input.value = '');
+        // Éxito - mostrar feedback y limpiar formulario
+        showToast('Bodega creada exitosamente!', 'success');
+        
+        // Limpiar formulario
+        document.getElementById('nombreBodega').value = '';
+        document.getElementById('capacidadBodega').value = '';
+        
+        // Recargar lista de bodegas
         await cargarBodegas();
         
     } catch (error) {
         console.error('Error al crear bodega:', error);
-        alert(`Error: ${error.message}`);
+        
+        // Mostrar error al usuario
+        showToast(error.message, 'error');
+        
+        // Resaltar campos con error
+        if (error.message.includes('nombre')) {
+            document.getElementById('nombreBodega').focus();
+        } else if (error.message.includes('capacidad')) {
+            document.getElementById('capacidadBodega').focus();
+        }
     } finally {
+        // Restaurar estado normal del botón
         btnAgregar.disabled = false;
-        btnAgregar.textContent = originalText;
+        btnAgregar.innerHTML = originalText;
     }
 }
-
 
 async function cargarBodegas() {
     const token = localStorage.getItem('token');
@@ -122,18 +195,77 @@ async function cargarBodegas() {
             throw new Error('Formato de datos incorrecto del servidor');
         }
 
-        actualizarTablaBodegas(result.data);
+        allBodegas = result.data;
+        displayCurrentPage();
         
     } catch (error) {
         console.error('Error al cargar bodegas:', error);
-        alert(`Error al cargar bodegas: ${error.message}`);
+        showToast(`Error al cargar bodegas: ${error.message}`, 'error');
+    }
+}
+
+function filterBodegas() {
+    const searchTerm = document.getElementById('bodegaSearch').value.toLowerCase();
+    if (!searchTerm) {
+        displayCurrentPage();
+        return;
+    }
+    
+    const filteredBodegas = allBodegas.filter(bodega => 
+        bodega.nombre.toLowerCase().includes(searchTerm) ||
+        bodega.capacidad.toString().includes(searchTerm) ||
+        (bodega.estado && bodega.estado.toLowerCase().includes(searchTerm))
+    );
+    
+    actualizarTablaBodegas(filteredBodegas);
+}
+
+function displayCurrentPage() {
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+    const bodegasToDisplay = allBodegas.slice(startIndex, endIndex);
+    
+    actualizarTablaBodegas(bodegasToDisplay);
+    updatePageInfo();
+    updatePaginationControls();
+}
+
+function updatePageInfo() {
+    const totalPages = Math.ceil(allBodegas.length / recordsPerPage);
+    const startItem = (currentPage - 1) * recordsPerPage + 1;
+    const endItem = Math.min(currentPage * recordsPerPage, allBodegas.length);
+    
+    document.getElementById('page-info').textContent = 
+        `Mostrando ${startItem}-${endItem} de ${allBodegas.length} bodegas`;
+}
+
+function updatePaginationControls() {
+    const totalPages = Math.ceil(allBodegas.length / recordsPerPage);
+    const prevButton = document.getElementById('prev-page');
+    const nextButton = document.getElementById('next-page');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages || totalPages === 0;
+    
+    // Actualizar números de página
+    const pageNumbersContainer = document.getElementById('page-numbers');
+    pageNumbersContainer.innerHTML = '';
+    
+    for (let i = 1; i <= totalPages; i++) {
+        const pageNumber = document.createElement('div');
+        pageNumber.className = `page-number ${i === currentPage ? 'active' : ''}`;
+        pageNumber.textContent = i;
+        pageNumber.addEventListener('click', () => {
+            currentPage = i;
+            displayCurrentPage();
+        });
+        pageNumbersContainer.appendChild(pageNumber);
     }
 }
 
 function actualizarTablaBodegas(bodegas) {
-    const tbody = document.querySelector('.cont-segun-formu');
-    const existingRows = tbody.querySelectorAll('.table-row2');
-    existingRows.forEach(row => row.remove());
+    const tbody = document.getElementById('bodegasTableBody');
+    tbody.innerHTML = '';
 
     if (!bodegas || !Array.isArray(bodegas)) {
         console.error('Bodegas no es un array válido:', bodegas);
@@ -141,46 +273,56 @@ function actualizarTablaBodegas(bodegas) {
     }
 
     bodegas.forEach(bodega => {
-        const row = document.createElement('div');
-        row.className = 'table-row2';
-        row.dataset.id = bodega.id_bodega; // Usar el ID en lugar del nombre
+        const row = document.createElement('tr');
+        
         row.innerHTML = `
-            <span>${bodega.nombre || 'N/A'}</span>
-            <span>${bodega.capacidad || 'N/A'}</span>
-            <span class="table-row2-bot" type="button">
-                <img src="/img/editar.png" alt="Editar" class="editar" data-id="${bodega.id_bodega}"> <!-- Usar data-id -->
-                <img src="/img/borrar.png" alt="Borrar" class="borrar" data-id="${bodega.id_bodega}">
-            </span> 
+            <td>${bodega.nombre || 'N/A'}</td>
+            <td>${bodega.capacidad || 'N/A'}</td> <!-- Cambiado: eliminado "m²" -->
+            <td>
+                <span class="status-badge ${bodega.estado === 'ACTIVA' ? 'status-active' : 'status-inactive'}">
+                    ${bodega.estado || 'N/A'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn edit" data-id="${bodega.id_bodega}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" data-id="${bodega.id_bodega}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
         `;
+        
         tbody.appendChild(row);
     });
 
-    // Evento para eliminar
-    document.querySelectorAll('.borrar').forEach(button => {
-        button.addEventListener('click', eliminarBodega);
+    // Asignar eventos a los botones
+    document.querySelectorAll('.action-btn.delete').forEach(btn => {
+        btn.addEventListener('click', eliminarBodega);
     });
-
-    // Evento para editar (redirección con ID)
-    document.querySelectorAll('.editar').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const idBodega = event.target.getAttribute('data-id'); // Obtener el ID
-            window.location.href = `/modi_bodegas?id=${encodeURIComponent(idBodega)}`; // Usar ID en la URL
+    
+    document.querySelectorAll('.action-btn.edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idBodega = e.currentTarget.getAttribute('data-id');
+            window.location.href = `/modi_bodegas?id=${encodeURIComponent(idBodega)}`;
         });
     });
 }
 
 async function eliminarBodega(event) {
-    const idBodega = event.target.getAttribute('data-id');
+    const idBodega = event.currentTarget.getAttribute('data-id');
     const token = localStorage.getItem('token');
 
     if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión.');
+        showToast('No hay sesión activa. Por favor, inicia sesión.', 'error');
         window.location.href = '/';
         return;
     }
 
-    if (!confirm(`¿Estás seguro de que quieres eliminar la bodega con ID ${idBodega}?`)) {
-        return; 
+    if (!confirm(`¿Estás seguro de que quieres eliminar esta bodega?`)) {
+        return;
     }
 
     try {
@@ -196,44 +338,42 @@ async function eliminarBodega(event) {
         const data = await response.json();
 
         if (response.ok) {
-            alert('Bodega eliminada correctamente');
+            showToast('Bodega eliminada correctamente', 'success');
             await cargarBodegas();
         } else {
-            alert(`Error: ${data.message || 'No se pudo eliminar la bodega'}`);
+            throw new Error(data.message || 'No se pudo eliminar la bodega');
         }
     } catch (error) {
         console.error('Error al eliminar bodega:', error);
-        alert('Error al eliminar la bodega. Verifica el servidor.');
+        showToast(`Error: ${error.message}`, 'error');
     }
 }
-
 
 function irAVistaAlertas() {
     const token = localStorage.getItem('token');
     if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión.');
+        showToast('No hay sesión activa. Por favor, inicia sesión.', 'error');
         window.location.href = '/';
         return;
     }
     window.location.href = '/alerta';
 }
 
-// Event listeners
-redirigir('adminUsuario');
-redirigir('bodegas');
-redirigir('historial');
-
-// Luego usa esta función en el event listener:
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Vincular correctamente el evento al botón
-    document.getElementById('agregarBodega').addEventListener('click', crearBodega);
-    cargarBodegas();
-});
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    verificarTokenAlCargar();
-});
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
