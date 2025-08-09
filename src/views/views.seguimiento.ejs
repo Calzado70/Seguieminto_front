@@ -21,6 +21,7 @@
                     <option>Bodegas</option>
                     <option value="/crear_bodega">Crear Bodegas</option>
                     <option value="/seguimiento">Seguimiento Bodega</option>
+                    <option value="/inventario">inventario de Bodegas</option>
                 </select>
                 <select class="select" id="historial">
                     <option>Historial</option>
@@ -36,11 +37,16 @@
 
             <!-- Filtros -->
             <form id="filtro-fechas" class="filtro-form">
+                <label for="id_bodega">Bodega:</label>
+                <select id="id_bodega" required>
+                                <option value="">Cargando bodegas...</option>
+                            </select>
+
                 <label for="fecha_inicio">Fecha Inicio:</label>
-                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" />
+                <input type="date" id="fecha_inicio" name="fecha_inicio" />
 
                 <label for="fecha_fin">Fecha Fin:</label>
-                <input type="datetime-local" id="fecha_fin" name="fecha_fin" />
+                <input type="date" id="fecha_fin" name="fecha_fin" />
 
                 <button type="submit">Buscar</button>
             </form>

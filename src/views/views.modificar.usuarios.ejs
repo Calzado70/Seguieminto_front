@@ -1,40 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/modificar.usuario.css">
-    <title>Modificar-Usuarios</title>
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar">
-            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-        </nav>
-        <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Modificar Usuario</h2>
-                <div class="cont-segun-list">
-                    <div class="cont-segun-list-for">
-                        <input type="text" class="input" id="nombre" placeholder="Nombre de usuario" readonly>
-                        <select class="desple" id="bodega">
-                            <option value="">Seleccione bodega</option>
-                            <!-- Las opciones se cargarán dinámicamente desde JavaScript -->
-                        </select>
-                        <div class="password-container">
-                            <input type="password" placeholder="Ingrese su contraseña" class="input" id="contrasena" required>
-                            <span class="toggle-password" onclick="togglePassword()">
-                                <img src="img/cerrado.png" alt="Mostrar contraseña" id="toggle-icon">
-                            </span>
-                        </div>
-                        <div class="cont-segun-list-bot">
-                            <button class="button" id="guardar">Guardar</button>
-                        </div>
-                    </div>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">USUARIOS</h3>
+                    <select class="nav-select" id="adminUsuario">
+                        <option value="">Admin-usuario</option>
+                        <option value="/usuario">Crear usuarios</option>
+                    </select>
+                </div>
+                
+                <div class="nav-section">
+                    <h3 class="nav-section-title">BODEGAS</h3>
+                    <select class="nav-select" id="bodegas">
+                        <option value="">Bodegas</option>
+                        <option value="/crear_bodega">Crear Bodegas</option>
+                        <option value="/seguimiento">Seguimiento Bodega</option>
+                        <option value="/inventario">inventario de Bodegas</option>
+
+                    </select>
+                </div>
+                
+                <div class="nav-section">
+                    <h3 class="nav-section-title">HISTORIAL</h3>
+                    <select class="nav-select" id="historial">
+                        <option value="">Historial</option>
+                        <option value="/historial">Lista de Historial</option>
+                        <option value="/logistica">Producto en Logistica</option>
+                    </select>
+                </div>
+            </nav>
+            
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="currentUserName">Nombre Usuario</span>
+                    <span class="user-role" id="currentUserRole">Rol</span>
                 </div>
             </div>
-        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1><i class="fas fa-user-edit"></i> Modificar Usuario</h1>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="irAVistaAlertas()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">1</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Form Section -->
+                <section class="form-section card">
+                    <form id="userForm" class="user-form">
+                        <div class="form-group">
+                            <label for="nombre">Nombre de usuario</label>
+                            <input type="text" id="nombre" placeholder="Nombre de usuario" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bodega">Bodega asignada</label>
+                            <select id="bodega" required>
+                                <option value="">Seleccione bodega</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña (dejar vacío para no cambiar)</label>
+                            <div class="password-input-container">
+                                <input type="password" id="contrasena" placeholder="Nueva contraseña">
+                                <button type="button" class="toggle-password" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="toggle-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-primary" id="guardar">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <button type="button" class="btn-secondary" id="cancelar">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
     </div>
+
     <script src="/js/modificar.usuario.js"></script>
 </body>
 </html>

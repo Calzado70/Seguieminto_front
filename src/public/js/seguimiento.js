@@ -23,7 +23,7 @@ function verificarTokenAlCargar() {
     }
 }
 
-async function cargarMovimientos(fechaInicio = null, fechaFin = null) {
+async function cargarMovimientos(idBodega = null, fechaInicio = null, fechaFin = null) {
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('No hay token en el localStorage');
@@ -31,17 +31,21 @@ async function cargarMovimientos(fechaInicio = null, fechaFin = null) {
     }
 
     try {
-        let url = 'http://localhost:4000/product/historial';
+        let url = 'http://localhost:4000/product/movi';
         const params = new URLSearchParams();
+
+        // Solo agregamos parámetros si no están vacíos
+        if (idBodega) params.append('id_bodega', idBodega);
         if (fechaInicio) params.append('fecha_inicio', fechaInicio);
         if (fechaFin) params.append('fecha_fin', fechaFin);
-        if (params.toString()) url += `?${params.toString()}`;
+
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
 
         const response = await fetch(url, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!response.ok) {
@@ -52,28 +56,25 @@ async function cargarMovimientos(fechaInicio = null, fechaFin = null) {
         console.log("Respuesta completa del backend:", data);
 
         if (!data.body || !Array.isArray(data.body)) {
-            console.error("Estructura de la respuesta:", data);
             throw new Error('La respuesta del backend no contiene un array de movimientos');
         }
 
-        // Filter out movements with 'Enviado' status
-        movimientosCompletos = data.body.filter(movimiento => 
-            movimiento.tipo_movimiento && movimiento.tipo_movimiento.toLowerCase() !== 'enviado'
-        );
-        
-        paginaActual = 1; // Resetear a la primera página
+        // Aquí no filtramos, mostramos todos los movimientos que lleguen
+        movimientosCompletos = data.body;
+
+        paginaActual = 1;
         actualizarTablaPaginada();
         actualizarControlesPaginacion();
-        
+
     } catch (error) {
         console.error('Error al cargar los movimientos:', error.message);
-        alert(`No se pudo cargar los movimientos. Verifica el servidor. Detalle: ${error.message}`);
+        alert(`No se pudo cargar los movimientos. Detalle: ${error.message}`);
     }
 }
 
 function actualizarTablaPaginada() {
     const tbody = document.querySelector('#tabla-movimientos tbody');
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
 
     if (movimientosCompletos.length === 0) {
         const tr = document.createElement('tr');
@@ -82,7 +83,6 @@ function actualizarTablaPaginada() {
         return;
     }
 
-    // Calcular índices para la página actual
     const indiceInicio = (paginaActual - 1) * registrosPorPagina;
     const indiceFin = indiceInicio + registrosPorPagina;
     const movimientosPagina = movimientosCompletos.slice(indiceInicio, indiceFin);
@@ -91,10 +91,10 @@ function actualizarTablaPaginada() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${movimiento.id_movimiento || 'N/A'}</td>
-            <td>${movimiento.producto_codigo || 'N/A'}</td>
+            <td>${movimiento.codigo || 'N/A'}</td>
             <td>${movimiento.bodega_origen || 'N/A'}</td>
             <td>${movimiento.bodega_destino || 'N/A'}</td>
-            <td>${movimiento.usuario_responsable || 'N/A'}</td>
+            <td>${movimiento.usuario || 'N/A'}</td>
             <td>${movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A'}</td>
             <td>${movimiento.tipo_movimiento || 'N/A'}</td>
             <td>${movimiento.observaciones || 'N/A'}</td>
@@ -106,26 +106,18 @@ function actualizarTablaPaginada() {
 
 function actualizarControlesPaginacion() {
     const totalPaginas = Math.ceil(movimientosCompletos.length / registrosPorPagina);
-    const controlesPaginacion = document.getElementById('controles-paginacion');
-    
-    if (!controlesPaginacion) {
-        crearControlesPaginacion();
-        return;
-    }
+    const controlesPaginacion = document.getElementById('controles-paginacion') || crearControlesPaginacion();
 
     controlesPaginacion.innerHTML = '';
 
-    // Información de página actual
     const infoPagina = document.createElement('span');
     infoPagina.className = 'info-pagina';
     infoPagina.textContent = `Página ${paginaActual} de ${totalPaginas} (${movimientosCompletos.length} registros total)`;
     controlesPaginacion.appendChild(infoPagina);
 
-    // Contenedor de botones
     const contenedorBotones = document.createElement('div');
     contenedorBotones.className = 'botones-paginacion';
 
-    // Botón anterior
     const btnAnterior = document.createElement('button');
     btnAnterior.textContent = '« Anterior';
     btnAnterior.className = 'btn-paginacion';
@@ -139,7 +131,6 @@ function actualizarControlesPaginacion() {
     };
     contenedorBotones.appendChild(btnAnterior);
 
-    // Botones de números de página
     const inicioRango = Math.max(1, paginaActual - 2);
     const finRango = Math.min(totalPaginas, paginaActual + 2);
 
@@ -153,7 +144,6 @@ function actualizarControlesPaginacion() {
         if (inicioRango > 2) {
             const puntos = document.createElement('span');
             puntos.textContent = '...';
-            puntos.className = 'puntos-suspensivos';
             contenedorBotones.appendChild(puntos);
         }
     }
@@ -170,7 +160,6 @@ function actualizarControlesPaginacion() {
         if (finRango < totalPaginas - 1) {
             const puntos = document.createElement('span');
             puntos.textContent = '...';
-            puntos.className = 'puntos-suspensivos';
             contenedorBotones.appendChild(puntos);
         }
 
@@ -181,7 +170,6 @@ function actualizarControlesPaginacion() {
         contenedorBotones.appendChild(btnUltimo);
     }
 
-    // Botón siguiente
     const btnSiguiente = document.createElement('button');
     btnSiguiente.textContent = 'Siguiente »';
     btnSiguiente.className = 'btn-paginacion';
@@ -210,7 +198,7 @@ function crearControlesPaginacion() {
     controlesPaginacion.id = 'controles-paginacion';
     controlesPaginacion.className = 'controles-paginacion';
     tableContainer.appendChild(controlesPaginacion);
-    actualizarControlesPaginacion();
+    return controlesPaginacion;
 }
 
 function exportarAExcel() {
@@ -219,32 +207,28 @@ function exportarAExcel() {
         return;
     }
 
-    // Crear datos para Excel usando todos los movimientos, no solo los de la página actual
     const datos = [
         ["ID Movimiento", "Código Producto", "Bodega Origen", "Bodega Destino", "Usuario", "Cantidad", "Tipo", "Observaciones", "Fecha"]
     ];
 
     movimientosCompletos.forEach(movimiento => {
-        const rowData = [
+        datos.push([
             movimiento.id_movimiento || 'N/A',
-            movimiento.producto_codigo || 'N/A',
+            movimiento.codigo || 'N/A',
             movimiento.bodega_origen || 'N/A',
             movimiento.bodega_destino || 'N/A',
-            movimiento.usuario_responsable || 'N/A',
+            movimiento.usuario || 'N/A',
             movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A',
             movimiento.tipo_movimiento || 'N/A',
             movimiento.observaciones || 'N/A',
             movimiento.fecha_movimiento ? new Date(movimiento.fecha_movimiento).toLocaleString() : 'N/A'
-        ];
-        datos.push(rowData);
+        ]);
     });
 
-    // Crear hoja de cálculo
     const ws = XLSX.utils.aoa_to_sheet(datos);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Movimientos");
 
-    // Generar y descargar archivo Excel
     const fecha = new Date().toISOString().split('T')[0];
     XLSX.writeFile(wb, `Movimientos_${fecha}.xlsx`);
 }
@@ -252,21 +236,62 @@ function exportarAExcel() {
 function redirigir(selectId) {
     const selectElement = document.getElementById(selectId);
     selectElement.addEventListener('change', function() {
-        const selectedOption = selectElement.options[selectElement.selectedIndex].value;
+        const selectedOption = selectElement.value;
         if (selectedOption) {
             window.location.href = selectedOption;
         }
     });
 }
 
+// Cargar bodegas desde la API
+async function cargarBodegas() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:4000/bode/mostrar', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) throw new Error('Error al cargar bodegas');
+        
+        const data = await response.json();
+        const selectBodega = document.getElementById('id_bodega');
+        
+        // Limpiar select excepto la primera opción
+        selectBodega.innerHTML = '<option value="">Seleccione bodega</option>';
+        
+        if (data.success && Array.isArray(data.data)) {
+            data.data.forEach(bodega => {
+                const option = document.createElement('option');
+                option.value = bodega.id_bodega;
+                option.textContent = bodega.nombre;
+                selectBodega.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar bodegas:', error);
+        showToast('Error al cargar bodegas', 'error');
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
+    cargarBodegas();
+
+    // Cargar todos los movimientos al iniciar
     cargarMovimientos();
 
-    // Manejar el formulario de filtros
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_inicio').value = hoy;
+    document.getElementById('fecha_fin').value = hoy;
+
     const form = document.getElementById('filtro-fechas');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const idBodega = document.getElementById('bodega').value;
         const fechaInicio = document.getElementById('fecha_inicio').value;
         const fechaFin = document.getElementById('fecha_fin').value;
 
@@ -275,18 +300,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        cargarMovimientos(fechaInicio || null, fechaFin || null);
+        // Si no hay filtros, mostramos todos los movimientos
+        cargarMovimientos(idBodega || null, fechaInicio || null, fechaFin || null);
     });
 
-    // Añadir evento para exportar a Excel
     const exportButton = document.createElement('button');
     exportButton.textContent = 'Exportar a Excel';
     exportButton.className = 'export-button';
     exportButton.addEventListener('click', exportarAExcel);
     form.appendChild(exportButton);
 
-    // Configurar redirecciones
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');
 });
+
+
+

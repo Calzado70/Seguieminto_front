@@ -74,8 +74,8 @@ body {
 .nav-select {
     width: 100%;
     padding: 0.75rem 1rem;
-    background-color: var(--primary-light);
-    color: var(--text-light);
+    background-color: #13302E;
+    color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius);
     font-size: 0.9rem;
@@ -88,9 +88,6 @@ body {
     background-size: 16px 12px;
 }
 
-.nav-select:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
 
 .user-profile {
     padding: 1.5rem;

@@ -1,3 +1,6 @@
+// Variables globales
+let bodegaActual = {};
+
 // Verificar token al cargar
 function verificarTokenAlCargar() {
     const token = localStorage.getItem('token');
@@ -8,6 +11,9 @@ function verificarTokenAlCargar() {
 
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
+        document.getElementById('currentUserName').textContent = payload.nombre || 'Usuario';
+        document.getElementById('currentUserRole').textContent = payload.rol || 'Rol';
+        
         const expiracion = payload.exp * 1000;
         if (Date.now() >= expiracion) {
             localStorage.removeItem('token');
@@ -20,27 +26,15 @@ function verificarTokenAlCargar() {
     }
 }
 
-// Redirigir según los select
-function redirigir(selectId) {
-    const selectElement = document.getElementById(selectId);
-    if (selectElement) {
-        selectElement.addEventListener('change', function() {
-            const selectedOption = selectElement.options[selectElement.selectedIndex].value;
-            if (selectedOption) {
-                window.location.href = selectedOption;
-            }
-        });
-    }
-}
-
+// Cargar datos de la bodega
 async function cargarDatosBodega() {
     const token = localStorage.getItem('token');
     const urlParams = new URLSearchParams(window.location.search);
     const idBodega = urlParams.get('id');
 
     if (!idBodega) {
-        alert('No se especificó bodega a modificar');
-        window.location.href = '/crear_bodega';
+        showToast('No se especificó bodega a modificar', 'error');
+        setTimeout(() => window.location.href = '/crear_bodega', 1500);
         return;
     }
 
@@ -61,24 +55,25 @@ async function cargarDatosBodega() {
             throw new Error('Bodega no encontrada');
         }
 
-        const bodega = result.data[0];
-        document.getElementById('idBodega').value = bodega.id_bodega;
-        document.getElementById('nombre').value = bodega.nombre || '';
-        document.getElementById('capacidad').value = bodega.capacidad || '';
-        document.getElementById('estado').value = bodega.estado || 'ACTIVA';
+        bodegaActual = result.data[0];
+        document.getElementById('idBodega').value = bodegaActual.id_bodega;
+        document.getElementById('nombre').value = bodegaActual.nombre || '';
+        document.getElementById('capacidad').value = bodegaActual.capacidad || '';
+        document.getElementById('estado').value = bodegaActual.estado || 'ACTIVA';
 
     } catch (error) {
         console.error('Error al cargar bodega:', error);
-        alert(`Error: ${error.message}`);
-        window.location.href = '/crear_bodega';
+        showToast(`Error: ${error.message}`, 'error');
+        setTimeout(() => window.location.href = '/crear_bodega', 1500);
     }
 }
 
+// Modificar bodega
 async function modificarBodega() {
     const btnGuardar = document.getElementById('guardar');
-    const originalText = btnGuardar.textContent;
+    const originalText = btnGuardar.innerHTML;
     btnGuardar.disabled = true;
-    btnGuardar.textContent = 'Guardando...';
+    btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
     try {
         const token = localStorage.getItem('token');
@@ -86,7 +81,7 @@ async function modificarBodega() {
 
         const idBodega = document.getElementById('idBodega').value;
         const nombre = document.getElementById('nombre').value.trim();
-        const capacidad = parseInt(document.getElementById('capacidad').value);
+        const capacidad = parseFloat(document.getElementById('capacidad').value);
         const estado = document.getElementById('estado').value;
 
         // Validaciones
@@ -100,6 +95,8 @@ async function modificarBodega() {
             capacidad,
             estado
         };
+
+        showToast('Actualizando bodega...', 'info');
 
         const response = await fetch('http://localhost:4000/bode/modificar', {
             method: 'PUT',
@@ -116,20 +113,75 @@ async function modificarBodega() {
             throw new Error(data.message || 'Error al modificar bodega');
         }
 
-        alert('Bodega modificada correctamente');
-        window.location.href = '/crear_bodega';
+        showToast('Bodega modificada correctamente', 'success');
+        setTimeout(() => {
+            window.location.href = '/crear_bodega';
+        }, 1500);
 
     } catch (error) {
         console.error('Error en modificarBodega:', error);
-        alert(`Error: ${error.message}`);
+        showToast(`Error: ${error.message}`, 'error');
     } finally {
         btnGuardar.disabled = false;
-        btnGuardar.textContent = originalText;
+        btnGuardar.innerHTML = originalText;
     }
 }
 
+// Función para mostrar notificaciones toast
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Redirigir a vista de alertas
+function irAVistaAlertas() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        showToast('No hay sesión activa. Por favor, inicia sesión.', 'error');
+        window.location.href = '/';
+        return;
+    }
+    window.location.href = '/alerta';
+}
+
+// Cancelar y volver
+function cancelarEdicion() {
+    window.location.href = '/crear_bodega';
+}
+
+// Inicialización
 document.addEventListener('DOMContentLoaded', () => {
     verificarTokenAlCargar();
-    cargarDatosBodega(); // ¡Asegúrate de llamar esta función!
+    cargarDatosBodega();
+    
+    // Event listeners
     document.getElementById('guardar').addEventListener('click', modificarBodega);
+    document.getElementById('cancelar').addEventListener('click', cancelarEdicion);
+    
+    // Redirecciones
+    document.getElementById('adminUsuario').addEventListener('change', function() {
+        if (this.value) window.location.href = this.value;
+    });
+    
+    document.getElementById('bodegas').addEventListener('change', function() {
+        if (this.value) window.location.href = this.value;
+    });
+    
+    document.getElementById('historial').addEventListener('change', function() {
+        if (this.value) window.location.href = this.value;
+    });
 });
