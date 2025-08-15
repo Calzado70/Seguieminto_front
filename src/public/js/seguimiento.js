@@ -92,8 +92,8 @@ function actualizarTablaPaginada() {
         tr.innerHTML = `
             <td>${movimiento.id_movimiento || 'N/A'}</td>
             <td>${movimiento.codigo || 'N/A'}</td>
-            <td>${movimiento.bodega_origen || 'N/A'}</td>
             <td>${movimiento.bodega_destino || 'N/A'}</td>
+            <td>${movimiento.bodega_origen || 'N/A'}</td>
             <td>${movimiento.usuario || 'N/A'}</td>
             <td>${movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A'}</td>
             <td>${movimiento.tipo_movimiento || 'N/A'}</td>
@@ -215,8 +215,8 @@ function exportarAExcel() {
         datos.push([
             movimiento.id_movimiento || 'N/A',
             movimiento.codigo || 'N/A',
-            movimiento.bodega_origen || 'N/A',
             movimiento.bodega_destino || 'N/A',
+            movimiento.bodega_origen || 'N/A',
             movimiento.usuario || 'N/A',
             movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A',
             movimiento.tipo_movimiento || 'N/A',

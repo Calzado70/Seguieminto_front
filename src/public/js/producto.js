@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   gestionarCampoCaracteristicas();
   // También cuando cambia la bodega
   document.getElementById('id_bodega').addEventListener('change', function() {
-    localStorage.setItem("bodega", this.value);
+    localStorage.setItem("bodega_consumo_id", this.value);
     gestionarCampoCaracteristicas();
   });
 });

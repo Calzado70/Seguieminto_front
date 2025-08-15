@@ -1,76 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/historial.css">
-    <title>Usuario</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/historial.css" />
+  <title>Historial de Movimientos | Trost</title>
 </head>
 <body>
-    <div class="container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-            <div class="navbar-options">
-                <select class="select" id="adminUsuario">
-                    <option>Admin-usuario</option>
-                    <option value="/usuario">Crear usuarios</option>
-                </select>
-                <select class="select" id="bodegas">
-                    <option>Bodegas</option>
-                    <option value="/crear_bodega">Crear Bodegas</option>
-                    <option value="/seguimiento">Seguimiento Bodega</option>
-                </select>
-                <select class="select" id="historial">
-                    <option>Historial</option>
-                    <option value="/historial">Lista de Historial</option>
-                    <option value="/logistica">Producto en Logistica</option>
-                </select>
-            </div>
-        </nav>
-
-        <!-- Contenido principal -->
-        <div class="content-segundario">
-            <!-- Tabla -->
-            <div class="cont-segun-formu">
-                <div class="table-header">Filtros</div>
-
-                <div class="filtros">
-                    <select class="desple" id="filtroBodega">
-                        <option value="">Seleccione la Bodega</option>
-                        <option value="1">Corte</option>
-                        <option value="2">Inyeccion</option>
-                        <option value="3">Preparada</option>
-                        <option value="4">Montaje</option>
-                        <option value="5">Terminada</option>
-                        <option value="6">Vulcanizado</option>
-                        <option value="8">Logistica</option>
-                    </select>
-                    <input type="date" class="date" id="filtroFechaInicio" placeholder="Fecha Inicio">
-                    <input type="date" class="date" id="filtroFechaFin" placeholder="Fecha Fin">
-                    <button type="button" class="export" id="aplicarFiltros">Aplicar Filtros</button>
-                    <button type="button" class="export" id="exportarExcel">Exportar Datos a Excel</button>
-                </div>
-
-                <div class="table-row1-1">
-                    <span>Historial De Bodegas</span>
-                </div>
-
-                <div class="table-row1">
-                    <span>Nombre</span>
-                    <span>Producto SKU</span>
-                    <span>Bodega</span>
-                    <span>Bodega-entregada</span>
-                    <span>Cantidad</span>
-                    <span>Tipo</span>
-                    <span>Fecha</span>
-                </div>
-                <!-- Contenedor dinámico para filas -->
-                <div id="historialRows"></div>
-            </div>
+  <div class="app-container">
+    <!-- Barra de navegación mejorada -->
+    <nav class="app-navbar">
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+        <span class="app-name">Gestión de Inventario</span>
+      </div>
+      
+      <div class="navbar-actions">
+        <div class="dropdown">
+          <select class="dropdown-select" id="adminUsuario">
+            <option value="" selected disabled>Admin-usuario</option>
+            <option value="/usuario">Crear usuarios</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
         </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="/js/historial.js"></script>
+        
+        <div class="dropdown">
+          <select class="dropdown-select" id="bodegas">
+            <option value="" selected disabled>Bodegas</option>
+            <option value="/crear_bodega">Crear Bodegas</option>
+            <option value="/seguimiento">Seguimiento Bodega</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+        
+        <div class="dropdown">
+          <select class="dropdown-select" id="historial">
+            <option value="" selected disabled>Historial</option>
+            <option value="/historial">Lista de Historial</option>
+            <option value="/logistica">Producto en Logística</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="app-content">
+      <section class="history-section">
+        <div class="section-header">
+          <h2><i class="fas fa-history"></i> Historial de Movimientos</h2>
+          <button class="export-button" id="exportarExcel">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+        </div>
+
+        <div class="history-container">
+          <!-- Encabezados de la tabla -->
+          <div class="table-header">
+            <div class="header-cell">Bodega</div>
+            <div class="header-cell">Código</div>
+            <div class="header-cell">Característica</div>
+            <div class="header-cell">Usuario</div>
+            <div class="header-cell">Cant. Ant.</div>
+            <div class="header-cell">Cant. Nueva</div>
+            <div class="header-cell">Fecha</div>
+          </div>
+
+          <!-- Contenedor dinámico para los registros -->
+          <div class="table-body" id="historialRows"></div>
+          
+          <!-- Controles de paginación se insertarán aquí -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="/js/historial.js"></script>
 </body>
 </html>

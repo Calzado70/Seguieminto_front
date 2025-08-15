@@ -34,17 +34,7 @@ function redirigir(selectId) {
     });
 }
 
-function irAVistaAlertas() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión.');
-        window.location.href = '/';
-        return;
-    }
-    window.location.href = '/alerta';
-}
-
-async function cargarHistorial(id_bodega = null, fecha_inicio = null, fecha_fin = null) {
+async function cargarHistorial() {
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('No hay token en el localStorage');
@@ -52,14 +42,7 @@ async function cargarHistorial(id_bodega = null, fecha_inicio = null, fecha_fin 
     }
 
     try {
-        let url = 'http://localhost:4000/api/historial';
-        const params = new URLSearchParams();
-        if (id_bodega) params.append('id_bodega', id_bodega);
-        if (fecha_inicio) params.append('fecha_inicio', fecha_inicio);
-        if (fecha_fin) params.append('fecha_fin', fecha_fin);
-        if (params.toString()) url += `?${params.toString()}`;
-
-        const response = await fetch(url, {
+        const response = await fetch('http://localhost:4000/hist/historial', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -78,11 +61,8 @@ async function cargarHistorial(id_bodega = null, fecha_inicio = null, fecha_fin 
             throw new Error('La respuesta del backend no contiene un array de historial');
         }
 
-        // Guardar datos completos y resetear paginación
         historialCompleto = data.body;
         paginaActual = 1;
-        
-        // Mostrar datos paginados
         mostrarPaginaActual();
         crearControlesPaginacion();
         
@@ -96,81 +76,72 @@ function mostrarPaginaActual() {
     const inicio = (paginaActual - 1) * registrosPorPagina;
     const fin = inicio + registrosPorPagina;
     const datosPagina = historialCompleto.slice(inicio, fin);
-    
     actualizarTablaHistorial(datosPagina);
 }
 
 function actualizarTablaHistorial(historial) {
     const tbody = document.querySelector('#historialRows');
-    tbody.innerHTML = ''; // Limpiar filas existentes
+    tbody.innerHTML = '';
 
     if (historial.length === 0) {
-        const tr = document.createElement('div');
-        tr.classList.add('table-row2');
-        tr.innerHTML = `<span colspan="7">No se encontraron registros.</span>`;
-        tbody.appendChild(tr);
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = 'No se encontraron registros.';
+        tbody.appendChild(noResults);
         return;
     }
 
     historial.forEach(item => {
-        const tr = document.createElement('div');
-        tr.classList.add('table-row2');
-        tr.innerHTML = `
-            <span>${item.Nombre || 'N/A'}</span>
-            <span>${item.SKU || 'N/A'}</span>
-            <span>${item.Bodega || ''}</span>
-            <span>${item.Bodega_entregada || ''}</span>
-            <span>${item.Cantidad !== undefined ? item.Cantidad : 'N/A'}</span>
-            <span>${item.Tipo || 'N/A'}</span>
-            <span>${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</span>
+        const row = document.createElement('div');
+        row.className = 'table-row';
+        row.innerHTML = `
+            <div class="table-cell">${item.Bodega || 'N/A'}</div>
+            <div class="table-cell">${item.Codigo || 'N/A'}</div>
+            <div class="table-cell">${item.caracteristica || ''}</div>
+            <div class="table-cell">${item.Usuario || ''}</div>
+            <div class="table-cell">${item.cantidad_anterior !== undefined ? item.cantidad_anterior : 'N/A'}</div>
+            <div class="table-cell">${item.cantidad_nueva !== undefined ? item.cantidad_nueva : 'N/A'}</div>
+            <div class="table-cell">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</div>
         `;
-        tbody.appendChild(tr);
+        tbody.appendChild(row);
     });
 }
 
 function crearControlesPaginacion() {
     const totalPaginas = Math.ceil(historialCompleto.length / registrosPorPagina);
     
-    // Eliminar controles existentes si los hay
-    const controlesExistentes = document.querySelector('.controles-paginacion');
-    if (controlesExistentes) {
-        controlesExistentes.remove();
-    }
+    const controlesExistentes = document.querySelector('.pagination-controls');
+    if (controlesExistentes) controlesExistentes.remove();
     
-    // Crear nuevo contenedor de controles
     const controles = document.createElement('div');
-    controles.className = 'controles-paginacion';
+    controles.className = 'pagination-controls';
     
-    // Información de registros
     const inicio = (paginaActual - 1) * registrosPorPagina + 1;
     const fin = Math.min(paginaActual * registrosPorPagina, historialCompleto.length);
     
     controles.innerHTML = `
-        <div class="info-paginacion">
+        <div class="pagination-info">
             Mostrando ${inicio}-${fin} de ${historialCompleto.length} registros
         </div>
-        <div class="botones-paginacion">
-            <button class="btn-paginacion" id="btnPrimera" ${paginaActual === 1 ? 'disabled' : ''}>
-                ««
+        <div class="pagination-buttons">
+            <button class="pagination-button" id="btnPrimera" ${paginaActual === 1 ? 'disabled' : ''}>
+                <i class="fas fa-angle-double-left"></i>
             </button>
-            <button class="btn-paginacion" id="btnAnterior" ${paginaActual === 1 ? 'disabled' : ''}>
-                ‹
+            <button class="pagination-button" id="btnAnterior" ${paginaActual === 1 ? 'disabled' : ''}>
+                <i class="fas fa-angle-left"></i>
             </button>
-            <span class="pagina-actual">Página ${paginaActual} de ${totalPaginas}</span>
-            <button class="btn-paginacion" id="btnSiguiente" ${paginaActual === totalPaginas ? 'disabled' : ''}>
-                ›
+            <span class="current-page">Página ${paginaActual} de ${totalPaginas}</span>
+            <button class="pagination-button" id="btnSiguiente" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+                <i class="fas fa-angle-right"></i>
             </button>
-            <button class="btn-paginacion" id="btnUltima" ${paginaActual === totalPaginas ? 'disabled' : ''}>
-                »»
+            <button class="pagination-button" id="btnUltima" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+                <i class="fas fa-angle-double-right"></i>
             </button>
         </div>
     `;
     
-    // Insertar controles después de la tabla
-    const contenedorTabla = document.querySelector('.cont-segun-formu');
-    contenedorTabla.appendChild(controles);
+    document.querySelector('.history-container').appendChild(controles);
     
-    // Agregar event listeners
     document.getElementById('btnPrimera').addEventListener('click', () => cambiarPagina(1));
     document.getElementById('btnAnterior').addEventListener('click', () => cambiarPagina(paginaActual - 1));
     document.getElementById('btnSiguiente').addEventListener('click', () => cambiarPagina(paginaActual + 1));
@@ -179,7 +150,6 @@ function crearControlesPaginacion() {
 
 function cambiarPagina(nuevaPagina) {
     const totalPaginas = Math.ceil(historialCompleto.length / registrosPorPagina);
-    
     if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
         paginaActual = nuevaPagina;
         mostrarPaginaActual();
@@ -188,63 +158,39 @@ function cambiarPagina(nuevaPagina) {
 }
 
 function exportarAExcel() {
-    // Exportar todos los datos, no solo la página actual
     if (historialCompleto.length === 0) {
         alert('No hay datos para exportar');
         return;
     }
 
-    // Crear datos para Excel
     const datos = [
-        ["Nombre", "Producto SKU", "Bodega", "Bodega-entregada", "Cantidad", "Tipo", "Fecha"]
+        ["Bodega", "Código", "Característica", "Usuario", "Cantidad Anterior", "Cantidad Nueva", "Fecha"]
     ];
 
     historialCompleto.forEach(item => {
-        const datosFila = [
-            item.Nombre || 'N/A',
-            item.SKU || 'N/A',
-            item.Bodega || '',
-            item.Bodega_entregada || '',
-            item.Cantidad !== undefined ? item.Cantidad : 'N/A',
-            item.Tipo || 'N/A',
+        datos.push([
+            item.Bodega || 'N/A',
+            item.Codigo || 'N/A',
+            item.caracteristica || '',
+            item.Usuario || '',
+            item.cantidad_anterior !== undefined ? item.cantidad_anterior : 'N/A',
+            item.cantidad_nueva !== undefined ? item.cantidad_nueva : 'N/A',
             item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'
-        ];
-        datos.push(datosFila);
+        ]);
     });
 
-    // Crear hoja de cálculo
     const ws = XLSX.utils.aoa_to_sheet(datos);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Historial");
-
-    // Generar y descargar archivo Excel
     XLSX.writeFile(wb, `Historial_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     verificarTokenAlCargar();
-    // Cargar datos iniciales sin filtros
     cargarHistorial();
 
-    // Aplicar filtros
-    document.getElementById('aplicarFiltros').addEventListener('click', () => {
-        const id_bodega = document.getElementById('filtroBodega').value || null;
-        const fecha_inicio = document.getElementById('filtroFechaInicio').value || null;
-        const fecha_fin = document.getElementById('filtroFechaFin').value || null;
-
-        // Validar que fecha_fin no sea anterior a fecha_inicio
-        if (fecha_inicio && fecha_fin && new Date(fecha_fin) < new Date(fecha_inicio)) {
-            alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
-            return;
-        }
-
-        cargarHistorial(id_bodega, fecha_inicio, fecha_fin);
-    });
-
-    // Exportar a Excel
     document.getElementById('exportarExcel').addEventListener('click', exportarAExcel);
 
-    // Redirigir para los menús desplegables
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');

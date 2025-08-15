@@ -70,8 +70,8 @@ async function cargarBodegas() {
 }
 
 async function rellenarCamposDesdeLocalStorage() {
-  const nombreUsuario = localStorage.getItem("nombre_usuario");
-  const idSesionBodega = localStorage.getItem("id_bodega");
+  const nombreUsuario = localStorage.getItem("nombre");
+  const idSesionBodega = localStorage.getItem("bodega");
 
   // Autocompletar campo usuario desde localStorage
   if (nombreUsuario) {
