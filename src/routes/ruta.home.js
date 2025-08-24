@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { alerta, crear_bodegas, historial, inventario, inventario_view, login, logistica, modi_bodegas, modificar, registrar, seguimiento, session, supervisor } from "../controllers/home.controller.js";
+import { alerta, crear_bodegas, historial, inventario, inventario_inicial, inventario_view, login, logistica, modi_bodegas, modificar, registrar, seguimiento, session, supervisor } from "../controllers/home.controller.js";
 
 const rutaHome = Router();
 
@@ -15,6 +15,7 @@ rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
 // rutaHome.get("/inyeccion",producto_inyec);
 rutaHome.get("/", login);
+rutaHome.get("/inventario_inicial", inventario_inicial);
 
 
 

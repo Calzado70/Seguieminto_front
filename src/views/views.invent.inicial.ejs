@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/inventario.inicial.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Supervisor</title>
+</head>
+
+<body>
+  <div class="container">
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      </div>
+    </nav>
+
+    <div class="content-segundario">
+      <div class="escrito">
+        <h2 class="h2">Inventario</h2>
+        <div class="cont-segun-list">
+          <div class="cont-segun-list-for">
+            <select class="input" id="usuarioSelect">
+              <option value="">Selecciona la Pareja</option>
+              <option value="1">Pareja 1</option>
+              <option value="2">Pareja 2</option>
+              <option value="3">Pareja 3</option>
+              <option value="4">Pareja 4</option>
+              <option value="5">Pareja 5</option>
+              <option value="6">Pareja 6</option>
+              <option value="7">Pareja 7</option>
+              <option value="8">Pareja 8</option>
+              <option value="9">Pareja 9</option>
+              <option value="10">Pareja 10</option>
+              <option value="11">Pareja 11</option>
+              <option value="12">Pareja 12</option>
+              <option value="13">Pareja 13</option>
+              <option value="14">Pareja 14</option>
+              <option value="15">Pareja 15</option>
+              <option value="16">Pareja 16</option>
+            </select>
+            <select class="input" id="conteoSelect">
+              <option value="">Selecciona el Conteo</option>
+              <option value="1">Conteo 1</option>
+              <option value="2">Conteo 2</option>
+              <option value="3">Conteo 3</option>
+            </select>
+            <select class="input" id="BodegaSelect">
+              <option value="">Selecciona la bodega</option>
+              <option value="Corte">Corte</option>
+              <option value="Guarnecida">Guarnecida</option>
+              <option value="Montaje">Montaje</option>
+              <option value="Inyeccion">Inyeccion</option>
+              <option value="Terminada">Terminada</option>
+            </select>
+            <input type="text" class="input" id="codigo_producto" placeholder="Código del Producto" />
+            <input type="number" class="input" id="cantidad_producto" placeholder="Cantidad" min=".5" <div
+              class="cont-segun-list-bot">
+            <button class="button" id="mover-productos">
+              exportar a excel
+            </button>
+          </div>
+          <div class="cont-segun-formu">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr class="table-row1">
+                    <th>Pareja</th>
+                    <th>Conteo</th>
+                    <th>Bodega</th>
+                    <th>Codigo</th>
+                    <th>Talla</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                  <!-- Aquí se mostrarán los productos agregados -->
+                </tbody>
+              </table>
+
+              <!-- ✅ Contador total de productos -->
+              <div class="contador-productos">
+                <strong>Total productos únicos:</strong>
+                <span id="totalProductos">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="/js/inventario.inicial.js"></script>
+</body>
+
+</html>
