@@ -14,8 +14,8 @@ rutaHome.get("/alerta", alerta); //puede que ya no sea necesario
 rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
 // rutaHome.get("/inyeccion",producto_inyec);
-rutaHome.get("/", login);
-rutaHome.get("/inicial", inventario_inicial);
+rutaHome.get("/login", login);
+rutaHome.get("", inventario_inicial);
 
 
 
