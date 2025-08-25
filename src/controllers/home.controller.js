@@ -54,7 +54,7 @@ export const session = (req, res) => {
 }
 
 export const inventario_inicial = (req, res) => {
-    res.render("views.invent.inicial.ejs");
+    res.render("views.inventario_inicial.ejs");
 }
 
 
