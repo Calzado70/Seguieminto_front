@@ -46,7 +46,7 @@ function togglePassword() {
 async function cargarBodegas() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/bode/mostrar', {
+        const response = await fetch('http://192.168.1.13:4000/bode/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
