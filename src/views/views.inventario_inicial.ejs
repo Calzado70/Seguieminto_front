@@ -35,10 +35,6 @@
                             <option value="10">Pareja 10</option>
                             <option value="11">Pareja 11</option>
                             <option value="12">Pareja 12</option>
-                            <option value="13">Pareja 13</option>
-                            <option value="14">Pareja 14</option>
-                            <option value="15">Pareja 15</option>
-                            <option value="16">Pareja 16</option>
                         </select>
                         
                         <select class="input" id="conteoSelect">
@@ -49,17 +45,20 @@
                         </select>
                         
                         <select class="input" id="BodegaSelect">
-                            <option value="">Selecciona la bodega</option>
-                            <option value="Corte">Corte</option>
-                            <option value="Guarnecida">Guarnecida</option>
-                            <option value="Montaje">Montaje</option>
-                            <option value="Inyeccion">Inyeccion</option>
-                            <option value="Terminada">Terminada</option>
+                            <option value="">Selecciona la Zona</option>
+                            <option value="Laboratorio">Laboratorio</option>
+                            <option value="Terceros">Terceros</option>
+                            <option value="Oficina">Oficina</option>
+                            <option value="MezaniA">MezaniA</option>
+                            <option value="MezaniB">MezaniB</option>
+                            <option value="Estanteria_lado_A">Estanteria_lado_A</option>
+                            <option value="Estanteria_lado_B">Estanteria_lado_B</option>
+                            <option value="Estanteria_lado_C">Estanteria_lado_C</option>
                         </select>
                         
                         <input type="text" class="input" id="codigo_producto" placeholder="Código del Producto" />
                         
-                        <input type="number" class="input" id="cantidad_producto" placeholder="Cantidad" min="0.5" step="0.5" />
+                        <input type="number" class="input" id="cantidad_producto" placeholder="Cantidad" min="1" step="1" />
                         
                         <div class="cont-segun-list-bot">
                             <button class="button" id="mover-productos">
@@ -74,7 +73,7 @@
                                         <tr class="table-row1">
                                             <th>Pareja</th>
                                             <th>Conteo</th>
-                                            <th>Bodega</th>
+                                            <th>Zona</th>
                                             <th>Codigo</th>
                                             <th>Talla</th>
                                             <th>Fecha</th>

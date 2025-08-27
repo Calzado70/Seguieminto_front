@@ -50,7 +50,7 @@ async function consultarInventario() {
 
     try {
         const token = localStorage.getItem('token');
-        let url = `http://192.168.1.13:4000/product/inventario`;
+        let url = `http://localhost:4000/product/inventario`;
 
         if (nombre_bodega) {
             url += `?nombre_bodega=${encodeURIComponent(nombre_bodega)}`;
@@ -104,7 +104,7 @@ async function cargarBodegas() {
         select.disabled = true;
 
         const token = localStorage.getItem('token');
-        const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+        const res = await fetch('http://localhost:4000/bode/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

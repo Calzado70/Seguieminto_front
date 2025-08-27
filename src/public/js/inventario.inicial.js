@@ -45,7 +45,7 @@ function manejarCodigoIngresado() {
     if (codigo.length >= 2) {
         // Auto-completar cantidad si está vacía
         if (!cantidadInput.value) {
-            cantidadInput.value = 0.5;
+            cantidadInput.value = 1;
         }
         
         // Si el código está completo (ajusta según tus códigos)
@@ -55,18 +55,6 @@ function manejarCodigoIngresado() {
             }, 100);
         }
     }
-}
-
-// Función para obtener el prefijo según la bodega
-function obtenerPrefijoBodega(bodega) {
-    const prefijos = {
-        'Corte': 'PPC',
-        'Guarnecida': 'PPG',
-        'Montaje': 'PPM',
-        'Inyeccion': 'PPI',
-        'Terminada': 'PPT'
-    };
-    return prefijos[bodega] || '';
 }
 
 function agregarProducto() {
@@ -82,28 +70,17 @@ function agregarProducto() {
     }
     
     if (!bodegaSelect.value) {
-        alert('Por favor selecciona una bodega');
-        return;
-    }
-    
-    if (!codigoInput.value.trim()) {
-        alert('Por favor ingresa el código del producto');
+        alert('Por favor selecciona una Zona');
         return;
     }
     
     let codigo = codigoInput.value.trim();
-    const cantidad = parseFloat(cantidadInput.value) || 0.5;
+    const cantidad = parseFloat(cantidadInput.value) || 1;
     const pareja = usuarioSelect.options[usuarioSelect.selectedIndex].text;
     const conteo = conteoSelect.options[conteoSelect.selectedIndex].text;
     const bodegaTexto = bodegaSelect.options[bodegaSelect.selectedIndex].text;
     const talla = codigo.slice(-2);
     const fecha = new Date().toLocaleDateString('es-CO');
-    
-    // Obtener prefijo y aplicarlo si no existe
-    const prefijo = obtenerPrefijoBodega(bodegaTexto);
-    if (prefijo && !codigo.startsWith(prefijo)) {
-        codigo = prefijo + codigo;
-    }
     
     // Buscar si el producto ya existe (usando código CON prefijo)
     const productoExistente = productos.find(p => 
@@ -213,7 +190,17 @@ function editarProducto(id) {
 }
 
 function eliminarProducto(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+    const claveCorrecta = "Admin123*-"; // ✅ contraseña para eliminar
+    
+    const claveIngresada = prompt("Ingrese la clave de autorización para eliminar este registro:");
+    if (claveIngresada !== claveCorrecta) {
+        if (claveIngresada !== null) {
+            alert("Clave incorrecta. No se puede eliminar el producto.");
+        }
+        return;
+    }
+
+    if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
         productos = productos.filter(p => p.id !== id);
         const fila = document.querySelector(`tr[data-id="${id}"]`);
         if (fila) {
@@ -221,6 +208,7 @@ function eliminarProducto(id) {
         }
         guardarProductos();
         actualizarContador();
+        alert("Producto eliminado exitosamente.");
     }
 }
 
@@ -244,11 +232,6 @@ function cargarProductosGuardados() {
     if (productosGuardados) {
         productos = JSON.parse(productosGuardados);
         productos.forEach(producto => {
-            // Asegurar que los productos guardados tengan prefijo
-            const prefijo = obtenerPrefijoBodega(producto.bodega);
-            if (prefijo && !producto.codigo.startsWith(prefijo)) {
-                producto.codigo = prefijo + producto.codigo;
-            }
             agregarFilaTabla(producto);
         });
         actualizarContador();
@@ -279,7 +262,7 @@ function exportarAExcel() {
         const datosExcel = productos.map(producto => ({
             'Pareja': producto.pareja,
             'Conteo': producto.conteo,
-            'Bodega': producto.bodega,
+            'Zona': producto.bodega,
             'Código': producto.codigo,
             'Talla': producto.talla,
             'Cantidad': producto.cantidad,
