@@ -102,7 +102,7 @@ async function cargarBodegas() {
   const select = document.getElementById('id_bodega'); // este ID es correcto según tu HTML
 
   try {
-    const res = await fetch('http://localhost:4000/bode/mostrar'); // Ajusta si es necesario
+    const res = await fetch('http://192.168.1.13:4000/bode/mostrar'); // Ajusta si es necesario
     const data = await res.json();
 
     if (data.success && Array.isArray(data.data)) {
@@ -256,7 +256,7 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
     // 🟡 Si es bodega de inyección (ID 3) y hay una característica válida, actualizarla primero
     if (id_bodega_origen === 3 && caracteristicas !== 'N/A' && caracteristicas !== '') {
       try {
-        const actualizarResp = await fetch('http://localhost:4000/product/actualizar', {
+        const actualizarResp = await fetch('http://192.168.1.13:4000/product/actualizar', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -296,7 +296,7 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
     };
 
     try {
-      const response = await fetch('http://localhost:4000/product/transferencia', {
+      const response = await fetch('http://192.168.1.13:4000/product/transferencia', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

@@ -326,7 +326,7 @@ async function eliminarBodega(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/bode/eliminar', {
+        const response = await fetch('http://192.168.1.13:4000/bode/eliminar', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
