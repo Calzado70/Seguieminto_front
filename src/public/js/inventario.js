@@ -1,5 +1,8 @@
 // Variables globales
 let bodegasData = [];
+let inventarioCompleto = [];
+let paginaActual = 1;
+const elementosPorPagina = 10;
 
 // Verificar token al cargar
 function verificarTokenAlCargar() {
@@ -50,7 +53,7 @@ async function consultarInventario() {
 
     try {
         const token = localStorage.getItem('token');
-        let url = `http://192.168.1.13:4000/product/inventario`;
+        let url = `http://localhost:4000/product/inventario`;
 
         if (nombre_bodega) {
             url += `?nombre_bodega=${encodeURIComponent(nombre_bodega)}`;
@@ -67,44 +70,178 @@ async function consultarInventario() {
         }
 
         if (data && Array.isArray(data.body) && data.body.length > 0) {
-            data.body.forEach(producto => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${producto.bodega}</td>
-                    <td>${producto.codigo}</td>
-                    <td>${producto.caracteristica}</td>
-                    <td>${producto.cantidad_disponible}</td>
-                    <td>${new Date(producto.fecha_actualizacion).toLocaleDateString()}</td>
-                `;
-                tbody.appendChild(row);
-            });
+            inventarioCompleto = data.body;
+            paginaActual = 1;
+            mostrarPagina(paginaActual);
             tabla.style.display = 'table';
             emptyState.style.display = 'none';
             showToast('Inventario cargado correctamente', 'success');
         } else {
+            inventarioCompleto = [];
             emptyState.innerHTML = `<i class="fas fa-box-open"></i><p>No se encontró inventario</p>`;
             mensaje.textContent = 'No se encontró inventario.';
             mensaje.classList.add('error');
+            ocultarPaginador();
         }
     } catch (error) {
         console.error('Error al consultar inventario:', error);
+        inventarioCompleto = [];
         emptyState.innerHTML = `<i class="fas fa-exclamation-triangle"></i><p>Error al cargar el inventario</p>`;
         mensaje.textContent = `Error: ${error.message}`;
         mensaje.classList.add('error');
+        ocultarPaginador();
     }
 }
 
+function mostrarPagina(pagina) {
+    const tabla = document.getElementById('tablaInventario');
+    const tbody = tabla.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    const inicio = (pagina - 1) * elementosPorPagina;
+    const fin = inicio + elementosPorPagina;
+    const datosPagina = inventarioCompleto.slice(inicio, fin);
+
+    datosPagina.forEach(producto => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${producto.bodega}</td>
+            <td>${producto.codigo}</td>
+            <td>${producto.caracteristica}</td>
+            <td>${producto.cantidad_disponible}</td>
+            <td>${new Date(producto.fecha_actualizacion).toLocaleDateString()}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    actualizarPaginador();
+}
+
+function actualizarPaginador() {
+    const totalPaginas = Math.ceil(inventarioCompleto.length / elementosPorPagina);
+    let paginador = document.getElementById('paginador');
+
+    if (!paginador) {
+        paginador = document.createElement('div');
+        paginador.id = 'paginador';
+        paginador.className = 'paginador';
+        document.querySelector('.table-container').appendChild(paginador);
+    }
+
+    if (totalPaginas <= 1) {
+        paginador.style.display = 'none';
+        return;
+    }
+
+    paginador.style.display = 'flex';
+    paginador.innerHTML = '';
+
+    // Información de página
+    const info = document.createElement('div');
+    info.className = 'paginador-info';
+    const inicio = (paginaActual - 1) * elementosPorPagina + 1;
+    const fin = Math.min(paginaActual * elementosPorPagina, inventarioCompleto.length);
+    info.textContent = `Mostrando ${inicio}-${fin} de ${inventarioCompleto.length} registros`;
+    paginador.appendChild(info);
+
+    // Controles de paginación
+    const controles = document.createElement('div');
+    controles.className = 'paginador-controles';
+
+    // Botón anterior
+    const btnAnterior = document.createElement('button');
+    btnAnterior.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    btnAnterior.className = 'paginador-btn';
+    btnAnterior.disabled = paginaActual === 1;
+    btnAnterior.onclick = () => cambiarPagina(paginaActual - 1);
+    controles.appendChild(btnAnterior);
+
+    // Números de página
+    const rangoPaginas = obtenerRangoPaginas(paginaActual, totalPaginas);
+    
+    rangoPaginas.forEach(num => {
+        if (num === '...') {
+            const separador = document.createElement('span');
+            separador.textContent = '...';
+            separador.className = 'paginador-separador';
+            controles.appendChild(separador);
+        } else {
+            const btnPagina = document.createElement('button');
+            btnPagina.textContent = num;
+            btnPagina.className = `paginador-btn ${num === paginaActual ? 'active' : ''}`;
+            btnPagina.onclick = () => cambiarPagina(num);
+            controles.appendChild(btnPagina);
+        }
+    });
+
+    // Botón siguiente
+    const btnSiguiente = document.createElement('button');
+    btnSiguiente.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    btnSiguiente.className = 'paginador-btn';
+    btnSiguiente.disabled = paginaActual === totalPaginas;
+    btnSiguiente.onclick = () => cambiarPagina(paginaActual + 1);
+    controles.appendChild(btnSiguiente);
+
+    paginador.appendChild(controles);
+}
+
+function obtenerRangoPaginas(actual, total) {
+    const rango = [];
+    const delta = 2;
+
+    if (total <= 7) {
+        for (let i = 1; i <= total; i++) {
+            rango.push(i);
+        }
+    } else {
+        rango.push(1);
+        
+        if (actual > delta + 2) {
+            rango.push('...');
+        }
+
+        const inicio = Math.max(2, actual - delta);
+        const fin = Math.min(total - 1, actual + delta);
+
+        for (let i = inicio; i <= fin; i++) {
+            rango.push(i);
+        }
+
+        if (actual < total - delta - 1) {
+            rango.push('...');
+        }
+
+        rango.push(total);
+    }
+
+    return rango;
+}
+
+function cambiarPagina(nuevaPagina) {
+    const totalPaginas = Math.ceil(inventarioCompleto.length / elementosPorPagina);
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+        paginaActual = nuevaPagina;
+        mostrarPagina(paginaActual);
+        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function ocultarPaginador() {
+    const paginador = document.getElementById('paginador');
+    if (paginador) {
+        paginador.style.display = 'none';
+    }
+}
 
 // Cargar bodegas
 async function cargarBodegas() {
     const select = document.getElementById('nombre_bodega');
     try {
-        // Mostrar estado de carga
         select.innerHTML = '<option value="">Cargando bodegas...</option>';
         select.disabled = true;
 
         const token = localStorage.getItem('token');
-        const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+        const res = await fetch('http://localhost:4000/bode/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

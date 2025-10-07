@@ -407,3 +407,78 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+/* Estilos del Paginador */
+.paginador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.paginador-info {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+}
+
+.paginador-controles {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.paginador-btn {
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+  min-width: 40px;
+  color: var(--primary-color);
+}
+
+.paginador-btn:hover:not(:disabled) {
+  background-color: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+}
+
+.paginador-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.paginador-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: #f8f9fa;
+}
+
+.paginador-separador {
+  padding: 0 0.25rem;
+  color: var(--dark-gray);
+}
+
+@media (max-width: 768px) {
+  .paginador {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .paginador-controles {
+    justify-content: center;
+  }
+  
+  .paginador-info {
+    text-align: center;
+  }
+}

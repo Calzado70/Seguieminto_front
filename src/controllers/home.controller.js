@@ -58,6 +58,11 @@ export const inventario_inicial = (req, res) => {
 }
 
 
+export const packing_list = (req, res) => {
+    res. render("views.packing.list.ejs");
+}
+
+
 
 
 // export const producto_inyec = (req, res) => {

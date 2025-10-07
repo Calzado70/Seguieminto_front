@@ -24,15 +24,21 @@ function verificarTokenAlCargar() {
   }
 }
 
-function redirigir(selectId) {
-  const selectElement = document.getElementById(selectId);
-  selectElement.addEventListener("change", function () {
-    const selectedOption =
-      selectElement.options[selectElement.selectedIndex].value;
-    if (selectedOption) {
-      window.location.href = selectedOption;
-    }
-  });
+function redirigir(elementId) {
+  const element = document.getElementById(elementId);
+  
+  if (element.tagName === 'SELECT') {
+    element.addEventListener("change", function() {
+      const selectedOption = element.options[element.selectedIndex].value;
+      if (selectedOption) {
+        window.location.href = selectedOption;
+      }
+    });
+  } else if (element.tagName === 'BUTTON') {
+    element.addEventListener("click", function() {
+      window.location.href = element.value;
+    });
+  }
 }
 
 /**
@@ -102,7 +108,7 @@ async function cargarBodegas() {
   const select = document.getElementById('id_bodega'); // este ID es correcto según tu HTML
 
   try {
-    const res = await fetch('http://192.168.1.13:4000/bode/mostrar'); // Ajusta si es necesario
+    const res = await fetch('http://localhost:4000/bode/mostrar'); // Ajusta si es necesario
     const data = await res.json();
 
     if (data.success && Array.isArray(data.data)) {
@@ -256,7 +262,7 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
     // 🟡 Si es bodega de inyección (ID 3) y hay una característica válida, actualizarla primero
     if (id_bodega_origen === 3 && caracteristicas !== 'N/A' && caracteristicas !== '') {
       try {
-        const actualizarResp = await fetch('http://192.168.1.13:4000/product/actualizar', {
+        const actualizarResp = await fetch('http://localhost:4000/product/actualizar', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -296,7 +302,7 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
     };
 
     try {
-      const response = await fetch('http://192.168.1.13:4000/product/transferencia', {
+      const response = await fetch('http://localhost:4000/product/transferencia', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -342,7 +348,7 @@ document.getElementById('mover-productos').addEventListener('click', async () =>
   }
 });
 
-
+redirigir("sesion");
 
 document.getElementById("cerrarModalErrorStock").addEventListener("click", () => {
   document.getElementById("modalErrorStock").style.display = "none";
