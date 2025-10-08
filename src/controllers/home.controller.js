@@ -57,13 +57,12 @@ export const inventario_inicial = (req, res) => {
     res.render("views.inventario_inicial.ejs");
 }
 
-
 export const packing_list = (req, res) => {
-    res. render("views.packing.list.ejs");
+    res.render("views.packing.list.ejs");
 }
 
-export const entrega = (req, res) => {
-    res. render("views.entraga.ejs");
+export const entrega  = (req, res) => {
+    res.render("views.entrega.ejs");
 }
 
 
