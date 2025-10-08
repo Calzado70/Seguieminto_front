@@ -62,6 +62,10 @@ export const packing_list = (req, res) => {
     res. render("views.packing.list.ejs");
 }
 
+export const entrega = (req, res) => {
+    res. render("views.entraga.ejs");
+}
+
 
 
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { alerta, 
     crear_bodegas, 
+    entrega, 
     historial, 
     inventario, 
     inventario_inicial, 
@@ -34,6 +35,7 @@ rutaHome.get("/inicial",inventario_inicial);
 
 //Packing List
 rutaHome.get("/packing", packing_list);
+rutaHome.get("/entrega", entrega);
 
 
 
