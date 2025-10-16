@@ -1,18 +1,27 @@
 :root {
   --primary-color: #13302E;
   --primary-light: #1a403d;
+  --primary-dark: #0a1c1b;
   --secondary-color: #E0FF00;
   --accent-color: #4361ee;
+  --accent-light: #5a7cff;
   --text-light: #ffffff;
   --text-dark: #333333;
+  --text-gray: #a0a0a0;
   --bg-light: #f5f7fa;
   --bg-dark: #383737;
+  --bg-darker: #2a2a2a;
   --border-color: #b1b6b1;
+  --border-light: #e1e5e9;
   --error-color: #ff3333;
   --success-color: #4bb543;
-  --border-radius: 8px;
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --border-radius-sm: 6px;
+  --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease;
+  --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
 }
 
 * {
@@ -31,6 +40,10 @@ body {
   color: var(--text-dark);
   font-family: 'Corbel', Arial, sans-serif;
   line-height: 1.6;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(19, 48, 46, 0.03) 0%, rgba(19, 48, 46, 0) 25%),
+    radial-gradient(circle at 85% 30%, rgba(67, 97, 238, 0.05) 0%, rgba(67, 97, 238, 0) 25%);
 }
 
 .container {
@@ -42,18 +55,21 @@ body {
 /* Navbar mejorada */
 .navbar {
   width: 100%;
-  background-color: var(--primary-color);
+  background: var(--gradient-primary);
   padding: 0.8rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
+  position: relative;
+  z-index: 100;
 }
 
 .navbar-brand .logo {
   height: 50px;
   width: auto;
   transition: var(--transition);
+  filter: brightness(0) invert(1);
 }
 
 .navbar-brand .logo:hover {
@@ -73,24 +89,30 @@ body {
 
 .dropdown {
   position: relative;
-  min-width: 150px;
+  min-width: 180px;
 }
 
 .dropdown-select {
   width: 100%;
-  padding: 0.6rem 1rem;
-  background-color: #000000;
-  color: var(--secondary-color);
-  border: none;
-  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-light);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
   appearance: none;
   cursor: pointer;
   font-size: 0.9rem;
   transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-select:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-select:focus {
   outline: none;
+  border-color: var(--secondary-color);
   box-shadow: 0 0 0 2px rgba(224, 255, 0, 0.3);
 }
 
@@ -99,27 +121,31 @@ body {
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--secondary-color);
+  color: var(--text-light);
   pointer-events: none;
+  font-size: 0.8rem;
 }
 
 .nav-button {
-  padding: 0.6rem 1.2rem;
+  padding: 0.75rem 1.5rem;
   background-color: transparent;
-  color: var(--secondary-color);
-  border: 1px solid var(--secondary-color);
-  border-radius: var(--border-radius);
+  color: var(--text-light);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   transition: var(--transition);
+  font-weight: 500;
 }
 
 .nav-button:hover {
-  background-color: rgba(224, 255, 0, 0.1);
+  background-color: rgba(224, 255, 0, 0.15);
+  border-color: var(--secondary-color);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-button i {
@@ -133,37 +159,65 @@ body {
   align-items: center;
   flex-grow: 1;
   padding: 2rem;
-  background-color: #43beee;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: 
+    radial-gradient(circle at 30% 70%, rgba(67, 190, 238, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(224, 255, 0, 0.05) 0%, transparent 50%);
+  z-index: -1;
 }
 
 .login-card {
-  background-color: var(--bg-dark);
+  background-color: var(--text-light);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   width: 100%;
-  max-width: 500px;
-  padding: 2rem;
+  max-width: 480px;
+  padding: 2.5rem;
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
 }
 
 .login-header {
   text-align: center;
   margin-bottom: 2rem;
-  color: var(--text-light);
+  color: var(--text-dark);
 }
 
 .login-header h2 {
   font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
+  color: var(--primary-color);
 }
 
 .login-header p {
-  color: var(--border-color);
-  font-size: 0.9rem;
+  color: var(--text-gray);
+  font-size: 0.95rem;
 }
 
 /* Formulario */
@@ -180,11 +234,17 @@ body {
 }
 
 .form-group label {
-  color: var(--text-light);
+  color: var(--text-dark);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group label i {
+  color: var(--primary-color);
+  width: 16px;
 }
 
 .select-wrapper {
@@ -193,12 +253,13 @@ body {
 
 .form-input {
   width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
   background-color: #ffffff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   transition: var(--transition);
+  color: var(--text-dark);
 }
 
 select.form-input {
@@ -208,8 +269,13 @@ select.form-input {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 0 2px rgba(224, 255, 0, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input:hover {
+  border-color: var(--border-color);
 }
 
 .select-icon {
@@ -217,13 +283,15 @@ select.form-input {
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-dark);
+  color: var(--text-gray);
   pointer-events: none;
+  font-size: 0.8rem;
 }
 
 textarea.form-input {
   min-height: 100px;
   resize: vertical;
+  font-family: inherit;
 }
 
 .form-actions {
@@ -232,28 +300,61 @@ textarea.form-input {
 
 .submit-button {
   width: 100%;
-  padding: 0.8rem;
-  background-color: var(--primary-color);
+  padding: 1rem;
+  background: var(--gradient-primary);
   color: var(--text-light);
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-sm);
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
 .submit-button:hover {
-  background-color: var(--primary-light);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(19, 48, 46, 0.3);
+}
+
+.submit-button:hover::before {
+  left: 100%;
 }
 
 .submit-button:active {
   transform: translateY(0);
+}
+
+.submit-button i {
+  font-size: 1rem;
+}
+
+/* Estados de los campos */
+.form-input:disabled {
+  background-color: #f8f9fa;
+  color: var(--text-gray);
+  cursor: not-allowed;
+}
+
+.form-input:read-only {
+  background-color: #f8f9fa;
+  color: var(--text-dark);
 }
 
 /* Responsive */
@@ -261,10 +362,11 @@ textarea.form-input {
   .navbar {
     flex-direction: column;
     padding: 1rem;
+    gap: 1rem;
   }
   
   .navbar-brand {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
   
   .navbar-options {
@@ -278,6 +380,85 @@ textarea.form-input {
   }
   
   .login-card {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+  
+  .login-header h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
+  .login-card {
     padding: 1.5rem;
   }
+  
+  .login-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .form-input {
+    padding: 0.8rem;
+  }
+  
+  .submit-button {
+    padding: 0.9rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Mejoras de accesibilidad */
+.form-input:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.submit-button:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+/* Estados de carga */
+.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--text-light);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

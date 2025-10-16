@@ -57,6 +57,7 @@ async function cargarBodegas() {
         option.textContent = bodega.nombre;
         selectBodega.appendChild(option);
       });
+      selectBodega.disabled = false;
     } else {
       console.error("Estructura de respuesta inesperada:", result);
       selectBodega.innerHTML =

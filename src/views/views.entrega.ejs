@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,49 +9,35 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <title>Toma Inventario</title>
 </head>
+
 <body>
   <div class="container">
     <nav class="navbar">
-      <div class="navbar-brand">
-        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-      </div>
+      <div class="navbar-brand"> <img src="/img/Trost_blanco.png" alt="Logo" class="logo"> </div>
     </nav>
-
     <div class="content-segundario">
       <div class="escrito">
         <h2 class="h2">Toma de Inventario</h2>
         <div class="cont-segun-list">
-          <div class="form-grid">
-
-            <!-- RESPONSABLE -->
-            <div class="input-group">
-              <label class="input-label" for="responsableInput">Responsable</label>
-              <input type="text" class="input" id="responsableInput" placeholder="Responsable" />
-            </div>
-
-            <!-- CÓDIGO -->
-            <div class="input-group">
-              <label class="input-label" for="codigo_producto">Código del Producto</label>
-              <input type="text" class="input" id="codigo_producto" placeholder="Escanea o escribe el código" />
-            </div>
+          <div class="form-grid"> <!-- RESPONSABLE -->
+            <div class="input-group"> <label class="input-label" for="responsableInput">Responsable</label> <input
+                type="text" class="input" id="responsableInput" placeholder="Responsable" /> </div> <!-- CAJA -->
+            <div class="input-group"> <label class="input-label" for="cajaInput">Caja</label> <input type="text"
+                class="input" id="cajaInput" placeholder="Número de caja" /> </div> <!-- CÓDIGO -->
+            <div class="input-group"> <label class="input-label" for="codigo_producto">Código del Producto</label>
+              <input type="text" class="input" id="codigo_producto" placeholder="Escanea o escribe el código" /> </div>
           </div>
-
-          <div class="cont-segun-list-bot">
-            <button class="button" id="mover-productos">
-              <i class="fas fa-file-export"></i>
-              Exportar a Excel
-            </button>
-          </div>
-
+          <div class="cont-segun-list-bot"> <button class="button" id="mover-productos"> <i
+                class="fas fa-file-export"></i> Exportar a Excel </button> </div>
           <div class="table-container">
             <div class="table-header">
               <div class="table-title">Productos Agregados</div>
             </div>
-            
             <table>
               <thead>
                 <tr>
                   <th>Responsable</th>
+                  <th>Caja</th>
                   <th>Código</th>
                   <th>Talla</th>
                   <th>Cantidad</th>
@@ -59,26 +46,22 @@
               </thead>
               <tbody id="tablaProductos">
                 <tr id="empty-state" style="display: none;">
-                  <td colspan="5">
-                    <div class="empty-state">
-                      <i class="fas fa-box-open"></i>
+                  <td colspan="6">
+                    <div class="empty-state"> <i class="fas fa-box-open"></i>
                       <p>No hay productos agregados aún</p>
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
-
-            <div class="contador-productos">
-              <strong>Total productos únicos:</strong>
-              <span id="totalProductos">0</span>
+            <div class="contador-productos"> <strong>Total productos únicos:</strong> <span id="totalProductos">0</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <script src="/js/entrega.js"></script>
 </body>
+
 </html>
