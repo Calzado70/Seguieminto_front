@@ -231,3 +231,4 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
   }
 });
 
+
