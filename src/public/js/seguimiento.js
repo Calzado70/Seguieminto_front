@@ -31,7 +31,7 @@ async function cargarMovimientos(idBodega = null, fechaInicio = null, fechaFin =
     }
 
     try {
-        let url = 'http://localhost:4000/product/movi';
+        let url = 'http://192.168.1.13:4000/product/movi';
         const params = new URLSearchParams();
 
         // Solo agregamos parámetros si no están vacíos
@@ -247,7 +247,7 @@ function redirigir(selectId) {
 async function cargarBodegas() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/bode/mostrar', {
+        const response = await fetch('http://192.168.1.13:4000/bode/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
