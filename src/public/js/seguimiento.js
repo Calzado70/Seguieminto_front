@@ -98,7 +98,7 @@ function actualizarTablaPaginada() {
             <td>${movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A'}</td>
             <td>${movimiento.tipo_movimiento || 'N/A'}</td>
             <td>${movimiento.observaciones || 'N/A'}</td>
-            <td>${movimiento.fecha_movimiento ? new Date(movimiento.fecha_movimiento).toLocaleString() : 'N/A'}</td>
+            <td>${movimiento.fecha_movimiento || 'N/A'}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -221,7 +221,7 @@ function exportarAExcel() {
             movimiento.cantidad !== undefined ? movimiento.cantidad : 'N/A',
             movimiento.tipo_movimiento || 'N/A',
             movimiento.observaciones || 'N/A',
-            movimiento.fecha_movimiento ? new Date(movimiento.fecha_movimiento).toLocaleString() : 'N/A'
+            movimiento.fecha_movimiento || 'N/A'
         ]);
     });
 
