@@ -358,3 +358,63 @@ table tbody tr:last-child td {
   color: var(--success-color);
   border-left: 4px solid var(--success-color);
 }
+
+
+
+
+/* === Modal de confirmación === */
+.modal-confirmacion {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-contenido {
+  background: #ffffff;
+  padding: 30px 50px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  animation: slideIn 0.4s ease-out;
+}
+
+.modal-contenido h3 {
+  margin-top: 10px;
+  color: #2e7d32;
+  font-size: 22px;
+}
+
+.modal-contenido p {
+  color: #444;
+  font-size: 16px;
+}
+
+.icono-exito {
+  font-size: 60px;
+  color: #2e7d32;
+  animation: pulse 1s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
