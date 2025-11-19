@@ -34,28 +34,68 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // === Inicialización de eventos ===
 function inicializarEventos() {
+
+  // Detectar cuando se escanea el código
   codigoInput.addEventListener('input', manejarCodigoIngresado);
+
+  // Enter manual
   codigoInput.addEventListener('keypress', e => {
     if (e.key === 'Enter') agregarProducto();
   });
+
   botonExportar.addEventListener('click', exportarAExcel);
   codigoInput.focus();
 }
 
 function manejarCodigoIngresado() {
   const codigo = codigoInput.value.trim();
-  if (codigo.length >= 13) setTimeout(() => agregarProducto(), 100);
+
+  // Si ya escribió 13 → procesar
+  if (codigo.length === 13) {
+    agregarProducto();
+    return;
+  }
+
+  // Si pasa de 13 caracteres → limpiar
+  if (codigo.length > 13) {
+    mostrarAlerta('Código no válido (debe tener 13 caracteres)', 'error');
+    codigoInput.value = '';
+    codigoInput.focus();
+    return;
+  }
+
+  // Si quedó menor a 13 pero se detuvo el escaneo (timeout)
+  clearTimeout(window._codigoTimer);
+  window._codigoTimer = setTimeout(() => {
+    if (codigo.length > 0 && codigo.length < 13) {
+      mostrarAlerta('Código no válido (debe tener 13 caracteres)', 'error');
+      codigoInput.value = '';
+      codigoInput.focus();
+    }
+  }, 500); // espera medio segundo por si el escáner no ha terminado
 }
 
 // === Agregar producto ===
 function agregarProducto() {
-  if (!responsableInput.value.trim()) return mostrarAlerta('Por favor ingresa el Responsable', 'error');
-  if (!cajaInput.value.trim()) return mostrarAlerta('Por favor ingresa la Caja', 'error');
-  if (!codigoInput.value.trim()) return mostrarAlerta('Por favor ingresa el Código', 'error');
+
+  if (!responsableInput.value.trim()) 
+    return mostrarAlerta('Por favor ingresa el Responsable', 'error');
+
+  if (!cajaInput.value.trim()) 
+    return mostrarAlerta('Por favor ingresa la Caja', 'error');
+
+  const codigo = codigoInput.value.trim();
+
+  // Nueva validación: exactamente 13 caracteres
+  if (codigo.length !== 13) {
+    mostrarAlerta('Código no válido (debe tener 13 caracteres)', 'error');
+    codigoInput.value = '';
+    codigoInput.focus();
+    return;
+  }
 
   const responsable = responsableInput.value.trim();
   const caja = cajaInput.value.trim();
-  const codigo = codigoInput.value.trim();
   const talla = codigo.slice(-2);
   const cantidad = 1;
   const fecha = new Date().toLocaleDateString('es-CO');
@@ -79,6 +119,7 @@ function agregarProducto() {
       cantidad,
       fecha
     };
+
     productos.push(nuevo);
     agregarFilaTabla(nuevo);
   }
@@ -190,7 +231,7 @@ function exportarAExcel() {
 
   mostrarAlerta('Archivo exportado exitosamente', 'success');
 
-  // 🔹 Limpiar tabla y almacenamiento después de exportar
+  // Limpiar tabla y almacenamiento
   productos = [];
   guardarProductos();
   tablaProductos.innerHTML = '';
