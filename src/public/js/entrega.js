@@ -50,13 +50,11 @@ function inicializarEventos() {
 function manejarCodigoIngresado() {
   const codigo = codigoInput.value.trim();
 
-  // Si ya escribió 13 → procesar
   if (codigo.length === 13) {
     agregarProducto();
     return;
   }
 
-  // Si pasa de 13 caracteres → limpiar
   if (codigo.length > 13) {
     mostrarAlerta('Código no válido (debe tener 13 caracteres)', 'error');
     codigoInput.value = '';
@@ -64,7 +62,6 @@ function manejarCodigoIngresado() {
     return;
   }
 
-  // Si quedó menor a 13 pero se detuvo el escaneo (timeout)
   clearTimeout(window._codigoTimer);
   window._codigoTimer = setTimeout(() => {
     if (codigo.length > 0 && codigo.length < 13) {
@@ -72,10 +69,10 @@ function manejarCodigoIngresado() {
       codigoInput.value = '';
       codigoInput.focus();
     }
-  }, 500); // espera medio segundo por si el escáner no ha terminado
+  }, 500);
 }
 
-// === Agregar producto ===
+// === Agregar producto (ACTUALIZADO CON PRIORIDAD AL SCANEAR) ===
 function agregarProducto() {
 
   if (!responsableInput.value.trim()) 
@@ -86,7 +83,6 @@ function agregarProducto() {
 
   const codigo = codigoInput.value.trim();
 
-  // Nueva validación: exactamente 13 caracteres
   if (codigo.length !== 13) {
     mostrarAlerta('Código no válido (debe tener 13 caracteres)', 'error');
     codigoInput.value = '';
@@ -100,16 +96,28 @@ function agregarProducto() {
   const cantidad = 1;
   const fecha = new Date().toLocaleDateString('es-CO');
 
-  const productoExistente = productos.find(p =>
+  let productoExistente = productos.find(p =>
     p.responsable === responsable &&
     p.caja === caja &&
     p.codigo === codigo
   );
 
   if (productoExistente) {
+
+    // Aumentar cantidad
     productoExistente.cantidad += 1;
+
+    // --- MOVER AL INICIO DEL ARRAY ---
+    productos = productos.filter(p => p.id !== productoExistente.id);
+    productos.unshift(productoExistente);
+
+    // --- MOVER FILA AL INICIO ---
+    moverFilaAlInicio(productoExistente.id);
+
     actualizarFilaExistente(productoExistente);
+
   } else {
+
     const nuevo = {
       id: Date.now(),
       responsable,
@@ -120,8 +128,10 @@ function agregarProducto() {
       fecha
     };
 
-    productos.push(nuevo);
-    agregarFilaTabla(nuevo);
+    // Insertar al inicio
+    productos.unshift(nuevo);
+
+    agregarFilaAlInicio(nuevo);
   }
 
   limpiarCampos();
@@ -129,10 +139,17 @@ function agregarProducto() {
   actualizarContador();
 }
 
-// === Tabla ===
-function agregarFilaTabla(producto) {
+// === Mover fila existente al inicio ===
+function moverFilaAlInicio(id) {
+  const fila = document.querySelector(`tr[data-id="${id}"]`);
+  if (!fila) return;
+  tablaProductos.prepend(fila);
+}
+
+// === Agregar fila al inicio de la tabla (NUEVO) ===
+function agregarFilaAlInicio(producto) {
   if (emptyState) emptyState.style.display = 'none';
-  
+
   const fila = document.createElement('tr');
   fila.dataset.id = producto.id;
   fila.className = 'fade-in';
@@ -154,7 +171,8 @@ function agregarFilaTabla(producto) {
       </div>
     </td>
   `;
-  tablaProductos.appendChild(fila);
+
+  tablaProductos.prepend(fila);
 }
 
 function actualizarFilaExistente(producto) {
@@ -205,7 +223,7 @@ function cargarProductosGuardados() {
   const guardados = localStorage.getItem('inv_productos');
   if (guardados) {
     productos = JSON.parse(guardados);
-    productos.forEach(agregarFilaTabla);
+    productos.forEach(agregarFilaAlInicio); // mantener orden correcto
     actualizarContador();
   }
 }
