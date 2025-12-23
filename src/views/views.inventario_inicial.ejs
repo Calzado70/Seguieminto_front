@@ -1,103 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/inventario.inicial.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <title>Supervisor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <link rel="stylesheet" href="/css/inventario.inicial.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <title>Inventario</title>
 </head>
+
 <body>
-    <div class="container">
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-            </div>
-        </nav>
+  <div class="app">
 
-        <div class="content-segundario">
-            <div class="escrito">
-                <h2 class="h2">Inventario</h2>
-                <div class="cont-segun-list">
-                    <div class="cont-segun-list-for">
-                        <select class="input" id="usuarioSelect">
-                            <option value="">Selecciona la Pareja</option>
-                            <option value="1">Pareja 1</option>
-                            <option value="2">Pareja 2</option>
-                            <option value="3">Pareja 3</option>
-                            <option value="4">Pareja 4</option>
-                            <option value="5">Pareja 5</option>
-                            <option value="6">Pareja 6</option>
-                            <option value="7">Pareja 7</option>
-                            <option value="8">Pareja 8</option>
-                            <option value="9">Pareja 9</option>
-                            <option value="10">Pareja 10</option>
-                            <option value="11">Pareja 11</option>
-                            <option value="12">Pareja 12</option>
-                        </select>
-                        
-                        <select class="input" id="conteoSelect">
-                            <option value="">Selecciona el Conteo</option>
-                            <option value="1">Conteo 1</option>
-                            <option value="2">Conteo 2</option>
-                            <option value="3">Conteo 3</option>
-                        </select>
-                        
-                        <select class="input" id="BodegaSelect">
-                            <option value="">Selecciona la Zona</option>
-                            <option value="Laboratorio">Laboratorio</option>
-                            <option value="Terceros">Terceros</option>
-                            <option value="Oficina">Oficina</option>
-                            <option value="MezaniA">MezaniA</option>
-                            <option value="MezaniB">MezaniB</option>
-                            <option value="Estanteria_lado_A">Estanteria_lado_A</option>
-                            <option value="Estanteria_lado_B">Estanteria_lado_B</option>
-                            <option value="Estanteria_lado_C">Estanteria_lado_C</option>
-                        </select>
-                        
-                        <input type="text" class="input" id="codigo_producto" placeholder="Código del Producto" />
-                        
-                        <input type="number" class="input" id="cantidad_producto" placeholder="Cantidad" min="1" step="1" />
-                        
-                        <div class="cont-segun-list-bot">
-                            <button class="button" id="mover-productos">
-                                exportar a excel
-                            </button>
-                        </div>
-                        
-                        <div class="cont-segun-formu">
-                            <div class="table-container">
-                                <table>
-                                    <thead>
-                                        <tr class="table-row1">
-                                            <th>Pareja</th>
-                                            <th>Conteo</th>
-                                            <th>Zona</th>
-                                            <th>Codigo</th>
-                                            <th>Talla</th>
-                                            <th>Fecha</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaProductos">
-                                        <!-- Aquí se mostrarán los productos agregados -->
-                                    </tbody>
-                                </table>
+    <!-- HEADER -->
+    <header class="topbar">
+      <img src="/img/Trost_blanco.png" class="logo" />
+      <h1>Toma de Inventario</h1>
+    </header>
 
-                                <!-- ✅ Contador total de productos -->
-                                <div class="contador-productos">
-                                    <strong>Total productos únicos:</strong>
-                                    <span id="totalProductos">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- CONTENIDO -->
+    <main class="dashboard">
+
+      <!-- FORMULARIO -->
+      <section class="card form-card">
+        <h2>Datos del Conteo</h2>
+
+        <div class="form-grid">
+
+          <select class="input" id="usuarioSelect">
+            <option value="">👥 Pareja</option>
+            <option value="1">Pareja 1</option>
+            <option value="2">Pareja 2</option>
+            <option value="3">Pareja 3</option>
+            <option value="4">Pareja 4</option>
+            <option value="5">Pareja 5</option>
+            <option value="6">Pareja 6</option>
+            <option value="7">Pareja 7</option>
+            <option value="8">Pareja 8</option>
+            <option value="9">Pareja 9</option>
+            <option value="10">Pareja 10</option>
+            <option value="11">Pareja 11</option>
+            <option value="12">Pareja 12</option>
+          </select>
+
+          <select class="input" id="conteoSelect">
+            <option value="">🔁 Conteo</option>
+            <option value="1">Conteo 1</option>
+            <option value="2">Conteo 2</option>
+            <option value="3">Conteo 3</option>
+          </select>
+
+          <select class="input" id="BodegaSelect">
+            <option value="">📦 Zona</option>
+            <option>Terceros</option>
+            <option>Oficina</option>
+            <option>Mezanini</option>
+            <option>Pecebrera</option>
+            <option>Estanteria_lado_A</option>
+            <option>Estanteria_lado_B</option>
+            <option>Estanteria_lado_C</option>
+          </select>
+
+          <input
+            type="text"
+            class="input highlight"
+            id="codigo_producto"
+            placeholder="📸 Escanea el código del producto"
+            autocomplete="off"
+          />
+
+          <input
+            type="number"
+            class="input"
+            id="cantidad_producto"
+            placeholder="Cantidad"
+            min="1"
+          />
         </div>
-    </div>
-    
-    <script src="/js/inventario.inicial.js"></script>
+
+        <button class="btn-primary" id="mover-productos">
+          <i class="fa-solid fa-file-excel"></i> Exportar a Excel
+        </button>
+      </section>
+
+      <!-- TABLA -->
+      <section class="card table-card">
+        <div class="table-header">
+          <h2>Productos Registrados</h2>
+          <span class="contador">
+            Total únicos: <strong id="totalProductos">0</strong>
+          </span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Pareja</th>
+                <th>Conteo</th>
+                <th>Zona</th>
+                <th>Código</th>
+                <th>Talla</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- JS SIN MODIFICAR -->
+  <script src="/js/inventario.inicial.js"></script>
 </body>
 </html>
