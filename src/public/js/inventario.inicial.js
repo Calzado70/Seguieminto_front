@@ -255,13 +255,64 @@ function eliminarProducto(id) {
 // EXPORTAR
 // ===============================
 function exportarAExcel() {
-  if (!productos.length) return alert('No hay productos');
+  if (!productos.length) {
+    alert('No hay productos para exportar');
+    return;
+  }
 
   const clave = prompt('Clave para exportar:');
   if (clave !== '123456789') return;
 
+  const confirmacion = confirm(`Vas a exportar ${productos.length} productos. ¿Continuar?`);
+  if (!confirmacion) return;
+
+
+  // Crear Excel
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(productos);
+  // 🔽 Datos SIN la columna "pares"
+const datosExcel = productos.map(p => ({
+  Pareja: p.pareja,
+  Conteo: p.conteo,
+  Zona: p.bodega,
+  Codigo: p.codigo,
+  Talla: p.talla,
+  Cantidad: p.cantidad,
+  Fecha: p.fecha
+}));
+
+const ws = XLSX.utils.json_to_sheet(datosExcel);
   XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
-  XLSX.writeFile(wb, 'Inventario.xlsx');
+  // 📅 Fecha y hora
+const ahora = new Date();
+
+const fecha = ahora.toISOString().split('T')[0]; // YYYY-MM-DD
+const hora = ahora
+  .toTimeString()
+  .split(' ')[0]
+  .replace(/:/g, '-'); // HH-MM-SS
+
+// 📌 Conteo seleccionado
+const conteoTexto =
+  conteoSelect.options[conteoSelect.selectedIndex]?.text || 'SinConteo';
+
+// 🧼 Limpiar texto
+const conteoLimpio = conteoTexto.replace(/\s+/g, '');
+
+// 📝 Nombre final
+const nombreArchivo = `Inventario_${conteoLimpio}_${fecha}_${hora}.xlsx`;
+
+// 💾 Guardar archivo
+XLSX.writeFile(wb, nombreArchivo);
+
+
+  // 🧹 LIMPIAR TODO DESPUÉS DE EXPORTAR
+  limpiarInventario();
+}
+
+function limpiarInventario() {
+  productos = [];
+  tablaProductos.innerHTML = '';
+  localStorage.removeItem('inventario_productos');
+  actualizarContador();
+  codigoInput.focus();
 }
