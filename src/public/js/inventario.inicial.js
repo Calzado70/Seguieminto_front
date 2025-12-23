@@ -1,10 +1,10 @@
 // ===============================
-// INVENTARIO INICIAL - JS
+// INVENTARIO INICIAL - JS FINAL
 // ===============================
 
 // Variables globales
 let productos = [];
-let contadorProductos = 0;
+let lecturaEnProceso = false;
 
 // Referencias DOM
 const usuarioSelect = document.getElementById('usuarioSelect');
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarEventos();
   cargarProductosGuardados();
   actualizarContador();
+  codigoInput.focus();
 });
 
 // ===============================
@@ -30,92 +31,89 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===============================
 function inicializarEventos() {
 
-  // Normaliza lectura de pistola
-  codigoInput.addEventListener('input', manejarCodigoIngresado);
+  // Lectura de pistola
+  codigoInput.addEventListener('input', manejarLecturaCodigo);
 
-  // Evita espacios manuales
+  // Bloquear espacios manuales
   codigoInput.addEventListener('keydown', e => {
     if (e.key === ' ') e.preventDefault();
   });
 
-  // Enter manual
-  codigoInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      agregarProducto();
-    }
-  });
-
+  // Exportar
   botonExportar.addEventListener('click', exportarAExcel);
-
-  codigoInput.focus();
 }
 
 // ===============================
-// NORMALIZACIÓN DE CÓDIGO
+// NORMALIZAR CÓDIGO
 // ===============================
 function normalizarCodigo(valor) {
   return valor
-    .replace(/\s+/g, '') // elimina espacios, tabs, enters
-    .toUpperCase()
+    .replace(/\s+/g, '')
+    .replace(/[^0-9]/g, '')
     .trim();
 }
 
 // ===============================
-// MANEJO DE LECTOR
+// MANEJO DE LECTURA
 // ===============================
-function manejarCodigoIngresado() {
+function manejarLecturaCodigo() {
+
+  if (lecturaEnProceso) return;
+
   const codigo = normalizarCodigo(codigoInput.value);
 
-  if (codigo.length >= 2 && !cantidadInput.value) {
-    cantidadInput.value = 1;
+  if (codigo.length < 13) return;
+
+  lecturaEnProceso = true;
+
+  if (codigo.length !== 13) {
+    mostrarErrorCodigo('El código debe tener EXACTAMENTE 13 dígitos');
+    return;
   }
 
-  // Ajusta longitud según tu estándar de códigos
-  if (codigo.length >= 13) {
-    setTimeout(() => {
-      agregarProducto();
-    }, 80);
-  }
+  setTimeout(() => {
+    agregarProductoConCodigo(codigo);
+  }, 50);
 }
 
 // ===============================
 // AGREGAR PRODUCTO
 // ===============================
-function agregarProducto() {
+function agregarProductoConCodigo(codigo) {
 
-  if (!usuarioSelect.value) return alert('Selecciona una pareja');
-  if (!conteoSelect.value) return alert('Selecciona un conteo');
-  if (!bodegaSelect.value) return alert('Selecciona una zona');
-
-  const codigo = normalizarCodigo(codigoInput.value);
-  if (!codigo) return;
+  if (!usuarioSelect.value) return mostrarErrorCodigo('Selecciona una pareja');
+  if (!conteoSelect.value) return mostrarErrorCodigo('Selecciona un conteo');
+  if (!bodegaSelect.value) return mostrarErrorCodigo('Selecciona una zona');
 
   const cantidad = parseFloat(cantidadInput.value) || 1;
-
   const pareja = usuarioSelect.options[usuarioSelect.selectedIndex].text;
   const conteo = conteoSelect.options[conteoSelect.selectedIndex].text;
-  const bodegaTexto = bodegaSelect.options[bodegaSelect.selectedIndex].text;
+  const bodega = bodegaSelect.options[bodegaSelect.selectedIndex].text;
   const talla = codigo.slice(-2);
   const fecha = new Date().toLocaleDateString('es-CO');
 
-  const productoExistente = productos.find(p =>
+  const existente = productos.find(p =>
     p.codigo === codigo &&
     p.pareja === pareja &&
     p.conteo === conteo &&
-    p.bodega === bodegaTexto
+    p.bodega === bodega
   );
 
-  if (productoExistente) {
-    productoExistente.cantidad += cantidad;
-    productoExistente.pares = Math.floor(productoExistente.cantidad);
-    actualizarFilaExistente(productoExistente);
+  if (existente) {
+    existente.cantidad += cantidad;
+    existente.pares = Math.floor(existente.cantidad);
+
+    // mover arriba
+    productos = productos.filter(p => p.id !== existente.id);
+    productos.unshift(existente);
+
+    actualizarFilaExistente(existente, true);
   } else {
-    const nuevoProducto = {
+    const producto = {
       id: Date.now() + Math.random(),
       pareja,
       conteo,
-      bodega: bodegaTexto,
+      bodega,
       codigo,
       talla,
       cantidad,
@@ -123,19 +121,37 @@ function agregarProducto() {
       fecha
     };
 
-    productos.push(nuevoProducto);
-    agregarFilaTabla(nuevoProducto);
+    productos.unshift(producto);
+    agregarFilaTabla(producto, true);
   }
 
-  limpiarCampos();
+  finalizarLectura();
   guardarProductos();
   actualizarContador();
 }
 
 // ===============================
+// ERRORES
+// ===============================
+function mostrarErrorCodigo(mensaje) {
+  alert(mensaje);
+  finalizarLectura();
+}
+
+// ===============================
+// FINALIZAR LECTURA
+// ===============================
+function finalizarLectura() {
+  codigoInput.value = '';
+  cantidadInput.value = '';
+  lecturaEnProceso = false;
+  codigoInput.focus();
+}
+
+// ===============================
 // TABLA
 // ===============================
-function agregarFilaTabla(producto) {
+function agregarFilaTabla(producto, esPrimero = false) {
   const fila = document.createElement('tr');
   fila.dataset.id = producto.id;
 
@@ -147,72 +163,51 @@ function agregarFilaTabla(producto) {
     <td>${producto.talla}</td>
     <td>${producto.fecha}</td>
     <td>
-      <strong>Cant: ${producto.cantidad}</strong>
+      <strong>${producto.cantidad}</strong>
       (${producto.pares} ${producto.pares === 1 ? 'par' : 'pares'})
       <br>
-      <button onclick="editarProducto(${producto.id})">
-        ✏️
-      </button>
-      <button onclick="eliminarProducto(${producto.id})">
-        🗑️
-      </button>
+      <button onclick="editarProducto(${producto.id})">✏️</button>
+      <button onclick="eliminarProducto(${producto.id})">🗑️</button>
     </td>
   `;
 
-  tablaProductos.appendChild(fila);
+  if (esPrimero && tablaProductos.firstChild) {
+    tablaProductos.insertBefore(fila, tablaProductos.firstChild);
+    resaltarFila(fila);
+  } else {
+    tablaProductos.appendChild(fila);
+  }
 }
 
-function actualizarFilaExistente(producto) {
+function actualizarFilaExistente(producto, moverArriba = false) {
   const fila = document.querySelector(`tr[data-id="${producto.id}"]`);
   if (!fila) return;
 
   fila.querySelector('td:last-child').innerHTML = `
-    <strong>Cant: ${producto.cantidad}</strong>
+    <strong>${producto.cantidad}</strong>
     (${producto.pares} ${producto.pares === 1 ? 'par' : 'pares'})
     <br>
     <button onclick="editarProducto(${producto.id})">✏️</button>
     <button onclick="eliminarProducto(${producto.id})">🗑️</button>
   `;
 
-  fila.classList.add('fila-actualizada');
-  setTimeout(() => fila.classList.remove('fila-actualizada'), 800);
-}
-
-// ===============================
-// EDITAR / ELIMINAR
-// ===============================
-function editarProducto(id) {
-  const producto = productos.find(p => p.id === id);
-  if (!producto) return;
-
-  const nuevaCantidad = prompt('Nueva cantidad:', producto.cantidad);
-  if (nuevaCantidad !== null && !isNaN(nuevaCantidad)) {
-    producto.cantidad = parseFloat(nuevaCantidad);
-    producto.pares = Math.floor(producto.cantidad);
-    actualizarFilaExistente(producto);
-    guardarProductos();
+  if (moverArriba) {
+    tablaProductos.insertBefore(fila, tablaProductos.firstChild);
+    resaltarFila(fila);
   }
 }
 
-function eliminarProducto(id) {
-  const clave = prompt('Clave de autorización:');
-  if (clave !== '123456789') return alert('Clave incorrecta');
-
-  productos = productos.filter(p => p.id !== id);
-  document.querySelector(`tr[data-id="${id}"]`)?.remove();
-  guardarProductos();
-  actualizarContador();
+// ===============================
+// RESALTAR FILA
+// ===============================
+function resaltarFila(fila) {
+  fila.classList.add('fila-nueva');
+  setTimeout(() => fila.classList.remove('fila-nueva'), 800);
 }
 
 // ===============================
-// UTILIDADES
+// CONTADOR / STORAGE
 // ===============================
-function limpiarCampos() {
-  codigoInput.value = '';
-  cantidadInput.value = '';
-  codigoInput.focus();
-}
-
 function actualizarContador() {
   totalProductos.textContent = productos.length;
 }
@@ -226,7 +221,33 @@ function cargarProductosGuardados() {
   if (!data) return;
 
   productos = JSON.parse(data);
-  productos.forEach(agregarFilaTabla);
+  productos.forEach(p => agregarFilaTabla(p));
+  actualizarContador();
+}
+
+// ===============================
+// EDITAR / ELIMINAR
+// ===============================
+function editarProducto(id) {
+  const p = productos.find(p => p.id === id);
+  if (!p) return;
+
+  const nuevaCantidad = prompt('Nueva cantidad:', p.cantidad);
+  if (!isNaN(nuevaCantidad)) {
+    p.cantidad = parseFloat(nuevaCantidad);
+    p.pares = Math.floor(p.cantidad);
+    actualizarFilaExistente(p);
+    guardarProductos();
+  }
+}
+
+function eliminarProducto(id) {
+  const clave = prompt('Clave:');
+  if (clave !== '123456789') return;
+
+  productos = productos.filter(p => p.id !== id);
+  document.querySelector(`tr[data-id="${id}"]`)?.remove();
+  guardarProductos();
   actualizarContador();
 }
 
@@ -234,48 +255,13 @@ function cargarProductosGuardados() {
 // EXPORTAR
 // ===============================
 function exportarAExcel() {
-
   if (!productos.length) return alert('No hay productos');
 
   const clave = prompt('Clave para exportar:');
-  if (clave !== '123456789') return alert('Clave incorrecta');
+  if (clave !== '123456789') return;
 
   const wb = XLSX.utils.book_new();
-
-  const datos = productos.map(p => ({
-    Pareja: p.pareja,
-    Conteo: p.conteo,
-    Zona: p.bodega,
-    Código: p.codigo,
-    Talla: p.talla,
-    Cantidad: p.cantidad,
-    Pares: p.pares,
-    Fecha: p.fecha
-  }));
-
-  const ws = XLSX.utils.json_to_sheet(datos);
+  const ws = XLSX.utils.json_to_sheet(productos);
   XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
-
-  XLSX.writeFile(wb, `Inventario_${Date.now()}.xlsx`);
-
-  limpiarInventarioDespuesExportacion();
+  XLSX.writeFile(wb, 'Inventario.xlsx');
 }
-
-function limpiarInventarioDespuesExportacion() {
-  if (!confirm('¿Limpiar inventario después de exportar?')) return;
-
-  productos = [];
-  tablaProductos.innerHTML = '';
-  localStorage.removeItem('inventario_productos');
-  actualizarContador();
-  limpiarCampos();
-}
-
-// ===============================
-// AUTOFOCUS (PISTOLA)
-// ===============================
-document.addEventListener('click', e => {
-  if (!e.target.matches('input, select, button')) {
-    codigoInput.focus();
-  }
-});

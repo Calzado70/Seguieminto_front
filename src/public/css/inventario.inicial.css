@@ -180,6 +180,12 @@ tbody tr:hover {
   }
 }
 
+.fila-nueva {
+  background-color: #d1ffe6 !important;
+  transition: background-color 0.4s ease;
+}
+
+
 /* 📱 MÓVIL (extra por si acaso) */
 @media (max-width: 600px) {
   .topbar {
