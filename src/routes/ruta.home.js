@@ -8,6 +8,7 @@ import { alerta,
     inventario_view, 
     login, 
     logistica, 
+    materia_prima, 
     modi_bodegas, 
     modificar, 
     packing_list, 
@@ -29,13 +30,16 @@ rutaHome.get("/alerta", alerta); //puede que ya no sea necesario
 rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
 // rutaHome.get("/inyeccion",producto_inyec);
+
+//LOGIN
 rutaHome.get("/", login);
-rutaHome.get("/inicial",inventario_inicial);
 
 
-//Packing List
+//Packing List O Ineventario
 rutaHome.get("/packing", packing_list);
 rutaHome.get("/entrega", entrega);
+rutaHome.get("/inicial",inventario_inicial);
+rutaHome.get("/materia", materia_prima);
 
 
 
