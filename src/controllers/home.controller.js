@@ -65,9 +65,10 @@ export const entrega  = (req, res) => {
     res.render("views.entrega.ejs");
 }
 
-export const materia_prima = (req, res) => {
+export const materia  = (req, res) => {
     res.render("views.inventario_materia_prima.ejs");
 }
+
 
 // export const producto_inyec = (req, res) => {
 //     res.render("views.producto.inyec.ejs");
