@@ -6,12 +6,12 @@ import ruta from "./routes/index.js";
 config();
 
 const __filename = fileURLToPath(import.meta.url);
-const __diranem = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.set("view engine", "ejs");
-app.set("views", path.join(__diranem, "views"));
-app.use(express.static(path.join(__diranem, "public")));
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static("public"));
 
 
