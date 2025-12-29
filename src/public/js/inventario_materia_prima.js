@@ -42,7 +42,7 @@ function manejarLectura() {
   if (lecturaEnProceso) return;
 
   const codigo = normalizarCodigo(codigoInput.value);
-  if (codigo.length < 4) return;
+  if (codigo.length < 13) return;
 
   lecturaEnProceso = true;
   agregarProducto(codigo);
