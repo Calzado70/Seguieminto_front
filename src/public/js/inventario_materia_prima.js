@@ -30,15 +30,19 @@ codigoInput.addEventListener('keydown', e => {
 
 botonExportar.addEventListener('click', exportarExcel);
 
+// 🔥 ACEPTA LETRAS Y NÚMEROS
 function normalizarCodigo(valor) {
-  return valor.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+  return valor
+    .toUpperCase()
+    .replace(/\s+/g, '')
+    .replace(/[^A-Z0-9]/g, '');
 }
 
 function manejarLectura() {
   if (lecturaEnProceso) return;
 
   const codigo = normalizarCodigo(codigoInput.value);
-  if (codigo.length < 13) return;
+  if (codigo.length < 4) return;
 
   lecturaEnProceso = true;
   agregarProducto(codigo);
@@ -76,6 +80,7 @@ function agregarProducto(codigo) {
 function agregarFila(p) {
   const tr = document.createElement('tr');
   tr.dataset.id = p.id;
+  tr.classList.add('fila-nueva');
 
   tr.innerHTML = `
     <td>${p.pareja}</td>
@@ -91,6 +96,7 @@ function agregarFila(p) {
   `;
 
   tablaProductos.prepend(tr);
+  setTimeout(() => tr.classList.remove('fila-nueva'), 800);
 }
 
 function eliminar(id) {
@@ -151,5 +157,24 @@ function exportarExcel() {
   const ws = XLSX.utils.json_to_sheet(datos);
   XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
 
-  XLSX.writeFile(wb, `Inventario_Materia_Prima.xlsx`);
+  // =========================
+  // 🔥 NOMBRE DINÁMICO
+  // =========================
+  const pareja = usuarioSelect.value.replace(/\s+/g, '_');
+  const conteo = conteoSelect.value.replace(/\s+/g, '_');
+  const zona = bodegaSelect.value.replace(/\s+/g, '_');
+
+  const nombreArchivo = `Inventario_${pareja}_${conteo}_${zona}.xlsx`;
+
+  XLSX.writeFile(wb, nombreArchivo);
+
+  // =========================
+  // 🧹 LIMPIAR TODO
+  // =========================
+  productos = [];
+  localStorage.removeItem('inventario_mp');
+  tablaProductos.innerHTML = '';
+  actualizarContador();
+
+  alert(`Inventario exportado correctamente:\n${nombreArchivo}`);
 }
