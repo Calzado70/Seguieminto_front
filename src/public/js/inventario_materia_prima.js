@@ -4,6 +4,7 @@
 
 let productos = [];
 let lecturaEnProceso = false;
+const CLAVE_SEGURIDAD = '123456789';
 
 // DOM
 const usuarioSelect = document.getElementById('usuarioSelect');
@@ -29,8 +30,24 @@ function inicializarEventos() {
   botonExportar.addEventListener('click', exportarAExcel);
 }
 
-// 🔤 PERMITE LETRAS Y NÚMEROS
-// 🔤 PERITE LETRAS Y NÚMEROS (SIN ESPACIOS)
+// ===============================
+// SEGURIDAD CLAVE (1 - 9)
+// ===============================
+function pedirClave() {
+  const clave = prompt('Ingrese la clave de seguridad:');
+  if (clave === null) return false;
+
+  if (clave !== CLAVE_SEGURIDAD) {
+    alert('❌ Clave incorrecta');
+    return false;
+  }
+
+  return true;
+}
+
+// ===============================
+// CÓDIGO DE BARRAS
+// ===============================
 function normalizarCodigo(valor) {
   return valor.replace(/\s+/g, '').trim();
 }
@@ -40,7 +57,6 @@ function manejarLecturaCodigo() {
 
   const codigo = normalizarCodigo(codigoInput.value);
 
-  // ⛔ SOLO 13 CARACTERES EXACTOS
   if (codigo.length < 13) return;
 
   if (codigo.length > 13) {
@@ -52,6 +68,9 @@ function manejarLecturaCodigo() {
   setTimeout(() => agregarProductoConCodigo(codigo), 50);
 }
 
+// ===============================
+// AGREGAR / ACTUALIZAR
+// ===============================
 function agregarProductoConCodigo(codigo) {
   if (!usuarioSelect.value) return mostrarError('Selecciona una pareja');
   if (!conteoSelect.value) return mostrarError('Selecciona un conteo');
@@ -107,7 +126,9 @@ function finalizarLectura() {
   codigoInput.focus();
 }
 
+// ===============================
 // TABLA
+// ===============================
 function agregarFilaTabla(p, moverArriba) {
   const tr = document.createElement('tr');
   tr.dataset.id = p.id;
@@ -133,30 +154,73 @@ function actualizarFilaExistente(p) {
   if (fila) fila.children[6].innerHTML = `<strong>${p.cantidad}</strong>`;
 }
 
+// ===============================
+// EDITAR
+// ===============================
+function editarProducto(id) {
+  const producto = productos.find(p => p.id === id);
+  if (!producto) return;
+
+  const nuevaCantidad = prompt('Nueva cantidad:', producto.cantidad);
+  if (nuevaCantidad === null) return;
+
+  const cantidad = parseFloat(nuevaCantidad);
+  if (!cantidad || cantidad <= 0) {
+    alert('Cantidad inválida');
+    return;
+  }
+
+  producto.cantidad = cantidad;
+  actualizarFilaExistente(producto);
+  guardarProductos();
+}
+
+// ===============================
+// ELIMINAR (CON CLAVE)
+// ===============================
+function eliminarProducto(id) {
+  if (!pedirClave()) return;
+
+  if (!confirm('¿Seguro que deseas eliminar este registro?')) return;
+
+  productos = productos.filter(p => p.id !== id);
+  document.querySelector(`tr[data-id="${id}"]`)?.remove();
+
+  guardarProductos();
+  actualizarContador();
+}
+
+// ===============================
 // STORAGE
+// ===============================
 function guardarProductos() {
   localStorage.setItem('inventario_productos', JSON.stringify(productos));
 }
+
 function cargarProductosGuardados() {
   const data = localStorage.getItem('inventario_productos');
   if (!data) return;
   productos = JSON.parse(data);
   productos.forEach(p => agregarFilaTabla(p));
 }
+
 function actualizarContador() {
   totalProductos.textContent = productos.length;
 }
 
-// EXPORTAR
+// ===============================
+// EXPORTAR (CON CLAVE)
+// ===============================
 function exportarAExcel() {
   if (!productos.length) {
     alert('No hay productos para exportar');
     return;
   }
 
+  if (!pedirClave()) return;
+
   const wb = XLSX.utils.book_new();
 
-  // 🔥 SOLO LOS CAMPOS NECESARIOS
   const datosExcel = productos.map(p => ({
     pareja: p.pareja,
     conteo: p.conteo,
@@ -182,13 +246,12 @@ function exportarAExcel() {
   const nombreArchivo = `Inventario_${pareja}_${conteo}_${zona}_${fecha}_${hora}.xlsx`;
 
   XLSX.writeFile(wb, nombreArchivo);
-
-  // 🧹 LIMPIA TODO DESPUÉS DE EXPORTAR
   limpiarInventario();
 }
 
-
+// ===============================
 // LIMPIAR
+// ===============================
 function limpiarInventario() {
   productos = [];
   tablaProductos.innerHTML = '';
