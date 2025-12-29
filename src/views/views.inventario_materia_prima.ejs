@@ -6,12 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
   <link rel="stylesheet" href="/css/inventario_materia_prima.css" />
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <title>Inventario</title>
+  <title>Inventario Materia Prima</title>
 </head>
 
 <body>
@@ -34,21 +32,21 @@
 
           <select class="input" id="usuarioSelect">
             <option value="">👥 Pareja</option>
-            <option value="1">Pareja 1</option>
-            <option value="2">Pareja 2</option>
-            <option value="3">Pareja 3</option>
-            <option value="4">Pareja 4</option>
+            <option>Pareja 1</option>
+            <option>Pareja 2</option>
+            <option>Pareja 3</option>
+            <option>Pareja 4</option>
           </select>
 
           <select class="input" id="conteoSelect">
             <option value="">🔁 Conteo</option>
-            <option value="1">Conteo 1</option>
-            <option value="2">Conteo 2</option>
-            <option value="3">Conteo 3</option>
+            <option>Conteo 1</option>
+            <option>Conteo 2</option>
+            <option>Conteo 3</option>
           </select>
 
           <select class="input" id="BodegaSelect">
-            <option value="">📦 Ubicacion</option>
+            <option value="">📦 Ubicación</option>
             <option>9999</option>
             <option>A1</option>
             <option>A2</option>
@@ -58,26 +56,22 @@
 
           <select class="input" id="UnidadSelect">
             <option value="">📏 Unidad de medida</option>
-            <option>C24</option>
-            <option>CM</option>
-            <option>CM3</option>
-            <option>DCM</option>
-            <option>GAL</option>
-            <option>GURE</option>
+            <option>UND</option>
             <option>KILO</option>
             <option>LT</option>
-            <option>MM</option>
             <option>MTS</option>
             <option>PAQ</option>
-            <option>PAR</option>
             <option>TON</option>
-            <option>UND</option>
           </select>
 
           <input type="text" class="input highlight" id="codigo_producto"
             placeholder="📸 Escanea el código del producto" autocomplete="off" />
 
-          <input type="number" class="input" id="cantidad_producto" placeholder="Cantidad" min="1" />
+          <input type="text" class="input" id="talla_producto"
+            placeholder="Talla (opcional)" autocomplete="off" />
+
+          <input type="number" class="input" id="cantidad_producto"
+            placeholder="Cantidad" min="1" />
         </div>
 
         <button class="btn-primary" id="mover-productos">
@@ -116,7 +110,6 @@
     </main>
   </div>
 
-  <!-- JS SIN MODIFICAR -->
   <script src="/js/inventario_materia_prima.js"></script>
 </body>
 

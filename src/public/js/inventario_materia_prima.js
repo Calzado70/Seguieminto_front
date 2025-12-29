@@ -2,247 +2,99 @@
 // INVENTARIO MATERIA PRIMA - FINAL
 // ===============================
 
-// Variables globales
 let productos = [];
 let lecturaEnProceso = false;
 
-// Referencias DOM
+// DOM
 const usuarioSelect = document.getElementById('usuarioSelect');
 const conteoSelect = document.getElementById('conteoSelect');
 const bodegaSelect = document.getElementById('BodegaSelect');
 const unidadSelect = document.getElementById('UnidadSelect');
 const codigoInput = document.getElementById('codigo_producto');
+const tallaInput = document.getElementById('talla_producto');
 const cantidadInput = document.getElementById('cantidad_producto');
 const botonExportar = document.getElementById('mover-productos');
 const tablaProductos = document.getElementById('tablaProductos');
 const totalProductos = document.getElementById('totalProductos');
 
-// ===============================
-// INICIALIZACIÓN
-// ===============================
 document.addEventListener('DOMContentLoaded', () => {
-  inicializarEventos();
-  cargarProductosGuardados();
-  actualizarContador();
   codigoInput.focus();
+  cargarProductos();
+  actualizarContador();
 });
 
-// ===============================
-// EVENTOS
-// ===============================
-function inicializarEventos() {
+codigoInput.addEventListener('input', manejarLectura);
+codigoInput.addEventListener('keydown', e => {
+  if (e.key === ' ') e.preventDefault();
+});
 
-  // Lectura de pistola
-  codigoInput.addEventListener('input', manejarLecturaCodigo);
+botonExportar.addEventListener('click', exportarExcel);
 
-  // Bloquear espacios
-  codigoInput.addEventListener('keydown', e => {
-    if (e.key === ' ') e.preventDefault();
-  });
-
-  // Exportar
-  botonExportar.addEventListener('click', exportarAExcel);
-}
-
-// ===============================
-// NORMALIZAR CÓDIGO
-// ===============================
 function normalizarCodigo(valor) {
-  return valor
-    .replace(/\s+/g, '')
-    .replace(/[^0-9]/g, '')
-    .trim();
+  return valor.replace(/\s+/g, '').replace(/[^0-9]/g, '');
 }
 
-// ===============================
-// MANEJO DE LECTURA
-// ===============================
-function manejarLecturaCodigo() {
-
+function manejarLectura() {
   if (lecturaEnProceso) return;
 
   const codigo = normalizarCodigo(codigoInput.value);
-
   if (codigo.length < 13) return;
 
   lecturaEnProceso = true;
-
-  if (codigo.length !== 13) {
-    mostrarError('El código debe tener exactamente 13 dígitos');
-    return;
-  }
-
-  setTimeout(() => agregarProductoConCodigo(codigo), 50);
+  agregarProducto(codigo);
 }
 
-// ===============================
-// AGREGAR / ACTUALIZAR PRODUCTO
-// ===============================
-function agregarProductoConCodigo(codigo) {
+function agregarProducto(codigo) {
 
-  if (!usuarioSelect.value) return mostrarError('Selecciona una pareja');
-  if (!conteoSelect.value) return mostrarError('Selecciona un conteo');
-  if (!bodegaSelect.value) return mostrarError('Selecciona una zona');
-  if (!unidadSelect.value) return mostrarError('Selecciona unidad de medida');
+  if (!usuarioSelect.value) return error('Selecciona pareja');
+  if (!conteoSelect.value) return error('Selecciona conteo');
+  if (!bodegaSelect.value) return error('Selecciona zona');
+  if (!unidadSelect.value) return error('Selecciona unidad');
 
   const cantidad = parseFloat(cantidadInput.value);
-  if (!cantidad || cantidad <= 0) {
-    cantidadInput.focus();
-    return mostrarError('Digita una cantidad válida');
-  }
+  if (!cantidad || cantidad <= 0) return error('Cantidad inválida');
 
-  const pareja = usuarioSelect.options[usuarioSelect.selectedIndex].text;
-  const conteo = conteoSelect.options[conteoSelect.selectedIndex].text;
-  const bodega = bodegaSelect.options[bodegaSelect.selectedIndex].text;
-  const unidad = unidadSelect.options[unidadSelect.selectedIndex].text;
-  const talla = codigo.slice(-2);
-  const fecha = new Date().toLocaleDateString('es-CO');
+  const producto = {
+    id: Date.now(),
+    pareja: usuarioSelect.value,
+    conteo: conteoSelect.value,
+    bodega: bodegaSelect.value,
+    codigo,
+    talla: tallaInput.value.trim() || 'N/A',
+    unidad: unidadSelect.value,
+    cantidad,
+    fecha: new Date().toLocaleDateString('es-CO')
+  };
 
-  const existente = productos.find(p =>
-    p.codigo === codigo &&
-    p.pareja === pareja &&
-    p.conteo === conteo &&
-    p.bodega === bodega &&
-    p.unidad === unidad
-  );
-
-  // 🔁 REEMPLAZA CANTIDAD
-  if (existente) {
-    existente.cantidad = cantidad;
-
-    productos = productos.filter(p => p.id !== existente.id);
-    productos.unshift(existente);
-
-    actualizarFilaExistente(existente, true);
-  }
-  // 🆕 CREA
-  else {
-    const producto = {
-      id: Date.now() + Math.random(),
-      pareja,
-      conteo,
-      bodega,
-      unidad,
-      codigo,
-      talla,
-      cantidad,
-      fecha
-    };
-
-    productos.unshift(producto);
-    agregarFilaTabla(producto, true);
-  }
-
-  finalizarLectura();
+  productos.unshift(producto);
+  agregarFila(producto);
   guardarProductos();
   actualizarContador();
+  limpiarInputs();
 }
 
-// ===============================
-// MENSAJES ERROR
-// ===============================
-function mostrarError(mensaje) {
-  alert(mensaje);
-  finalizarLectura();
-}
+function agregarFila(p) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = p.id;
 
-// ===============================
-// FINALIZAR LECTURA
-// ===============================
-function finalizarLectura() {
-  codigoInput.value = '';
-  cantidadInput.value = '';
-  lecturaEnProceso = false;
-  codigoInput.focus();
-}
-
-// ===============================
-// TABLA
-// ===============================
-function agregarFilaTabla(producto, moverArriba = false) {
-  const fila = document.createElement('tr');
-  fila.dataset.id = producto.id;
-
-  fila.innerHTML = `
-    <td>${producto.pareja}</td>
-    <td>${producto.conteo}</td>
-    <td>${producto.bodega}</td>
-    <td>${producto.codigo}</td>
-    <td>${producto.talla}</td>
-    <td>${producto.unidad}</td>
-    <td><strong>${producto.cantidad}</strong></td>
+  tr.innerHTML = `
+    <td>${p.pareja}</td>
+    <td>${p.conteo}</td>
+    <td>${p.bodega}</td>
+    <td>${p.codigo}</td>
+    <td>${p.talla}</td>
+    <td>${p.unidad}</td>
+    <td><strong>${p.cantidad}</strong></td>
     <td>
-      <button onclick="editarProducto(${producto.id})">✏️</button>
-      <button onclick="eliminarProducto(${producto.id})">🗑️</button>
+      <button onclick="eliminar(${p.id})">🗑️</button>
     </td>
   `;
 
-  if (moverArriba && tablaProductos.firstChild) {
-    tablaProductos.insertBefore(fila, tablaProductos.firstChild);
-    resaltarFila(fila);
-  } else {
-    tablaProductos.appendChild(fila);
-  }
+  tablaProductos.prepend(tr);
 }
 
-function actualizarFilaExistente(producto, moverArriba = false) {
-  const fila = document.querySelector(`tr[data-id="${producto.id}"]`);
-  if (!fila) return;
-
-  fila.children[6].innerHTML = `<strong>${producto.cantidad}</strong>`;
-
-  if (moverArriba) {
-    tablaProductos.insertBefore(fila, tablaProductos.firstChild);
-    resaltarFila(fila);
-  }
-}
-
-// ===============================
-// RESALTAR FILA
-// ===============================
-function resaltarFila(fila) {
-  fila.classList.add('fila-nueva');
-  setTimeout(() => fila.classList.remove('fila-nueva'), 800);
-}
-
-// ===============================
-// CONTADOR / STORAGE
-// ===============================
-function actualizarContador() {
-  totalProductos.textContent = productos.length;
-}
-
-function guardarProductos() {
-  localStorage.setItem('inventario_productos', JSON.stringify(productos));
-}
-
-function cargarProductosGuardados() {
-  const data = localStorage.getItem('inventario_productos');
-  if (!data) return;
-
-  productos = JSON.parse(data);
-  productos.forEach(p => agregarFilaTabla(p));
-  actualizarContador();
-}
-
-// ===============================
-// EDITAR / ELIMINAR
-// ===============================
-function editarProducto(id) {
-  const p = productos.find(p => p.id === id);
-  if (!p) return;
-
-  const nuevaCantidad = parseFloat(prompt('Nueva cantidad:', p.cantidad));
-  if (!nuevaCantidad || nuevaCantidad <= 0) return;
-
-  p.cantidad = nuevaCantidad;
-  actualizarFilaExistente(p);
-  guardarProductos();
-}
-
-function eliminarProducto(id) {
-  const clave = prompt('Clave:');
-  if (clave !== '123456789') return;
+function eliminar(id) {
+  if (prompt('Clave:') !== '123456789') return;
 
   productos = productos.filter(p => p.id !== id);
   document.querySelector(`tr[data-id="${id}"]`)?.remove();
@@ -250,24 +102,41 @@ function eliminarProducto(id) {
   actualizarContador();
 }
 
-// ===============================
-// EXPORTAR A EXCEL
-// ===============================
-function exportarAExcel() {
+function guardarProductos() {
+  localStorage.setItem('inventario_mp', JSON.stringify(productos));
+}
 
-  if (!productos.length) {
-    alert('No hay productos para exportar');
-    return;
-  }
+function cargarProductos() {
+  const data = localStorage.getItem('inventario_mp');
+  if (!data) return;
 
-  const clave = prompt('Clave para exportar:');
-  if (clave !== '123456789') return;
+  productos = JSON.parse(data);
+  productos.forEach(p => agregarFila(p));
+}
 
-  if (!confirm(`Vas a exportar ${productos.length} productos. ¿Continuar?`)) return;
+function actualizarContador() {
+  totalProductos.textContent = productos.length;
+}
 
-  const wb = XLSX.utils.book_new();
+function limpiarInputs() {
+  codigoInput.value = '';
+  tallaInput.value = '';
+  cantidadInput.value = '';
+  lecturaEnProceso = false;
+  codigoInput.focus();
+}
 
-  const datosExcel = productos.map(p => ({
+function error(msg) {
+  alert(msg);
+  lecturaEnProceso = false;
+}
+
+function exportarExcel() {
+  if (!productos.length) return alert('No hay datos');
+
+  if (prompt('Clave:') !== '123456789') return;
+
+  const datos = productos.map(p => ({
     Pareja: p.pareja,
     Conteo: p.conteo,
     Zona: p.bodega,
@@ -278,41 +147,9 @@ function exportarAExcel() {
     Fecha: p.fecha
   }));
 
-  const ws = XLSX.utils.json_to_sheet(datosExcel);
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(datos);
   XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
 
-  const ahora = new Date();
-  const fecha = ahora.toISOString().split('T')[0];
-  const hora = ahora.toTimeString().split(' ')[0].replace(/:/g, '-');
-  const conteoTexto = conteoSelect.options[conteoSelect.selectedIndex]?.text || 'SinConteo';
-
-  const nombreArchivo = `Inventario_${conteoTexto.replace(/\s+/g, '')}_${fecha}_${hora}.xlsx`;
-
-  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([wbout], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nombreArchivo;
-  document.body.appendChild(a);
-  a.click();
-
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  limpiarInventario();
-}
-
-// ===============================
-// LIMPIAR INVENTARIO
-// ===============================
-function limpiarInventario() {
-  productos = [];
-  tablaProductos.innerHTML = '';
-  localStorage.removeItem('inventario_productos');
-  actualizarContador();
-  codigoInput.focus();
+  XLSX.writeFile(wb, `Inventario_Materia_Prima.xlsx`);
 }
