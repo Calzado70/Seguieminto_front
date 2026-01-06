@@ -20,10 +20,6 @@ codigoInput.addEventListener('input', () => {
   if (codigoInput.value.trim().length === 13) agregarProducto();
 });
 
-// Enter manual
-codigoInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') agregarProducto();
-});
 
 botonExportar.addEventListener('click', exportarAExcel);
 
