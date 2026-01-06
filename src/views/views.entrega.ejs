@@ -13,26 +13,51 @@
 <body>
   <div class="container">
     <nav class="navbar">
-      <div class="navbar-brand"> <img src="/img/Trost_blanco.png" alt="Logo" class="logo"> </div>
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      </div>
     </nav>
+
     <div class="content-segundario">
       <div class="escrito">
         <h2 class="h2">Toma de Inventario</h2>
+
         <div class="cont-segun-list">
-          <div class="form-grid"> <!-- RESPONSABLE -->
-            <div class="input-group"> <label class="input-label" for="responsableInput">Responsable</label> <input
-                type="text" class="input" id="responsableInput" placeholder="Responsable" /> </div> <!-- CAJA -->
-            <div class="input-group"> <label class="input-label" for="cajaInput">Caja</label> <input type="text"
-                class="input" id="cajaInput" placeholder="Número de caja" /> </div> <!-- CÓDIGO -->
-            <div class="input-group"> <label class="input-label" for="codigo_producto">Código del Producto</label>
-              <input type="text" class="input" id="codigo_producto" placeholder="Escanea o escribe el código" /> </div>
-          </div>
-          <div class="cont-segun-list-bot"> <button class="button" id="mover-productos"> <i
-                class="fas fa-file-export"></i> Exportar a Excel </button> </div>
-          <div class="table-container">
-            <div class="table-header">
-              <div class="table-title">Productos Agregados</div>
+
+          <div class="form-grid">
+            <div class="input-group">
+              <label class="input-label">Responsable</label>
+              <input type="text" class="input" id="responsableInput">
             </div>
+
+            <div class="input-group">
+              <label class="input-label">Caja</label>
+              <input type="text" class="input" id="cajaInput">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">Código del Producto</label>
+              <input type="text" class="input" id="codigo_producto">
+            </div>
+          </div>
+
+          <div class="cont-segun-list-bot">
+            <button class="button" id="mover-productos">
+              <i class="fas fa-file-export"></i> Exportar a Excel
+            </button>
+          </div>
+
+          <div class="table-container">
+            <!-- HEADER CON CONTADOR -->
+            <div class="table-header header-flex">
+              <div class="table-title">Productos Agregados</div>
+
+              <div class="contador-header">
+                <span>Total únicos:</span>
+                <strong id="totalProductos">0</strong>
+              </div>
+            </div>
+
             <table>
               <thead>
                 <tr>
@@ -45,22 +70,23 @@
                 </tr>
               </thead>
               <tbody id="tablaProductos">
-                <tr id="empty-state" style="display: none;">
+                <tr id="empty-state" style="display:none">
                   <td colspan="6">
-                    <div class="empty-state"> <i class="fas fa-box-open"></i>
+                    <div class="empty-state">
+                      <i class="fas fa-box-open"></i>
                       <p>No hay productos agregados aún</p>
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div class="contador-productos"> <strong>Total productos únicos:</strong> <span id="totalProductos">0</span>
-            </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
+
   <script src="/js/entrega.js"></script>
 </body>
 
