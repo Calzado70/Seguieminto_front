@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   codigoInput.focus();
 });
 
-// Escaneo / escritura
+// Escaneo automático
 codigoInput.addEventListener('input', () => {
   if (codigoInput.value.trim().length === 13) agregarProducto();
 });
 
+// Enter manual
 codigoInput.addEventListener('keypress', e => {
   if (e.key === 'Enter') agregarProducto();
 });
@@ -29,27 +30,27 @@ botonExportar.addEventListener('click', exportarAExcel);
 // =========================
 function agregarProducto() {
 
-  if (!responsableInput.value || !cajaInput.value)
+  if (!responsableInput.value.trim() || !cajaInput.value.trim())
     return mostrarAlerta('Responsable y Caja son obligatorios', 'error');
 
   const codigo = codigoInput.value.trim();
   if (codigo.length !== 13)
     return mostrarAlerta('Código inválido', 'error');
 
-  const responsable = responsableInput.value;
-  const caja = cajaInput.value;
+  const responsable = responsableInput.value.trim();
+  const caja = cajaInput.value.trim();
   const talla = codigo.slice(-2);
 
-  let existe = productos.find(p =>
+  let existente = productos.find(p =>
     p.responsable === responsable &&
     p.caja === caja &&
     p.codigo === codigo
   );
 
-  if (existe) {
-    existe.cantidad++;
-    moverFilaInicio(existe.id);
-    actualizarFila(existe);
+  if (existente) {
+    existente.cantidad++;
+    moverFilaInicio(existente.id);
+    actualizarFila(existente);
   } else {
     const nuevo = {
       id: Date.now(),
@@ -87,8 +88,12 @@ function agregarFilaInicio(p) {
     <td>${p.cantidad}</td>
     <td>
       <div class="action-buttons">
-        <button class="btn-editar" onclick="editarProducto(${p.id})"><i class="fas fa-edit"></i></button>
-        <button class="btn-eliminar" onclick="eliminarProducto(${p.id})"><i class="fas fa-trash"></i></button>
+        <button class="btn-editar" onclick="editarProducto(${p.id})">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-eliminar" onclick="eliminarProducto(${p.id})">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
     </td>
   `;
@@ -110,16 +115,19 @@ function actualizarFila(p) {
 function editarProducto(id) {
   const p = productos.find(x => x.id === id);
   const cant = prompt('Nueva cantidad:', p.cantidad);
-  if (!isNaN(cant)) {
+
+  if (cant !== null && !isNaN(cant)) {
     p.cantidad = parseInt(cant);
     actualizarFila(p);
     guardarProductos();
+    actualizarContador();
   }
 }
 
 function eliminarProducto(id) {
   productos = productos.filter(p => p.id !== id);
-  document.querySelector(`tr[data-id="${id}"]`).remove();
+  document.querySelector(`tr[data-id="${id}"]`)?.remove();
+
   guardarProductos();
   actualizarContador();
 
@@ -128,9 +136,11 @@ function eliminarProducto(id) {
 
 // =========================
 function actualizarContador() {
-  totalProductos.textContent = productos.length;
+  const total = productos.reduce((sum, p) => sum + p.cantidad, 0);
+  totalProductos.textContent = total;
 }
 
+// =========================
 function guardarProductos() {
   localStorage.setItem('inv_productos', JSON.stringify(productos));
 }
@@ -145,7 +155,8 @@ function cargarProductos() {
 
 // =========================
 function exportarAExcel() {
-  if (!productos.length) return;
+  if (!productos.length)
+    return mostrarAlerta('No hay datos para exportar', 'error');
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(productos);
