@@ -1,187 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="es">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="/css/producto.css" />
-    <title>Supervisor</title>
-  </head>
-  <body>
+    <title>Supervisor - Movimientos</title>
+</head>
+<body>
     <div class="container">
-      <nav class="navbar">
-      <div class="navbar-brand">
-        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-      </div>
-      <div class="navbar-menu">
-        <div class="navbar-options">
-          <div class="dropdown">
-            <select class="dropdown-select" id="consultas">
-              <option value="" selected disabled>Consultas</option>
-              <option value="#">Inventario</option>
-              <option value="#">Stock por Producto</option>
-            </select>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
-          </div>
-          <button class="nav-button" id="sesion" value="/sesion">
-            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-          </button>
-          <button class="nav-button" id="transferencia" value="/supervisor">
-            <i class="fas fa-exchange-alt"></i> Transferencia/Consumos
-          </button>
-        </div>
-      </div>
-    </nav>
-
-      <div class="modal" id="modalMovimiento" style="display: none">
-        <div class="modal-content">
-          <h3>Mover Producto</h3>
-          <p>Confirma el movimiento del producto:</p>
-          <div class="movimiento-info">
-            <p>
-              <strong>Producto:</strong> <span id="productoMovimiento"></span>
-            </p>
-            <p><strong>Desde:</strong> <span id="bodegaOrigen"></span></p>
-            <p><strong>Hacia:</strong> <span id="bodegaDestinoSpan"></span></p>
-            <p><strong>Tipo:</strong> <span id="tipoMovimiento"></span></p>
-          </div>
-          <textarea
-            id="observaciones"
-            class="modal-input"
-            placeholder="Observaciones (opcional)"
-            rows="3"
-          ></textarea>
-          <div class="modal-buttons">
-            <button
-              class="modal-button modal-button-cancel"
-              id="cancelarMovimiento"
-            >
-              Cancelar
-            </button>
-            <button
-              class="modal-button modal-button-confirm"
-              id="confirmarMovimiento"
-            >
-              Confirmar Movimiento
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal" id="modalErrorStock" style="display: none">
-        <div class="modal-content">
-          <h3>Error de Stock</h3>
-          <p id="mensajeErrorStock">No hay suficiente stock disponible.</p>
-          <div class="modal-buttons">
-            <button
-              class="modal-button modal-button-confirm"
-              id="cerrarModalErrorStock"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="content-segundario">
-        <div class="escrito">
-          <h2 class="h2">Movimientos</h2>
-          <div class="cont-segun-list">
-            <div class="cont-segun-list-for">
-              <input
-                type="text"
-                class="input"
-                id="usuario"
-                placeholder="Usuario"
-                disabled
-              />
-              <input
-                type="text"
-                class="input"
-                id="bodegaActual"
-                placeholder="Bodega Actual"
-                disabled
-              />
-              <input
-                type="text"
-                class="input"
-                id="codigo_producto"
-                placeholder="Código del Producto"
-              />
-              <select id="id_bodega" required class="input">
-                <option value="">Seleccione bodega</option>
-              </select>
-              <select class="desple" id="tipoMovimientoSelect">
-                <option value="">Tipo de Movimiento</option>
-                <option value="ENTRADA">ENTRADA</option>
-                <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                <option value="SALIDA">SALIDA</option>
-                <option value="AJUSTE">AJUSTE</option>
-              </select>
-
-              <select class="desple" id="caracteristicas">
-                <option value="">Selecciona la caracteristicas</option>
-                <option value="40">Caucho</option>
-                <option value="41">Caucho dielectrica</option>
-                <option value="42">Mono sin inserto N</option>
-                <option value="43">Mono con inserto G</option>
-                <option value="44">Bi N con inserto</option>
-                <option value="45">Mono Ncon inserto gris Kevlar</option>
-                <option value="46">Bi N/G con inserto kevlar</option>
-                <option value="47">Bi G con inserto kevlar</option>
-                <option value="48">Mono N valeta</option>
-                <option value="49">Bi N/G sin inserto</option>
-                <option value="50">Mono G valeta</option>
-                <option value="51">Mono sin inserto G</option>
-                <option value="52">Bi N/N sin inserto kevlar</option>
-                <option value="53">Bi N/N sin inserto</option>
-                <option value="54">Bi G/G sin inserto</option>
-                <option value="55">Bi G/G sin inserto Antiestatica</option>
-                <option value="56">Bi N/G sin inserto kevlar</option>
-                <option value="57">Bi N/G sin inserto Antiestatica</option>
-                <option value="58">Bi C/N sin inserto GN</option>
-                <option value="59">Bi C/N sin inserto kevlar</option>
-              </select>
-
-              <div class="cont-segun-list-bot">
-                <button class="button" id="mover-productos">
-                  Realizar Consumo
-                </button>
-              </div>
-              <div class="cont-segun-formu">
-                <div class="table-container">
-                  <table>
-                    <thead>
-                      <tr class="table-row1">
-                        <th>Usuario</th>
-                        <th>Bodega origen</th>
-                        <th>Bodega a Consumir</th>
-                        <th>Cantidad</th>
-                        <th>Código</th>
-                        <th>Tipo de movieminto</th>
-                        <th>Características</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                        <!-- ✅ NUEVA COLUMNA -->
-                      </tr>
-                    </thead>
-                    <tbody id="tablaProductos">
-                      <!-- Aquí se mostrarán los productos agregados -->
-                    </tbody>
-                  </table>
-
-                  <!-- ✅ Contador total de productos -->
-                  <div class="contador-productos">
-                    <strong>Total productos únicos:</strong>
-                    <span id="totalProductos">0</span>
-                  </div>
-                </div>
-              </div>
+        <!-- Navbar Moderna -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+                <span class="app-name">Gestión de Movimientos</span>
             </div>
-          </div>
+            <div class="navbar-menu">
+                <div class="navbar-options">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" type="button">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Consultas</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#"><i class="fas fa-boxes"></i> Inventario</a>
+                            <a href="#"><i class="fas fa-chart-pie"></i> Stock por Producto</a>
+                            <a href="#"><i class="fas fa-history"></i> Historial</a>
+                        </div>
+                    </div>
+                    
+                    <button class="nav-btn primary" id="sesion" value="/sesion">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Iniciar Sesión</span>
+                    </button>
+                    
+                    <button class="nav-btn accent" id="transferencia" value="/supervisor">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transferencias</span>
+                    </button>
+                    
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="current-user"></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Modales -->
+        <div class="modal-overlay" id="modalMovimiento" style="display: none">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3><i class="fas fa-truck-moving"></i> Confirmar Movimiento</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <i class="fas fa-box"></i>
+                            <div>
+                                <label>Producto</label>
+                                <p id="productoMovimiento">-</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-arrow-up"></i>
+                            <div>
+                                <label>Bodega Origen</label>
+                                <p id="bodegaOrigen">-</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-arrow-down"></i>
+                            <div>
+                                <label>Bodega Destino</label>
+                                <p id="bodegaDestinoSpan">-</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-exchange-alt"></i>
+                            <div>
+                                <label>Tipo de Movimiento</label>
+                                <p id="tipoMovimiento">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observaciones"><i class="fas fa-sticky-note"></i> Observaciones</label>
+                        <textarea id="observaciones" class="form-textarea" 
+                                  placeholder="Agregue observaciones sobre este movimiento (opcional)" 
+                                  rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelarMovimiento">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-primary" id="confirmarMovimiento">
+                        <i class="fas fa-check"></i> Confirmar Movimiento
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="modal-overlay" id="modalErrorStock" style="display: none">
+            <div class="modal-card error">
+                <div class="modal-header error">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Error de Stock</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <p id="mensajeErrorStock" class="error-message">No hay suficiente stock disponible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="cerrarModalErrorStock">
+                        <i class="fas fa-check"></i> Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <!-- Encabezado con estadísticas -->
+            <div class="content-header">
+                <div class="header-left">
+                    <h1><i class="fas fa-warehouse"></i> Gestión de Movimientos</h1>
+                    <p class="subtitle">Realiza transferencias, consumos y movimientos entre bodegas</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-box-open"></i>
+                        <div>
+                            <span class="stat-value" id="totalProductos">0</span>
+                            <span class="stat-label">Productos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-day"></i>
+                        <div>
+                            <span class="stat-value" id="currentDate">-</span>
+                            <span class="stat-label">Fecha Actual</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Control -->
+            <div class="control-panel">
+                <div class="panel-section">
+                    <h3><i class="fas fa-sliders-h"></i> Configuración del Movimiento</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="usuario"><i class="fas fa-user"></i> Usuario</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user-tag"></i>
+                                <input type="text" class="form-control" id="usuario" placeholder="Usuario" disabled />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bodegaActual"><i class="fas fa-warehouse"></i> Bodega Actual</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-location-arrow"></i>
+                                <input type="text" class="form-control" id="bodegaActual" placeholder="Bodega Actual" disabled />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="codigo_producto"><i class="fas fa-barcode"></i> Código del Producto</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-qrcode"></i>
+                                <input type="text" class="form-control" id="codigo_producto" 
+                                       placeholder="Escanee o ingrese el código" />
+                                <button class="input-action" id="scanBtn" title="Escanear código"></button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cantidad_manual"><i class="fas fa-balance-scale"></i> Cantidad</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-boxes"></i>
+                                <input type="number" class="form-control" id="cantidad_manual" 
+                                       placeholder="Cantidad (opcional)" min="1" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_bodega"><i class="fas fa-map-marker-alt"></i> Bodega Destino</label>
+                            <div class="select-with-icon">
+                                <i class="fas fa-arrow-right"></i>
+                                <select id="id_bodega" required class="form-control">
+                                    <option value="">Seleccione bodega destino</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tipoMovimientoSelect"><i class="fas fa-exchange-alt"></i> Tipo de Movimiento</label>
+                            <div class="select-with-icon">
+                                <i class="fas fa-directions"></i>
+                                <select class="form-control" id="tipoMovimientoSelect">
+                                    <option value="">Seleccione tipo</option>
+                                    <option value="ENTRADA" class="entrada">ENTRADA</option>
+                                    <option value="SALIDA" class="salida">SALIDA</option>
+                                    <option value="INTERNO" class="interno">INTERNO</option>
+                                    <option value="EXTERNO" class="externo">EXTERNO</option>
+                                    <option value="COMPLETO" class="completo">COMPLETO</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="caracteristicas-container">
+                            <label for="caracteristicas"><i class="fas fa-cogs"></i> Características</label>
+                            <div class="select-with-icon">
+                                <i class="fas fa-list-alt"></i>
+                                <select class="form-control" id="caracteristicas">
+                                    <option value="">Seleccione características</option>
+                                    <option value="40">(40) Caucho</option>
+                                    <option value="41">(41) Caucho dielectrica</option>
+                                    <option value="42">(42) Mono sin inserto N</option>
+                                    <option value="43">(43) Mono con inserto G</option>
+                                    <option value="44">(44) Bi N con inserto</option>
+                                    <option value="45">(45) Mono N con inserto gris Kevlar</option>
+                                    <option value="46">(46) Bi N/G con inserto kevlar</option>
+                                    <option value="47">(47) Bi G con inserto kevlar</option>
+                                    <option value="48">(48) Mono N valeta</option>
+                                    <option value="49">(49) Bi N/G sin inserto</option>
+                                    <option value="50">(50) Mono G valeta</option>
+                                    <!-- ... resto de opciones ... -->
+                                </select>
+                            </div>
+                            <small id="caracteristicas-help" class="help-text" style="display: none;">
+                                <i class="fas fa-info-circle"></i> Solo disponible para bodega específica
+                            </small>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <button class="btn btn-success" id="mover-productos">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Realizar Transferencia</span>
+                            </button>
+                            <button class="btn btn-outline" id="limpiar-lista">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Limpiar Lista</span>
+                            </button>
+                            <button class="btn btn-info" id="agregar-manual">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Agregar Manual</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel de Productos Agregados -->
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-clipboard-list"></i> Productos en Lista</h3>
+                        <div class="section-actions">
+                            <span class="badge" id="totalItems">0 items</span>
+                            <span class="badge badge-primary" id="totalQuantity">0 unidades</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="modern-table" id="tablaProductos">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-user"></i> Usuario</th>
+                                        <th><i class="fas fa-arrow-up"></i> Origen</th>
+                                        <th><i class="fas fa-arrow-down"></i> Destino</th>
+                                        <th><i class="fas fa-boxes"></i> Cantidad</th>
+                                        <th><i class="fas fa-barcode"></i> Código</th>
+                                        <th><i class="fas fa-ruler"></i> Talla</th>
+                                        <th><i class="fas fa-exchange-alt"></i> Tipo</th>
+                                        <th><i class="fas fa-cogs"></i> Características</th>
+                                        <th><i class="fas fa-calendar"></i> Fecha</th>
+                                        <th><i class="fas fa-cog"></i> Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Filas se agregarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Estado vacío -->
+                        <div class="empty-state" id="emptyState">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h4>No hay productos en la lista</h4>
+                            <p>Agrega productos escaneando códigos o ingresándolos manualmente</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="/img/Trost_blanco.png" alt="Logo" class="footer-logo-img">
+                </div>
+                <div class="footer-info">
+                    <p><i class="fas fa-copyright"></i> 2024 Sistema de Gestión de Bodegas</p>
+                    <p><i class="fas fa-user"></i> Usuario: <span id="footer-user">-</span></p>
+                    <p><i class="fas fa-warehouse"></i> Bodega: <span id="footer-bodega">-</span></p>
+                </div>
+                <div class="footer-status">
+                    <div class="status-indicator active">
+                        <span class="status-dot"></span>
+                        <span>Sistema Online</span>
+                    </div>
+                    <div class="last-update">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Última actualización: <span id="lastUpdate">-</span></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="/js/producto.js"></script>
-  </body>
+</body>
 </html>

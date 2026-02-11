@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fila.className = "table-row";
     fila.dataset.codigo = producto.codigo;
     fila.innerHTML = `
-      <td>${producto.id || "N/A"}</td>
       <td>${producto.codigo}</td>
       <td>${producto.cantidad}</td>
       <td>${producto.nombre_bodega || "N/A"}</td>
@@ -89,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const bodyData = { codigo: codigo };
 
     try {
-      await fetch("http://192.168.1.13:4000/product/crear", {
+      await fetch("http://localhost:4000/product/crear", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      const response = await fetch("http://192.168.1.13:4000/product/agregar", {
+      const response = await fetch("http://localhost:4000/product/agregar", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -206,7 +205,7 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
   if (!confirmar) return;
 
   try {
-    const response = await fetch("http://192.168.1.13:4000/product/finalizar", {
+    const response = await fetch("http://localhost:4000/product/finalizar", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

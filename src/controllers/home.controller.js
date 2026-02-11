@@ -54,19 +54,19 @@ export const session = (req, res) => {
 }
 
 export const inventario_inicial = (req, res) => {
-    res.render("views.inventario_inicial.ejs");
+    res.render("./proyectos flash/views.inventario_inicial.ejs");
 }
 
 export const packing_list = (req, res) => {
-    res.render("views.packing.list.ejs");
+    res.render("./proyectos flash/views.packing.list.ejs");
 }
 
 export const entrega  = (req, res) => {
-    res.render("views.entrega.ejs");
+    res.render("./proyectos flash/views.entrega.ejs");
 }
 
 export const materia  = (req, res) => {
-    res.render("views.inventario_materia_prima.ejs");
+    res.render("./proyectos flash/views.inventario_materia_prima.ejs");
 }
 
 
