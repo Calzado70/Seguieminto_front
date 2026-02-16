@@ -105,7 +105,7 @@ async function crearUsuario() {
         showToast('Creando usuario...', 'info');
 
         // Enviar la solicitud al servidor
-        const response = await fetch('http://localhost:4000/user/insertarusuario', {
+        const response = await fetch('http://192.168.1.13:4000/user/insertarusuario', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ async function cargarUsuarios() {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/user/mostrar', {
+        const response = await fetch('http://192.168.1.13:4000/user/mostrar', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -312,7 +312,7 @@ async function eliminarUsuario(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:4000/user/eliminar', {
+        const response = await fetch('http://192.168.1.13:4000/user/eliminar', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -365,7 +365,7 @@ async function cargarBodegas() {
     const selectBodega = document.getElementById('bodega');
     
     try {
-        const response = await fetch('http://localhost:4000/bode/mostrar');
+        const response = await fetch('http://192.168.1.13:4000/bode/mostrar');
         
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);

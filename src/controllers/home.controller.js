@@ -53,6 +53,12 @@ export const session = (req, res) => {
     res.render("views.sesion.ejs");
 }
 
+export const inventario_supervisor = (req, res) => {
+    res.render("views.inventario.supervisor.ejs");
+}
+
+
+
 export const inventario_inicial = (req, res) => {
     res.render("./proyectos flash/views.inventario_inicial.ejs");
 }

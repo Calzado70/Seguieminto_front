@@ -3,126 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Inventario</title>
+  <title>Gestión de Inventario Supervisor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/inventario.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/inventario.supervisor.css">
 </head>
 <body>
-  <div class="admin-container">
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <div class="logo-container">
-        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-      </div>
-      
-      <nav class="sidebar-nav">
-        <div class="nav-section">
-          <h3 class="nav-section-title">USUARIOS</h3>
-          <select class="nav-select" id="adminUsuario">
-            <option value="">Admin-usuario</option>
-            <option value="/usuario">Crear usuarios</option>
-          </select>
-        </div>
-        
-        <div class="nav-section">
-          <h3 class="nav-section-title">BODEGAS</h3>
-          <select class="nav-select" id="bodegas">
-            <option value="">Bodegas</option>
-            <option value="/crear_bodega">Crear Bodegas</option>
-            <option value="/seguimiento">Seguimiento Bodega</option>
-            <option value="/inventario">inventario de Bodegas</option>
 
-          </select>
-        </div>
-        
-        <div class="nav-section">
-          <h3 class="nav-section-title">HISTORIAL</h3>
-          <select class="nav-select" id="historial">
-            <option value="">Historial</option>
-            <option value="/historial">Lista de Historial</option>
-            <option value="/logistica">Producto en Logistica</option>
-          </select>
-        </div>
-      </nav>
-      
-      <div class="user-profile">
-        <div class="user-avatar">
-          <i class="fas fa-user-circle"></i>
-        </div>
-        <div class="user-info">
-          <span class="user-name" id="currentUserName">Nombre Usuario</span>
-          <span class="user-role" id="currentUserRole">Rol</span>
-        </div>
-      </div>
-    </aside>
+  <!-- Header superior -->
+  <header class="top-header">
+    <div class="logo-container">
+      <img src="/img/Trost_blanco.png" alt="Trost" class="logo">
+      <h1>Gestión de Inventario</h1>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="content-header">
-        <h1><i class="fas fa-boxes"></i> Gestión de Inventario</h1>
-        <div class="header-actions">
-          <button class="notification-btn" onclick="irAVistaAlertas()">
-            <i class="fas fa-bell"></i>
-            <span class="notification-badge">1</span>
+    <div class="user-profile">
+      <div class="user-info">
+        <span class="user-name" id="currentUserName">Nombre Usuario</span>
+        <span class="user-role" id="currentUserRole">Supervisor</span>
+      </div>
+      <div class="user-avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navegación horizontal -->
+  <nav class="top-nav">
+    <button class="nav-btn active" data-ruta="/inventario_supervisor">
+      <i class="fas fa-search"></i> Consultar Inventario
+    </button>
+    <button class="nav-btn" data-ruta="/sesion">
+      <i class="fas fa-sign-in-alt"></i> Iniciar Sesión Escaneo
+    </button>
+    <button class="nav-btn accent" data-ruta="/supervisor">
+      <i class="fas fa-exchange-alt"></i> Transferencia
+    </button>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <div class="content-container">
+      <section class="inventory-section card">
+        <div class="section-header">
+          <h2><i class="fas fa-warehouse"></i> Inventario por Bodega</h2>
+        </div>
+
+        <div class="inventory-controls">
+          <div class="form-group">
+            <label>Bodega</label>
+            <div class="select-wrapper">
+              <select id="nombre_bodega" class="form-control">
+                <option value="">-- Todas las bodegas --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Código</label>
+            <input type="text" id="codigo_busqueda" class="form-control" placeholder="Ej: ABC123XL">
+          </div>
+
+          <button class="btn-search" onclick="consultarInventario()">
+            <i class="fas fa-search"></i> Buscar
           </button>
         </div>
-      </header>
 
-      <div class="content-grid">
-        <!-- Inventory Section -->
-        <section class="inventory-section card">
-          <div class="tabs">
-            <div class="tab active" onclick="openTab('inventario')">
-              <i class="fas fa-warehouse"></i> Inventario por Bodega
-            </div>
+        <div class="table-container">
+          <table id="tablaInventario" class="data-table">
+            <thead>
+              <tr>
+                <th>Bodega</th>
+                <th>Código</th>
+                <th>Talla</th>
+                <th>Característica</th>
+                <th>Disponible</th>
+                <th>Últ. Act.</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div id="empty-state" class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>presione Buscar</p>
           </div>
+        </div>
 
-          <!-- Inventory Content -->
-          <div id="inventario" class="tab-content active">
-            <div class="inventory-controls">
-              <div class="form-group">
-                <label for="nombre_bodega">Seleccione una bodega:</label>
-                <div class="select-container">
-                  <select id="nombre_bodega" class="form-control">
-                    <option value="">-- Seleccione --</option>
-                  </select>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-              </div>
-              
-              <button class="btn-primary" onclick="consultarInventario()">
-                <i class="fas fa-search"></i> Consultar
-              </button>
-            </div>
+        <div id="mensajeInventario" class="message"></div>
+      </section>
+    </div>
+  </main>
 
-            <div class="table-container">
-              <table id="tablaInventario" class="data-table">
-                <thead>
-                  <tr>
-                    <th><i class="fas fa-lock"></i> Bodega </th>
-                    <th><i class="fas fa-barcode"></i> Código</th>
-                    <th><i class="fas fa-info-circle"></i> Característica</th>
-                    <th><i class="fas fa-box-open"></i> Disponible</th>
-                    <th><i class="fas fa-calendar-alt"></i> Actualización</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-              
-              <div id="empty-state" class="empty-state">
-                <i class="fas fa-box-open"></i>
-                <p>Seleccione una bodega y haga clic en Consultar para ver el inventario</p>
-              </div>
-            </div>
-
-            <div id="mensajeInventario" class="message"></div>
-          </div>
-        </section>
-      </div>
-    </main>
-  </div>
-
-  <script src="/js/inventario.js"></script>
+  <script src="/js/inventario.supervisor.js"></script>
 </body>
 </html>

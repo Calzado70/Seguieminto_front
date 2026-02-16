@@ -5,6 +5,7 @@ import { alerta,
     historial, 
     inventario, 
     inventario_inicial, 
+    inventario_supervisor, 
     inventario_view, 
     login, 
     logistica,  
@@ -29,6 +30,7 @@ rutaHome.get("/historial", historial);
 rutaHome.get("/alerta", alerta); //puede que ya no sea necesario
 rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
+rutaHome.get("/inventario_supervisor", inventario_supervisor);
 // rutaHome.get("/inyeccion",producto_inyec);
 
 //LOGIN

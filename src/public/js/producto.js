@@ -69,7 +69,7 @@ async function cargarBodegas() {
     if (!select) return;
 
     try {
-        const res = await fetch("http://localhost:4000/bode/mostrar");
+        const res = await fetch("http://192.168.1.13:4000/bode/mostrar");
         const data = await res.json();
 
         if (data.success) {
@@ -326,7 +326,7 @@ async function transferirProductos() {
         try {
             // Actualizar características si es bodega 3
             if (payload.id_bodega_origen === 3 && caracteristicas !== "N/A") {
-                await fetch("http://localhost:4000/product/actualizar", {
+                await fetch("http://192.168.1.13:4000/product/actualizar", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
@@ -337,7 +337,7 @@ async function transferirProductos() {
             }
 
             // Realizar transferencia
-            const res = await fetch("http://localhost:4000/product/transferencia", {
+            const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 

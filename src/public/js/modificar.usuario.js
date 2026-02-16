@@ -46,7 +46,7 @@ function togglePassword() {
 async function cargarBodegas() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/bode/mostrar', {
+        const response = await fetch('http://192.168.1.13:4000/bode/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -94,7 +94,7 @@ async function cargarDatosUsuario() {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:4000/user/mostrar?nombre=${encodeURIComponent(nombreUsuario)}`, {
+        const response = await fetch(`http://192.168.1.13:4000/user/mostrar?nombre=${encodeURIComponent(nombreUsuario)}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -142,7 +142,7 @@ async function modificarUsuario() {
 
         showToast('Actualizando usuario...', 'info');
 
-        const response = await fetch('http://localhost:4000/user/modificar', {
+        const response = await fetch('http://192.168.1.13:4000/user/modificar', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
