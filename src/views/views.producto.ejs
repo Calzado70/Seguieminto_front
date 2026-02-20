@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="/css/producto.css" />
     <title>Supervisor - Movimientos</title>
 </head>
+
 <body>
     <div class="container">
         <!-- Navbar Moderna -->
@@ -30,17 +32,17 @@
                             <a href="#"><i class="fas fa-history"></i> Historial</a>
                         </div>
                     </div>
-                    
+
                     <button class="nav-btn primary" id="sesion" value="/sesion">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Iniciar Sesión</span>
                     </button>
-                    
+
                     <button class="nav-btn accent" id="transferencia" value="/supervisor">
                         <i class="fas fa-exchange-alt"></i>
                         <span>Transferencias</span>
                     </button>
-                    
+
                     <div class="user-info">
                         <i class="fas fa-user-circle"></i>
                         <span id="current-user"></span>
@@ -87,12 +89,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="observaciones"><i class="fas fa-sticky-note"></i> Observaciones</label>
-                        <textarea id="observaciones" class="form-textarea" 
-                                  placeholder="Agregue observaciones sobre este movimiento (opcional)" 
-                                  rows="3"></textarea>
+                        <textarea id="observaciones" class="form-textarea"
+                            placeholder="Agregue observaciones sobre este movimiento (opcional)" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -155,7 +156,7 @@
             <div class="control-panel">
                 <div class="panel-section">
                     <h3><i class="fas fa-sliders-h"></i> Configuración del Movimiento</h3>
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="usuario"><i class="fas fa-user"></i> Usuario</label>
@@ -164,34 +165,35 @@
                                 <input type="text" class="form-control" id="usuario" placeholder="Usuario" disabled />
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="bodegaActual"><i class="fas fa-warehouse"></i> Bodega Entrada</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-location-arrow"></i>
-                                <input type="text" class="form-control" id="bodegaActual" placeholder="Bodega Actual" disabled />
+                                <input type="text" class="form-control" id="bodegaActual" placeholder="Bodega Actual"
+                                    disabled />
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="codigo_producto"><i class="fas fa-barcode"></i> Código del Producto</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-qrcode"></i>
-                                <input type="text" class="form-control" id="codigo_producto" 
-                                       placeholder="Escanee o ingrese el código" />
+                                <input type="text" class="form-control" id="codigo_producto"
+                                    placeholder="Escanee o ingrese el código" />
                                 <button class="input-action" id="scanBtn" title="Escanear código"></button>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="cantidad_manual"><i class="fas fa-balance-scale"></i> Cantidad</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-boxes"></i>
-                                <input type="number" class="form-control" id="cantidad_manual" 
-                                       placeholder="Cantidad (opcional)" min="1" />
+                                <input type="number" class="form-control" id="cantidad_manual"
+                                    placeholder="Cantidad (opcional)" min="1" />
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="id_bodega"><i class="fas fa-map-marker-alt"></i> Bodega Salida</label>
                             <div class="select-with-icon">
@@ -201,9 +203,10 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="tipoMovimientoSelect"><i class="fas fa-exchange-alt"></i> Tipo de Movimiento</label>
+                            <label for="tipoMovimientoSelect"><i class="fas fa-exchange-alt"></i> Tipo de
+                                Movimiento</label>
                             <div class="select-with-icon">
                                 <i class="fas fa-directions"></i>
                                 <select class="form-control" id="tipoMovimientoSelect">
@@ -216,32 +219,21 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="form-group" id="caracteristicas-container">
-                            <label for="caracteristicas"><i class="fas fa-cogs"></i> Características</label>
-                            <div class="select-with-icon">
-                                <i class="fas fa-list-alt"></i>
-                                <select class="form-control" id="caracteristicas">
-                                    <option value="">Seleccione características</option>
-                                    <option value="40">(40) Caucho</option>
-                                    <option value="41">(41) Caucho dielectrica</option>
-                                    <option value="42">(42) Mono sin inserto N</option>
-                                    <option value="43">(43) Mono con inserto G</option>
-                                    <option value="44">(44) Bi N con inserto</option>
-                                    <option value="45">(45) Mono N con inserto gris Kevlar</option>
-                                    <option value="46">(46) Bi N/G con inserto kevlar</option>
-                                    <option value="47">(47) Bi G con inserto kevlar</option>
-                                    <option value="48">(48) Mono N valeta</option>
-                                    <option value="49">(49) Bi N/G sin inserto</option>
-                                    <option value="50">(50) Mono G valeta</option>
-                                    <!-- ... resto de opciones ... -->
-                                </select>
+                            <label for="caracteristicas">
+                                <i class="fas fa-cogs"></i> Características
+                            </label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-keyboard"></i>
+                                <input type="text" class="form-control" id="caracteristicas"
+                                    placeholder="Ingrese características del producto" />
                             </div>
                             <small id="caracteristicas-help" class="help-text" style="display: none;">
                                 <i class="fas fa-info-circle"></i> Solo disponible para bodega específica
                             </small>
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <button class="btn btn-success" id="mover-productos">
                                 <i class="fas fa-paper-plane"></i>
@@ -258,7 +250,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Panel de Productos Agregados -->
                 <div class="panel-section">
                     <div class="section-header">
@@ -268,7 +260,7 @@
                             <span class="badge badge-primary" id="totalQuantity">0 unidades</span>
                         </div>
                     </div>
-                    
+
                     <div class="table-container">
                         <div class="table-responsive">
                             <table class="modern-table" id="tablaProductos">
@@ -291,7 +283,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Estado vacío -->
                         <div class="empty-state" id="emptyState">
                             <i class="fas fa-clipboard-list"></i>
@@ -332,4 +324,5 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="/js/producto.js"></script>
 </body>
+
 </html>

@@ -5,6 +5,44 @@ let productos = {};
 let totalUnidades = 0;
 
 /* =========================
+   PERSISTENCIA LOCAL
+========================= */
+function guardarListaEnLocalStorage() {
+    localStorage.setItem("productos_transferencia", JSON.stringify(productos));
+    localStorage.setItem("total_unidades_transferencia", totalUnidades);
+}
+
+function restaurarListaDesdeLocalStorage() {
+    const productosGuardados = localStorage.getItem("productos_transferencia");
+    const totalGuardado = localStorage.getItem("total_unidades_transferencia");
+
+    if (!productosGuardados) return;
+
+    productos = JSON.parse(productosGuardados);
+    totalUnidades = parseInt(totalGuardado) || 0;
+
+    Object.keys(productos).forEach(codigo => {
+        crearFilaProducto(codigo, productos[codigo]);
+    });
+
+    actualizarEstadisticas();
+}
+
+function restaurarDatosFormulario() {
+    const bodegaGuardada = localStorage.getItem("bodega_destino_id");
+    const tipoMovimientoGuardado = localStorage.getItem("tipo_movimiento_guardado");
+
+    if (bodegaGuardada) {
+        document.getElementById("id_bodega").value = bodegaGuardada;
+    }
+
+    if (tipoMovimientoGuardado) {
+        document.getElementById("tipoMovimientoSelect").value = tipoMovimientoGuardado;
+    }
+}
+
+
+/* =========================
    INICIALIZACIÓN
 ========================= */
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +58,8 @@ function inicializarApp() {
     actualizarEstadoVacio();
     configurarInputCodigo();
     setInterval(actualizarFecha, 60000); // Actualizar cada minuto
+    restaurarListaDesdeLocalStorage();
+    restaurarDatosFormulario();
 }
 
 /* =========================
@@ -69,7 +109,7 @@ async function cargarBodegas() {
     if (!select) return;
 
     try {
-        const res = await fetch("http://192.168.1.13:4000/bode/mostrar");
+        const res = await fetch("http://localhost:4000/bode/mostrar");
         const data = await res.json();
 
         if (data.success) {
@@ -145,7 +185,7 @@ function agregarProducto(codigo) {
     }
 
     const cantidadInput = document.getElementById("cantidad_manual");
-    let cantidad = parseInt(cantidadInput.value, 10) || 1;
+    let cantidad = parseInt(cantidadInput.value, 10) || 0.5;
     const usuario = document.getElementById("usuario").value;
     const bodegaOrigen = document.getElementById("bodegaActual").value;
     const bodegaDestinoSelect = document.getElementById("id_bodega");
@@ -185,6 +225,8 @@ function agregarProducto(codigo) {
     actualizarEstadisticas();
     cantidadInput.value = "";
     
+
+    guardarListaEnLocalStorage();
     mostrarNotificacion(`Producto ${codigo} agregado`, "success");
 }
 
@@ -273,6 +315,7 @@ function eliminarProducto(codigo) {
         fila.remove();
     }
     
+    guardarListaEnLocalStorage();
     actualizarEstadisticas();
     mostrarNotificacion("Producto eliminado", "info");
 }
@@ -326,7 +369,7 @@ async function transferirProductos() {
         try {
             // Actualizar características si es bodega 3
             if (payload.id_bodega_origen === 3 && caracteristicas !== "N/A") {
-                await fetch("http://192.168.1.13:4000/product/actualizar", {
+                await fetch("http://localhost:4000/product/actualizar", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
@@ -337,7 +380,7 @@ async function transferirProductos() {
             }
 
             // Realizar transferencia
-            const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
+            const res = await fetch("http://localhost:4000/product/transferencia", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
@@ -390,6 +433,10 @@ function limpiarLista() {
     tbody.innerHTML = '';
     
     actualizarEstadisticas();
+
+    localStorage.removeItem("productos_transferencia");
+    localStorage.removeItem("total_unidades_transferencia");
+
     mostrarNotificacion("Lista limpiada", "info");
 }
 
@@ -462,9 +509,13 @@ function mostrarNotificacion(mensaje, tipo = "info") {
 function configurarEventos() {
     // Select de bodega destino
     document.getElementById("id_bodega").addEventListener("change", e => {
-        localStorage.setItem("bodega_destino_id", e.target.value);
-        gestionarCampoCaracteristicas();
-    });
+    localStorage.setItem("bodega_destino_id", e.target.value);
+    gestionarCampoCaracteristicas();
+});
+
+document.getElementById("tipoMovimientoSelect").addEventListener("change", e => {
+    localStorage.setItem("tipo_movimiento_guardado", e.target.value);
+});
 
     // Botón de transferencia
     document.getElementById("mover-productos").addEventListener("click", transferirProductos);
@@ -528,6 +579,9 @@ function configurarEventos() {
     document.getElementById("transferencia").addEventListener("click", () => {
         window.location.href = "/supervisor";
     });
+
+
+    
 }
 
 function modificarCantidad(codigo, cambio) {
@@ -543,6 +597,7 @@ function modificarCantidad(codigo, cambio) {
     totalUnidades += cambio;
     actualizarFilaProducto(codigo, productos[codigo]);
     actualizarEstadisticas();
+    guardarListaEnLocalStorage();
 }
 
 function editarProducto(codigo) {
@@ -556,6 +611,7 @@ function editarProducto(codigo) {
         totalUnidades += cambio;
         actualizarFilaProducto(codigo, productos[codigo]);
         actualizarEstadisticas();
+        guardarListaEnLocalStorage();
         mostrarNotificacion("Cantidad actualizada", "success");
     }
 }

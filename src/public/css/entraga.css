@@ -286,7 +286,7 @@ table tbody tr:last-child td {
 
 #totalProductos {
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--text-light);
   font-size: 1.2rem;
 }
 
