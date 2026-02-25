@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
-    "exceljs": "^4.4.0",
+    "exceljs": "^4.1.1",
     "express": "^4.21.2",
     "jwt-decode": "^4.0.0",
     "morgan": "^1.10.0",
@@ -32,7 +32,7 @@
     "@babel/node": "^7.26.0",
     "@babel/plugin-transform-runtime": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
-    "copyfiles": "^2.4.1",
+    "copyfiles": "^1.0.0",
     "ejs-lint": "^2.0.1",
     "nodemon": "^3.1.7"
   }

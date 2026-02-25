@@ -3,72 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión de Escaneo</title>
+  <title>Iniciar Sesión | Trost</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/sesion.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container">
-    <!-- Navbar mejorada -->
+  <div class="app">
+    <!-- Sidebar/Navbar minimalista -->
     <nav class="navbar">
-      <div class="navbar-brand">
-        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-      </div>
-      <div class="navbar-menu">
-        <div class="navbar-options">
-          <div class="dropdown">
-            <select class="dropdown-select" id="consultas">
+      <div class="nav-container">
+        <div class="nav-left">
+          <img src="/img/Trost_blanco.png" alt="Trost" class="logo">
+        </div>
+        
+        <div class="nav-right">
+          <div class="nav-item dropdown">
+            <select class="nav-select" id="consultas">
               <option value="" selected disabled>Consultas</option>
-              <option value="/inventario" id="inventario">Inventario</option>
+              <option value="/inventario_supervisor">Inventario</option>
             </select>
-            <i class="fas fa-chevron-down dropdown-icon"></i>
+            <i class="fas fa-chevron-down"></i>
           </div>
-          <button class="nav-button" id="sesion" value="/sesion">
-            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+          
+          <button class="nav-btn" id="transferencia" value="/supervisor">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transferencia</span>
           </button>
-          <button class="nav-button" id="transferencia" value="/supervisor">
-            <i class="fas fa-exchange-alt"></i> Transferencia/Consumos
+          
+          <button class="nav-btn active" id="sesion" value="/sesion">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Iniciar Sesión</span>
           </button>
         </div>
       </div>
     </nav>
 
-    <main class="login-container">
-      <div class="login-card">
-        <div class="login-header">
-          <h2><i class="fas fa-user-lock"></i> Iniciar Sesión</h2>
-          <p>Ingrese sus credenciales para acceder al sistema</p>
-        </div>
+    <main class="main-content">
+      <div class="login-wrapper">
+        <div class="login-card">
+          <div class="card-header">
+            <h1>Bienvenido de nuevo</h1>
+            <p>Ingresa tus credenciales para acceder al sistema</p>
+          </div>
 
-        <form id="formSesion" class="login-form">
-          <div class="form-group">
-            <label for="id_bodega"><i class="fas fa-warehouse"></i> Bodega</label>
-            <div class="select-wrapper">
-              <select id="id_bodega" required class="form-input" disabled>
-                <option value="">Seleccione bodega</option>
-                <!-- Las opciones se cargarán desde JS -->
-              </select>
-              <i class="fas fa-chevron-down select-icon"></i>
+          <form id="formSesion" class="login-form">
+            <div class="form-group">
+              <label for="id_bodega">
+                <i class="fas fa-warehouse"></i>
+                Bodega
+              </label>
+              <div class="input-wrapper">
+                <select id="id_bodega" required class="form-input" disabled>
+                  <option value="">Selecciona una bodega</option>
+                </select>
+                <i class="fas fa-chevron-down input-icon"></i>
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="id_usuario"><i class="fas fa-user"></i> Usuario</label>
-            <input type="text" id="id_usuario" required class="form-input" placeholder="Ingrese su nombre">
-          </div>
+            <div class="form-group">
+              <label for="id_usuario">
+                <i class="fas fa-user"></i>
+                Usuario
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="text" 
+                  id="id_usuario" 
+                  required 
+                  class="form-input" 
+                  placeholder="ej: Juan Pérez"
+                  autocomplete="off"
+                >
+                <i class="fas fa-user input-icon-left"></i>
+              </div>
+            </div>
 
-          <div class="form-group">
-            <label for="observaciones"><i class="fas fa-comment"></i> Observaciones</label>
-            <textarea id="observaciones" rows="3" class="form-input" placeholder="Observaciones adicionales"></textarea>
-          </div>
+            <div class="form-group">
+              <label for="observaciones">
+                <i class="fas fa-pencil-alt"></i>
+                Observaciones
+                <span class="optional">(opcional)</span>
+              </label>
+              <div class="input-wrapper">
+                <textarea 
+                  id="observaciones" 
+                  rows="3" 
+                  class="form-input" 
+                  placeholder="Agrega notas adicionales..."
+                ></textarea>
+              </div>
+            </div>
 
-          <div class="form-actions">
-            <button type="submit" class="submit-button" value="/producto">
-              <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-arrow-right-to-bracket"></i>
+              <span>Iniciar Sesión</span>
             </button>
+          </form>
+
+          <div class="card-footer">
+            <p>Sistema de gestión de inventario</p>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   </div>

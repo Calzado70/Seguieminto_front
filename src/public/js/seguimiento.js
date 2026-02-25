@@ -29,7 +29,7 @@ function verificarTokenAlCargar() {
 /* ========= CARGAR MOVIMIENTOS ========= */
 async function cargarMovimientos(idBodega = null, fechaInicio = null, fechaFin = null, codigoInteligente = null) {
     const token = localStorage.getItem('token');
-    let url = 'http://localhost:4000/product/movi';
+    let url = 'http://192.168.1.13:4000/product/movi';
     const params = new URLSearchParams();
 
     if (idBodega) params.append('id_bodega', idBodega);
@@ -67,7 +67,7 @@ function actualizarTablaPaginada() {
     if (movimientosCompletos.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" class="no-data">
+                <td colspan="10" class="no-data">
                     <i class="fas fa-inbox"></i>
                     <p>No se encontraron movimientos</p>
                 </td>
@@ -89,6 +89,7 @@ function actualizarTablaPaginada() {
             <td>${m.bodega_destino || 'N/A'}</td>
             <td>${m.usuario || 'N/A'}</td>
             <td><span class="tipo-movimiento">${m.tipo_movimiento || 'N/A'}</span></td>
+            <td>${m.talleres || 'N/A'}</td>
             <td>${m.fecha_movimiento || 'N/A'}</td>
         `;
         tbody.appendChild(tr);
@@ -209,7 +210,7 @@ function mostrarMensaje(texto, tipo = 'info') {
 async function cargarBodegas() {
     const token = localStorage.getItem('token');
     try {
-        const res = await fetch('http://localhost:4000/bode/mostrar', {
+        const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -244,6 +245,7 @@ function exportarExcel() {
         'Bodega Destino': m.bodega_destino || '',
         'Usuario': m.usuario || '',
         'Tipo Movimiento': m.tipo_movimiento || '',
+        'Taller': m.talleres || '',
         'Fecha': formatearFecha(m.fecha_movimiento)
     }));
 

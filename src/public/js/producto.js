@@ -109,7 +109,7 @@ async function cargarBodegas() {
     if (!select) return;
 
     try {
-        const res = await fetch("http://localhost:4000/bode/mostrar");
+        const res = await fetch("http://192.168.1.13:4000/bode/mostrar");
         const data = await res.json();
 
         if (data.success) {
@@ -192,6 +192,7 @@ function agregarProducto(codigo) {
     const bodegaDestino = bodegaDestinoSelect.selectedOptions[0]?.text || "N/A";
     const tipoMovimiento = document.getElementById("tipoMovimientoSelect").value;
     const caracteristicas = document.getElementById("caracteristicas")?.value || "N/A";
+    const taller = document.getElementById("talleres")?.value || "N/A";
     const fecha = formatearFechaCompleta();
 
     // Validar que no se exceda el stock disponible
@@ -212,9 +213,10 @@ function agregarProducto(codigo) {
         bodegaDestino,
         tipoMovimiento,
         caracteristicas,
+        taller, //  
         fecha,
         cantidad,
-        talla, // 👈 NUEVO
+        talla, // 
         idBodegaDestino: bodegaDestinoSelect.value
     };
 
@@ -224,7 +226,7 @@ function agregarProducto(codigo) {
     totalUnidades += cantidad;
     actualizarEstadisticas();
     cantidadInput.value = "";
-    
+    document.getElementById("talleres").value = "";
 
     guardarListaEnLocalStorage();
     mostrarNotificacion(`Producto ${codigo} agregado`, "success");
@@ -277,6 +279,7 @@ function crearFilaProducto(codigo, producto) {
         <td><span class="badge badge-primary">${producto.talla}</span></td>
         <td><span class="movement-type">${producto.tipoMovimiento}</span></td>
         <td>${producto.caracteristicas}</td>
+        <td>${producto.taller || "N/A"}</td>
         <td>${producto.fecha}</td>
         <td>
             <div class="action-buttons">
@@ -369,7 +372,7 @@ async function transferirProductos() {
         try {
             // Actualizar características si es bodega 3
             if (payload.id_bodega_origen === 3 && caracteristicas !== "N/A") {
-                await fetch("http://localhost:4000/product/actualizar", {
+                await fetch("http://192.168.1.13:4000/product/actualizar", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
@@ -380,14 +383,15 @@ async function transferirProductos() {
             }
 
             // Realizar transferencia
-            const res = await fetch("http://localhost:4000/product/transferencia", {
+            const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
                     ...payload, 
                     codigo_producto: codigo, 
                     cantidad: producto.cantidad, 
-                    caracteristicas 
+                    caracteristicas,
+                    talleres: producto.taller || "N/A" // 👈
                 })
             });
 

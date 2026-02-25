@@ -36,15 +36,12 @@ function redirigir(elementId) {
   }
 }
 
-redirigir("transferencia");
-redirigir("sesion");
-
 
 async function cargarBodegas() {
   const selectBodega = document.getElementById("id_bodega");
 
   try {
-    const response = await fetch("http://localhost:4000/bode/mostrar");
+    const response = await fetch("http://192.168.1.13:4000/bode/mostrar");
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
     const result = await response.json();
@@ -57,7 +54,7 @@ async function cargarBodegas() {
         option.textContent = bodega.nombre;
         selectBodega.appendChild(option);
       });
-      selectBodega.disabled = false;
+      selectBodega.disabled = true;
     } else {
       console.error("Estructura de respuesta inesperada:", result);
       selectBodega.innerHTML =
@@ -118,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   try {
-    const response = await fetch("http://localhost:4000/product/inicio", {
+    const response = await fetch("http://192.168.1.13:4000/product/inicio", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -156,4 +153,9 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Hubo un error al iniciar la sesión.");
   }
 });
+
+
+redirigir("consultas");
+redirigir("transferencia");
+redirigir("sesion");
 });
