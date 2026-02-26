@@ -251,3 +251,59 @@ body {
   text-align: center;
   font-size: 1.05rem;
 }
+
+
+/* ===============================
+   PAGINADOR
+=================================*/
+
+.paginador {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.paginador-info {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.paginador-controles {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.paginador-btn {
+  min-width: 36px;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.paginador-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.paginador-btn.active {
+  background: var(--accent);
+  color: #0f2a2a;
+  border-color: var(--accent);
+}
+
+.paginador-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
