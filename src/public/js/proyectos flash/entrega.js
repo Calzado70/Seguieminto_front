@@ -8,6 +8,7 @@ const botonExportar = document.getElementById('mover-productos');
 const tablaProductos = document.getElementById('tablaProductos');
 const totalProductos = document.getElementById('totalProductos');
 const emptyState = document.getElementById('empty-state');
+const CLAVE_SEGURIDAD = "1234";
 
 document.addEventListener('DOMContentLoaded', () => {
   cargarProductos();
@@ -121,13 +122,28 @@ function editarProducto(id) {
 }
 
 function eliminarProducto(id) {
+  // Solicitar la clave al usuario
+  const password = prompt('Ingrese la clave de seguridad para eliminar este registro:');
+
+  // Si el usuario cancela o la clave es incorrecta
+  if (password === null) return; // Usuario canceló
+
+  if (password !== CLAVE_SEGURIDAD) {
+    return mostrarAlerta('Clave incorrecta. No se puede eliminar el registro.', 'error');
+  }
+
+  // Si la clave es correcta, proceder con la eliminación
   productos = productos.filter(p => p.id !== id);
   document.querySelector(`tr[data-id="${id}"]`)?.remove();
 
   guardarProductos();
   actualizarContador();
 
-  if (productos.length === 0) emptyState.style.display = '';
+  if (productos.length === 0) {
+    emptyState.style.display = '';
+  }
+  
+  mostrarAlerta('Registro eliminado correctamente', 'success');
 }
 
 // =========================

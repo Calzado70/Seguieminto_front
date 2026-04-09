@@ -89,7 +89,6 @@ function actualizarTablaPaginada() {
             <td>${m.bodega_destino || 'N/A'}</td>
             <td>${m.usuario || 'N/A'}</td>
             <td><span class="tipo-movimiento">${m.tipo_movimiento || 'N/A'}</span></td>
-            <td>${m.talleres || 'N/A'}</td>
             <td>${m.fecha_movimiento || 'N/A'}</td>
         `;
         tbody.appendChild(tr);
@@ -195,9 +194,7 @@ function formatearFecha(fechaString) {
     return fecha.toLocaleDateString('es-ES', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: '2-digit'
     });
 }
 
@@ -245,7 +242,6 @@ function exportarExcel() {
         'Bodega Destino': m.bodega_destino || '',
         'Usuario': m.usuario || '',
         'Tipo Movimiento': m.tipo_movimiento || '',
-        'Taller': m.talleres || '',
         'Fecha': formatearFecha(m.fecha_movimiento)
     }));
 

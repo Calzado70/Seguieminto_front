@@ -167,7 +167,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="bodegaActual"><i class="fas fa-warehouse"></i> Bodega Entrada</label>
+                            <label for="bodegaActual"><i class="fas fa-warehouse"></i> Bodega </label>
                             <div class="input-with-icon">
                                 <i class="fas fa-location-arrow"></i>
                                 <input type="text" class="form-control" id="bodegaActual" placeholder="Bodega Actual"
@@ -195,7 +195,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="id_bodega"><i class="fas fa-map-marker-alt"></i> Bodega Salida</label>
+                            <label for="id_bodega"><i class="fas fa-map-marker-alt"></i> Bodega Destino o Consumo</label>
                             <div class="select-with-icon">
                                 <i class="fas fa-arrow-right"></i>
                                 <select id="id_bodega" required class="form-control">
@@ -212,10 +212,8 @@
                                 <select class="form-control" id="tipoMovimientoSelect">
                                     <option value="">Seleccione tipo</option>
                                     <option value="ENTRADA" class="entrada">ENTRADA</option>
-                                    <option value="SALIDA" class="salida">SALIDA</option>
-                                    <option value="INTERNO" class="interno">INTERNO</option>
-                                    <option value="EXTERNO" class="externo">EXTERNO</option>
-                                    <option value="COMPLETO" class="completo">COMPLETO</option>
+                                    <option value="PROCESO" class="Proceso">PROCESO</option>
+                                    <option value="COMPLETO" class="Completo">COMPLETO</option>
                                 </select>
                             </div>
                         </div>
@@ -232,34 +230,6 @@
                             <small id="caracteristicas-help" class="help-text" style="display: none;">
                                 <i class="fas fa-info-circle"></i> Solo disponible para bodega específica
                             </small>
-                        </div>
-
-                        <!-- NUEVO CAMPO TALLERES -->
-                        <div class="form-group" id="talleres-container">
-                            <label for="talleres">
-                                <i class="fas fa-industry"></i> Talleres
-                            </label>
-                            <div class="select-with-icon">
-                                <i class="fas fa-building"></i>
-                                <select id="talleres" class="form-control">
-                                    <option value="">Seleccione taller</option>
-                                    <!-- Aquí luego agregas tus talleres -->
-                                    <option value="Jose Andres Villa Restrepo">Jose Andres Villa Restrepo</option>
-                                    <option value="Luis Javier Quintero Quintero">Luis Javier Quintero Quintero</option>
-                                    <option value="Jorge Wiliam Goez Gil">Jorge Wiliam Goez Gil</option>
-                                    <option value="Maquiladora Dativel">Maquiladora Dativel</option>
-                                    <option value="Maria Isaura Castaño Cespedez">Maria Isaura Castaño Cespedez</option>
-                                    <option value="Nabor Soto Cataño">Nabor Soto Cataño</option>
-                                    <option value="Lisett Blindon Zapata">Lisett Blindon Zapata</option>
-                                    <option value="Santiago Torres Diaz">Santiago Torres Diaz</option>
-                                    <option value="Maria Gilma De Botero Hincapie">Maria Gilma De Botero Hincapie</option>
-                                    <option value="Augusto Javier Molina Garcia">Augusto Javier Molina Garcia</option>
-                                    <option value="joany del Rosario ramirez Perez">joany del Rosario ramirez Perez</option>
-                                    <option value="Jesus Maria Velandia Rosales">Jesus Maria Velandia Rosales</option>
-                                    <option value="Santiago Murillo Gil">Santiago Murillo Gil</option>
-                                    
-                                </select>
-                            </div>
                         </div>
 
                         <div class="form-group full-width">
@@ -295,14 +265,13 @@
                                 <thead>
                                     <tr>
                                         <th><i class="fas fa-user"></i> Usuario</th>
-                                        <th><i class="fas fa-arrow-up"></i> Destino</th>
-                                        <th><i class="fas fa-arrow-down"></i> Origen</th>
+                                        <th><i class="fas fa-arrow-up"></i> Origen</th>
+                                        <th><i class="fas fa-arrow-down"></i> Destino</th>
                                         <th><i class="fas fa-boxes"></i> Cantidad</th>
                                         <th><i class="fas fa-barcode"></i> Código</th>
                                         <th><i class="fas fa-ruler"></i> Talla</th>
                                         <th><i class="fas fa-exchange-alt"></i> Tipo</th>
                                         <th><i class="fas fa-cogs"></i> Características</th>
-                                        <th><i class="fas fa-industry"></i> Taller</th>
                                         <th><i class="fas fa-calendar"></i> Fecha</th>
                                         <th><i class="fas fa-cog"></i> Acciones</th>
                                     </tr>

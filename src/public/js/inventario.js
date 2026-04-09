@@ -63,6 +63,7 @@ async function consultarInventario() {
         if (!res.ok) throw new Error(data.message);
 
         inventarioCompleto = data.body;
+        console.log("Respuesta API:", data);
         inventarioFiltrado = [...inventarioCompleto];
         paginaActual = 1;
 
@@ -109,8 +110,9 @@ function mostrarPagina(pagina) {
         row.innerHTML = `
           <td>${p.bodega}</td>
           <td>${p.codigo}</td>
+          <td>${p.ultima_observacion || '-'}</td>
           <td>${obtenerTallaDesdeCodigo(p.codigo)}</td>
-          <td>${p.cantidad_disponible}</td>
+          <td class="${getClaseStock(p.cantidad_disponible)}">${p.cantidad_disponible}</td>
           <td>${p.caracteristica}</td>
           <td>${new Date(p.fecha_actualizacion).toLocaleDateString()}</td>
         `;
@@ -179,6 +181,103 @@ function setupNavigation() {
 }
 
 /* ==========================
+   COLORES DE STOCK
+========================== */
+function getClaseStock(stock) {
+    if (stock <= 0) return 'stock-rojo';
+    if (stock < 50) return 'stock-amarillo';
+    return 'stock-verde';
+}
+
+/* ==========================
+   ORDENAR COLUMNAS
+========================== */
+let ordenAsc = true;
+
+function ordenar(campo) {
+
+    inventarioFiltrado.sort((a, b) => {
+
+        let A = a[campo];
+        let B = b[campo];
+
+        if (campo === 'talla') {
+            A = obtenerTallaDesdeCodigo(a.codigo);
+            B = obtenerTallaDesdeCodigo(b.codigo);
+        }
+
+        if (typeof A === 'string') A = A.toLowerCase();
+        if (typeof B === 'string') B = B.toLowerCase();
+
+        if (A < B) return ordenAsc ? -1 : 1;
+        if (A > B) return ordenAsc ? 1 : -1;
+        return 0;
+
+    });
+
+    ordenAsc = !ordenAsc;
+    mostrarPagina(1);
+}
+
+/* ==========================
+   EXPORTAR A EXCEL
+========================== */
+function exportarExcel() {
+
+    let csv = "Bodega,Codigo,Talla,Disponible,Caracteristica,Fecha\n";
+
+    inventarioFiltrado.forEach(p => {
+        csv += `${p.bodega},${p.codigo},${obtenerTallaDesdeCodigo(p.codigo)},${p.cantidad_disponible},${p.caracteristica},${p.fecha_actualizacion}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "inventario.csv";
+    link.click();
+}
+
+function aplicarFiltros() {
+
+    const codigo = document.getElementById('buscarCodigo').value.toLowerCase();
+    const talla = document.getElementById('filtroTalla').value;
+    const caracteristica = document.getElementById('filtroCaracteristica').value.toLowerCase();
+    const stock = document.getElementById('filtroStock').value;
+
+    inventarioFiltrado = inventarioCompleto.filter(p => {
+
+        const tallaProd = obtenerTallaDesdeCodigo(p.codigo);
+
+        let cumple = true;
+
+        if (codigo && !p.ultima_observacion.toLowerCase().includes(codigo)) {
+            cumple = false;
+        }
+
+        if (talla && tallaProd !== talla) {
+            cumple = false;
+        }
+
+        if (caracteristica && !p.caracteristica?.toLowerCase().includes(caracteristica)) {
+            cumple = false;
+        }
+
+        if (stock === 'bajo' && p.cantidad_disponible >= 50) {
+            cumple = false;
+        }
+
+        if (stock === 'critico' && p.cantidad_disponible > 0) {
+            cumple = false;
+        }
+
+        return cumple;
+    });
+
+    mostrarPagina(1);
+}
+
+/* ==========================
    INIT
 ========================== */
 
@@ -187,5 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarBodegas();
     setupNavigation();
     consultarInventario();
-    document.getElementById('buscarCodigo').addEventListener('input', filtrarPorCodigo);
+    document.getElementById('buscarCodigo').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtroTalla').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtroCaracteristica').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtroStock').addEventListener('change', aplicarFiltros);
 });

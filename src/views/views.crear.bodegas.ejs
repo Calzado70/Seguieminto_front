@@ -107,7 +107,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn-primary" id="agregarBodega">
+                <button type="submit" class="btn-primary">
                   <i class="fas fa-save"></i> Guardar Bodega
                 </button>
               </div>
@@ -165,6 +165,39 @@
             </div>
           </section>
         </div>
+        <!-- Permisos de Bodegas -->
+<section class="card">
+  <h2 class="section-title">
+    <i class="fas fa-user-lock"></i> Asignar Permisos de Bodegas
+  </h2>
+
+  <div class="form-group">
+    <label for="usuarioSelect">Seleccionar Usuario</label>
+    <select id="usuarioSelect">
+      <option value="">Seleccione un usuario</option>
+    </select>
+  </div>
+
+  <div class="table-responsive">
+    <table class="bodegas-table">
+      <thead>
+        <tr>
+          <th>Bodega</th>
+          <th>Permiso</th>
+        </tr>
+      </thead>
+      <tbody id="tablaPermisosBodegas">
+        <!-- Se llena dinámicamente -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-primary" onclick="guardarPermisosBodega()">
+      <i class="fas fa-save"></i> Guardar Permisos
+    </button>
+  </div>
+</section>
       </main>
     </div>
 

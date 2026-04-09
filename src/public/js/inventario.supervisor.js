@@ -7,6 +7,7 @@ const ELEMENTOS_POR_PAGINA = 10;
 
 let inventarioCompleto = [];
 let paginaActual = 1;
+let ordenAsc = true;
 
 // ===============================
 // UTILIDADES JWT
@@ -114,8 +115,8 @@ async function consultarInventario() {
     emptyState.innerHTML = `<i class="fas fa-spinner fa-spin"></i><p>Cargando inventario...</p>`;
 
     try {
-        // SIEMPRE consulta todo el inventario
         const data = await fetchSeguro(`${API_BASE}/product/inventario`);
+        if (!data) return;
 
         if (data?.body?.length > 0) {
 
@@ -124,18 +125,18 @@ async function consultarInventario() {
             // FILTRO POR BODEGA
             if (nombre_bodega) {
                 resultado = resultado.filter(item =>
-                    item.bodega.toLowerCase() === nombre_bodega.toLowerCase()
+                    (item.bodega || '').toLowerCase() === nombre_bodega.toLowerCase()
                 );
             }
 
             // FILTRO POR CÓDIGO
             if (codigoBusqueda) {
                 resultado = resultado.filter(item =>
-                    item.codigo.toLowerCase().includes(codigoBusqueda.toLowerCase())
+                    (item.codigo || '').toLowerCase().includes(codigoBusqueda.toLowerCase())
                 );
             }
 
-            inventarioCompleto = resultado;
+            inventarioCompleto = aplicarFiltrosAvanzados(resultado);
             paginaActual = 1;
 
             if (inventarioCompleto.length > 0) {
@@ -167,6 +168,42 @@ async function consultarInventario() {
 }
 
 // ===============================
+// FILTROS AVANZADOS
+// ===============================
+
+function aplicarFiltrosAvanzados(data) {
+
+    const tallaFiltro = document.getElementById("filtroTalla")?.value;
+    const caracteristicaFiltro = document.getElementById("filtroCaracteristica")?.value?.toLowerCase();
+    const stockFiltro = document.getElementById("filtroStock")?.value;
+
+    return data.filter(item => {
+
+        let cumple = true;
+
+        const talla = obtenerTallaDesdeCodigo(item.codigo);
+
+        if (tallaFiltro && talla !== tallaFiltro) {
+            cumple = false;
+        }
+
+        if (caracteristicaFiltro && !(item.caracteristica || '').toLowerCase().includes(caracteristicaFiltro)) {
+            cumple = false;
+        }
+
+        if (stockFiltro === 'bajo' && item.cantidad_disponible >= 50) {
+            cumple = false;
+        }
+
+        if (stockFiltro === 'critico' && item.cantidad_disponible > 0) {
+            cumple = false;
+        }
+
+        return cumple;
+    });
+}
+
+// ===============================
 // RENDER TABLA
 // ===============================
 
@@ -187,9 +224,10 @@ function renderizarTabla() {
         row.innerHTML = `
             <td>${escapeHTML(producto.bodega)}</td>
             <td class="codigo-cell">${escapeHTML(codigo)}</td>
+            <td>${escapeHTML(producto.ultima_observacion || '-')}</td>
             <td class="talla-cell">${escapeHTML(talla)}</td>
-            <td>${escapeHTML(producto.caracteristica)}</td>
-            <td class="cantidad-cell">${producto.cantidad_disponible}</td>
+            <td class="cantidad-cell ${getClaseStock(producto.cantidad_disponible)}">${producto.cantidad_disponible}</td>
+            <td>${escapeHTML(producto.caracteristica || '')}</td>
             <td>${formatearFecha(producto.fecha_actualizacion)}</td>
         `;
 
@@ -197,16 +235,35 @@ function renderizarTabla() {
     });
 }
 
+// ===============================
+// UTILIDADES
+// ===============================
+
 function obtenerTallaDesdeCodigo(codigo) {
     if (!codigo || codigo.length < 2) return "-";
-
-    // Toma los últimos 2 caracteres
     return codigo.slice(-2);
 }
 
+function formatearFecha(fecha) {
+    return new Date(fecha).toLocaleDateString();
+}
+
+function escapeHTML(text) {
+    if (!text) return "";
+    return text.replace(/[&<>"']/g, function (match) {
+        const escape = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+        return escape[match];
+    });
+}
 
 // ===============================
-// PAGINADOR COMPLETO
+// PAGINADOR
 // ===============================
 
 function renderizarPaginador() {
@@ -225,17 +282,14 @@ function renderizarPaginador() {
     const controles = document.createElement("div");
     controles.className = "paginador-controles";
 
-    // Botón anterior
     controles.appendChild(crearBotonPagina("«", paginaActual - 1, paginaActual === 1));
 
-    // Botones numerados
     for (let i = 1; i <= totalPaginas; i++) {
         const btn = crearBotonPagina(i, i, false);
         if (i === paginaActual) btn.classList.add("active");
         controles.appendChild(btn);
     }
 
-    // Botón siguiente
     controles.appendChild(crearBotonPagina("»", paginaActual + 1, paginaActual === totalPaginas));
 
     contenedor.appendChild(info);
@@ -266,36 +320,52 @@ function eliminarPaginadorExistente() {
 }
 
 // ===============================
-// UTILIDADES
+// STOCK COLOR
 // ===============================
 
-function formatearFecha(fecha) {
-    return new Date(fecha).toLocaleDateString();
+function getClaseStock(stock) {
+    if (stock <= 0) return 'stock-rojo';
+    if (stock < 50) return 'stock-amarillo';
+    return 'stock-verde';
 }
 
-function escapeHTML(text) {
-    if (!text) return "";
-    return text.replace(/[&<>"']/g, function (match) {
-        const escape = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        };
-        return escape[match];
+// ===============================
+// ORDENAR
+// ===============================
+
+function ordenar(campo) {
+
+    inventarioCompleto.sort((a, b) => {
+
+        let A = a[campo];
+        let B = b[campo];
+
+        if (campo === 'talla') {
+            A = obtenerTallaDesdeCodigo(a.codigo);
+            B = obtenerTallaDesdeCodigo(b.codigo);
+        }
+
+        if (typeof A === 'string') A = A.toLowerCase();
+        if (typeof B === 'string') B = B.toLowerCase();
+
+        if (A < B) return ordenAsc ? -1 : 1;
+        if (A > B) return ordenAsc ? 1 : -1;
+        return 0;
     });
+
+    ordenAsc = !ordenAsc;
+
+    renderizarTabla();
+    renderizarPaginador();
 }
 
 // ===============================
-// INICIALIZACIÓN
+// INIT
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
     verificarSesion();
     cargarBodegas();
-
-    // Exponer función global para el botón HTML
     window.consultarInventario = consultarInventario;
 });
 
@@ -303,9 +373,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const botones = document.querySelectorAll("button[data-ruta]");
 
     botones.forEach(boton => {
-      boton.addEventListener("click", function () {
-        const ruta = this.getAttribute("data-ruta");
-        window.location.href = ruta;
-      });
+        boton.addEventListener("click", function () {
+            const ruta = this.getAttribute("data-ruta");
+            window.location.href = ruta;
+        });
     });
-  });
+});

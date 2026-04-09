@@ -307,3 +307,20 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+.stock-rojo {
+  background: #ff4d4d;
+  color: white;
+  font-weight: bold;
+}
+
+.stock-amarillo {
+  background: #ffc107;
+  font-weight: bold;
+}
+
+.stock-verde {
+  background: #28a745;
+  color: white;
+}

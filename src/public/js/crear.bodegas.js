@@ -2,11 +2,14 @@
 let currentPage = 1;
 const recordsPerPage = 5;
 let allBodegas = [];
+let todosUsuarios = [];
+let permisosSeleccionados = [];
 
 // Cargar información al iniciar
 document.addEventListener('DOMContentLoaded', async () => {
     verificarTokenAlCargar();
     await cargarBodegas();
+    await cargarUsuarios();
     setupEventListeners();
     
     // Cargar información del usuario actual
@@ -23,20 +26,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function setupEventListeners() {
-    // Botón de agregar
-    document.getElementById('agregarBodega').addEventListener('click', crearBodega);
-    
-    // Búsqueda
+
+    document.getElementById('bodegaForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        crearBodega();
+    });
+
+    const usuarioSelect = document.getElementById('usuarioSelect');
+
+    if (usuarioSelect) {
+        usuarioSelect.addEventListener('change', () => {
+            cargarTablaPermisos();
+        });
+    }
+
     document.getElementById('bodegaSearch').addEventListener('input', filterBodegas);
-    
-    // Paginación
+
     document.getElementById('prev-page').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
             displayCurrentPage();
         }
     });
-    
+
     document.getElementById('next-page').addEventListener('click', () => {
         const totalPages = Math.ceil(allBodegas.length / recordsPerPage);
         if (currentPage < totalPages) {
@@ -44,11 +56,11 @@ function setupEventListeners() {
             displayCurrentPage();
         }
     });
-    
-    // Redirecciones
+
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');
+
 }
 
 function verificarTokenAlCargar() {
@@ -83,7 +95,7 @@ function redirigir(selectId) {
 }
 
 async function crearBodega() {
-    const btnAgregar = document.getElementById('agregarBodega');
+    const btnAgregar = document.querySelector('#bodegaForm button[type="submit"]');
     const originalText = btnAgregar.innerHTML;
     
     // Mostrar estado de carga
@@ -376,4 +388,156 @@ function showToast(message, type = 'info') {
             toast.remove();
         }, 300);
     }, 3000);
+}
+
+async function cargarUsuarios() {
+
+    const token = localStorage.getItem('token');
+
+    try {
+
+        const response = await fetch('http://192.168.1.13:4000/user/mostrar', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        console.log("Usuarios recibidos:", data);
+
+        if (Array.isArray(data)) {
+
+            todosUsuarios = data;
+
+        } else if (Array.isArray(data.data)) {
+
+            todosUsuarios = data.data;
+
+        } else if (Array.isArray(data.body)) {
+
+            todosUsuarios = data.body;
+
+        } else {
+
+            throw new Error("Formato de usuarios inválido");
+
+        }
+
+        const select = document.getElementById('usuarioSelect');
+
+        select.innerHTML = '<option value="">Seleccione un usuario</option>';
+
+        todosUsuarios.forEach(usuario => {
+
+            const option = document.createElement('option');
+
+            option.value = usuario.id_usuario;
+            option.textContent = usuario.nombre;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error('Error cargando usuarios', error);
+
+    }
+
+}
+
+function cargarTablaPermisos() {
+
+    const tbody = document.getElementById('tablaPermisosBodegas');
+    tbody.innerHTML = '';
+
+    allBodegas.forEach(bodega => {
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${bodega.nombre}</td>
+            <td>
+                <input type="checkbox" class="permisoBodega" value="${bodega.id_bodega}">
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+
+}
+
+async function guardarPermisosBodega() {
+
+    const usuarioId = document.getElementById('usuarioSelect').value;
+
+    if (!usuarioId) {
+
+        showToast('Seleccione un usuario', 'error');
+        return;
+
+    }
+
+    const checkboxes = document.querySelectorAll('.permisoBodega:checked');
+
+    const bodegas = [];
+
+    checkboxes.forEach(cb => {
+
+        bodegas.push(cb.value);
+
+    });
+
+    if (bodegas.length === 0) {
+
+        showToast('Seleccione al menos una bodega', 'error');
+        return;
+
+    }
+
+    const token = localStorage.getItem('token');
+
+    try {
+
+        const response = await fetch('http://192.168.1.13:4000/bode/asignar', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+
+            },
+
+            body: JSON.stringify({
+
+                id_usuario: usuarioId,
+                bodegas: bodegas
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            showToast('Permisos guardados correctamente', 'success');
+
+        } else {
+
+            throw new Error(data.message);
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        showToast('Error al guardar permisos', 'error');
+
+    }
+
 }
