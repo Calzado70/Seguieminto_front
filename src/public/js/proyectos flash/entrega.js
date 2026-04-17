@@ -18,7 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Escaneo automático
 codigoInput.addEventListener('input', () => {
-  if (codigoInput.value.trim().length === 13) agregarProducto();
+  // Solo números
+  codigoInput.value = codigoInput.value.replace(/\D/g, '');
+
+  const length = codigoInput.value.trim().length;
+
+  if (length >= 13 && length <= 14) {
+    agregarProducto();
+  }
 });
 
 
@@ -31,8 +38,9 @@ function agregarProducto() {
     return mostrarAlerta('Responsable y Caja son obligatorios', 'error');
 
   const codigo = codigoInput.value.trim();
-  if (codigo.length !== 13)
-    return mostrarAlerta('Código inválido', 'error');
+  if (codigo.length < 13 || codigo.length > 14) {
+  return mostrarAlerta('El código debe tener entre 13 y 14 dígitos', 'error');
+}
 
   const responsable = responsableInput.value.trim();
   const caja = cajaInput.value.trim();

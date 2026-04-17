@@ -298,7 +298,7 @@ function actualizarTablaUsuarios(usuarios) {
 
 // Modifica la función eliminarUsuario para resetear la paginación después de eliminar
 async function eliminarUsuario(event) {
-    const idUsuario = event.target.getAttribute('data-id');
+    const idUsuario = event.currentTarget.getAttribute('data-id');
     const token = localStorage.getItem('token');
 
     if (!token) {

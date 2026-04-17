@@ -134,7 +134,7 @@ async function crearBodega() {
         // Mostrar notificación de carga
         showToast('Creando bodega...', 'info');
 
-        const response = await fetch('http://192.168.1.13:4000/bode/crear', {
+        const response = await fetch('http://localhost:4000/bode/crear', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -186,7 +186,7 @@ async function cargarBodegas() {
     }
 
     try {
-        const response = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+        const response = await fetch('http://localhost:4000/bode/mostrar', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -338,7 +338,7 @@ async function eliminarBodega(event) {
     }
 
     try {
-        const response = await fetch('http://192.168.1.13:4000/bode/eliminar', {
+        const response = await fetch('http://localhost:4000/bode/eliminar', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -396,7 +396,7 @@ async function cargarUsuarios() {
 
     try {
 
-        const response = await fetch('http://192.168.1.13:4000/user/mostrar', {
+        const response = await fetch('http://localhost:4000/user/mostrar', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -501,7 +501,7 @@ async function guardarPermisosBodega() {
 
     try {
 
-        const response = await fetch('http://192.168.1.13:4000/bode/asignar', {
+        const response = await fetch('http://localhost:4000/bode/asignar', {
 
             method: 'POST',
 
