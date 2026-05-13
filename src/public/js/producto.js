@@ -125,7 +125,7 @@ async function cargarBodegasUsuario() {
     const idUsuario = payload.id_usuario;
 
     const response = await fetch(
-      `http://192.168.1.13:4000/bode/bodegas-usuario/${idUsuario}`,
+      `http://localhost:4000/bode/bodegas-usuario/${idUsuario}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -228,7 +228,7 @@ function agregarProducto(codigo) {
   const tipoMovimiento = document.getElementById("tipoMovimientoSelect").value;
   const caracteristicasInput = document.getElementById("caracteristicas");
   let caracteristicas =
-    caracteristicasInput?.value.trim().toUpperCase() || "N/A";
+    caracteristicasInput?.value.trim().toUpperCase() || "";
 
   // VALIDAR SI EXISTE EN LA LISTA
   const idBodegaOrigen = localStorage.getItem("bodega");
@@ -242,7 +242,7 @@ function agregarProducto(codigo) {
     }
   } else {
     // en otras bodegas no se usa característica
-    caracteristicas = "N/A";
+    caracteristicas = "";
   }
   const fecha = formatearFechaCompleta();
 
@@ -441,9 +441,9 @@ async function transferirProductos() {
       if (
         payload.id_bodega_origen === 6 &&
         payload.id_bodega_destino === 24 &&
-        caracteristicas !== "N/A"
+        caracteristicas !== ""
       ) {
-        await fetch("http://192.168.1.13:4000/product/actualizar", {
+        await fetch("http://localhost:4000/product/actualizar", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -456,7 +456,7 @@ async function transferirProductos() {
       const token = localStorage.getItem("token");
 
       // Realizar transferencia
-      const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
+      const res = await fetch("http://localhost:4000/product/transferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -467,6 +467,7 @@ async function transferirProductos() {
           id_bodega_destino: producto.idBodegaDestino,
           codigo_producto: codigo,
           cantidad: producto.cantidad,
+          caracteristicas: producto.caracteristicas,
         }),
       });
 

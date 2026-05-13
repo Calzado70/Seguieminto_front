@@ -71,6 +71,10 @@ export const entrega  = (req, res) => {
     res.render("./proyectos flash/views.entrega.ejs");
 }
 
+export const archivo_plano = (req, res) => {
+    res.render("./proyectos flash/views.entrega.archivoplano.ejs");
+}
+
 export const materia  = (req, res) => {
     res.render("./proyectos flash/views.inventario_materia_prima.ejs");
 }

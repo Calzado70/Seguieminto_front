@@ -16,7 +16,9 @@ import { alerta,
     registrar, 
     seguimiento, 
     session, 
-    supervisor } from "../controllers/home.controller.js";
+    supervisor, 
+    archivo_plano
+  } from "../controllers/home.controller.js";
 
 const rutaHome = Router();
 
@@ -31,6 +33,7 @@ rutaHome.get("/alerta", alerta); //puede que ya no sea necesario
 rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
 rutaHome.get("/inventario_supervisor", inventario_supervisor);
+rutaHome.get("/plano", archivo_plano);
 // rutaHome.get("/inyeccion",producto_inyec);
 
 //LOGIN

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/entraga.archivoplano.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Toma Inventario</title>
+</head>
+
+<body>
+  <div class="container">
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+      </div>
+    </nav>
+
+    <div class="content-segundario">
+      <div class="escrito">
+        <h2 class="h2">Entrega de Producción a Logística</h2>
+
+        <div class="cont-segun-list">
+
+          <div class="form-grid">
+            <div class="input-group">
+              <label class="input-label">Código del Producto</label>
+              <input type="text" class="input" id="codigo_producto" minlength="13" maxlength="14" pattern="\d{13,14}" title="El código debe contener entre 13 y 14 dígitos">
+            </div>
+          </div>
+
+          <div class="cont-segun-list-bot">
+            <button class="button" id="mover-productos">
+              <i class="fas fa-file-export"></i> Exportar a Excel
+            </button>
+          </div>
+
+          <div class="table-container">
+            <!-- HEADER CON TOTAL DE CANTIDADES -->
+            <div class="table-header header-flex">
+              <div class="table-title">Productos Agregados</div>
+
+              <div class="contador-header">
+                <span>Total cantidades:</span>
+                <strong id="totalProductos">0</strong>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Talla</th>
+                  <th>Cantidad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaProductos">
+                <tr id="empty-state" style="display:none">
+                  <td colspan="6">
+                    <div class="empty-state">
+                      <i class="fas fa-box-open"></i>
+                      <p>No hay productos agregados aún</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/proyectos flash/entrega.archivoplano.js"></script>
+</body>
+</html>

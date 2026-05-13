@@ -29,6 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const idSesionInput = document.getElementById("id_sesion");
   const nombre_bodega = localStorage.getItem("nombre_bodega");
 
+  // 🔒 MODO INDUSTRIAL
+  codigoProductoInput.setAttribute("autocomplete", "new-password");
+  codigoProductoInput.focus();
+
+  codigoProductoInput.addEventListener("blur", () => {
+  setTimeout(() => codigoProductoInput.focus(), 50);
+});
+
   const idSesionGuardado = localStorage.getItem("id_sesion");
   if (idSesionGuardado) {
     idSesionInput.value = idSesionGuardado;
@@ -78,73 +86,80 @@ document.addEventListener("DOMContentLoaded", function () {
     const producto = productosAgregados[codigo];
     const fila = tablaProductos.querySelector(`tr[data-codigo="${codigo}"]`);
     if (fila) {
-      fila.cells[2].textContent = producto.cantidad;
-      fila.cells[4].textContent = producto.fecha;
+      fila.cells[1].textContent = producto.cantidad;
+      fila.cells[3].textContent = producto.fecha;
     }
   }
 
   async function guardarProductoYAgregarASesion(codigo, cantidad) {
-    const id_sesion = parseInt(idSesionInput.value);
-    const bodyData = { codigo: codigo };
+  const id_sesion = parseInt(idSesionInput.value);
 
-    try {
-      await fetch("http://192.168.1.13:4000/product/crear", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(bodyData),
-      });
-    } catch (error) {
-      console.warn("Producto posiblemente ya existe:", error.message);
-    }
+  try {
+    const response = await fetch("http://localhost:4000/product/agregar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        id_sesion,
+        codigo_producto: codigo,
+        cantidad,
+      }),
+    });
 
-    try {
-      const response = await fetch("http://192.168.1.13:4000/product/agregar", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          id_sesion,
-          codigo_producto: codigo,
+    const result = await response.json();
+
+    if (response.ok) {
+
+      const esNuevo = !productosAgregados[codigo];
+
+      if (esNuevo) {
+
+        productosAgregados[codigo] = {
+          codigo,
           cantidad,
-        }),
-      });
+          fecha: obtenerFechaFormateada(),
+          nombre_bodega,
+        };
 
-      const result = await response.json();
+        agregarFilaTabla(productosAgregados[codigo]);
 
-      if (response.ok) {
-        const esNuevo = !productosAgregados[codigo];
-        if (esNuevo) {
-          productosAgregados[codigo] = {
-            codigo,
-            cantidad,
-            fecha: obtenerFechaFormateada(),
-            nombre_bodega,
-          };
-          agregarFilaTabla(productosAgregados[codigo]);
-          actualizarContadorTotal();
-        } else {
-          productosAgregados[codigo].cantidad += cantidad;
-          productosAgregados[codigo].fecha = obtenerFechaFormateada();
-          actualizarFilaTabla(codigo);
-        }
+        actualizarContadorTotal();
 
-        guardarEnLocalStorage();
-        codigoProductoInput.value = "";
-        cantidadInput.value = "";
-        codigoProductoInput.focus();
       } else {
-        alert(result?.mensaje || "Error al agregar producto a la sesión");
+
+        productosAgregados[codigo].cantidad += cantidad;
+
+        productosAgregados[codigo].fecha =
+          obtenerFechaFormateada();
+
+        actualizarFilaTabla(codigo);
+
       }
-    } catch (error) {
-      console.error("Error agregando producto a la sesión:", error);
-      alert("Error interno del servidor.");
+
+      guardarEnLocalStorage();
+
+      codigoProductoInput.value = "";
+
+      cantidadInput.value = "";
+
+      codigoProductoInput.focus();
+
+    } else {
+
+      alert(result?.mensaje || "Error al agregar producto");
+
     }
+
+  } catch (error) {
+
+    console.error("Error agregando producto:", error);
+
+    alert("Error interno del servidor");
+
   }
+}
 
   function manejarAgregarProducto() {
     const codigo = codigoProductoInput.value.trim();
@@ -205,7 +220,7 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
   if (!confirmar) return;
 
   try {
-    const response = await fetch("http://192.168.1.13:4000/product/finalizar", {
+    const response = await fetch("http://localhost:4000/product/finalizar", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

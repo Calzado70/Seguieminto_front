@@ -42,7 +42,7 @@ async function cargarHistorial() {
     }
 
     try {
-        const response = await fetch('http://192.168.1.13:4000/hist/historial', {
+        const response = await fetch('http://localhost:4000/hist/historial', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
