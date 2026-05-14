@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const id_sesion = parseInt(idSesionInput.value);
 
   try {
-    const response = await fetch("http://localhost:4000/product/agregar", {
+    const response = await fetch("http://192.168.1.13:4000/product/agregar", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -220,7 +220,7 @@ document.getElementById("cerrarSesion").addEventListener("click", async function
   if (!confirmar) return;
 
   try {
-    const response = await fetch("http://localhost:4000/product/finalizar", {
+    const response = await fetch("http://192.168.1.13:4000/product/finalizar", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

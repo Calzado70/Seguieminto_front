@@ -52,7 +52,7 @@ async function cargarHistorialEnviado(id_bodega = null, fecha_inicio = null, fec
     }
 
     try {
-        let url = 'http://localhost:4000/api/logistica';
+        let url = 'http://192.168.1.13:4000/api/logistica';
         const params = new URLSearchParams();
         if (id_bodega) params.append('id_bodega', id_bodega);
         if (fecha_inicio) params.append('fecha_inicio', fecha_inicio);

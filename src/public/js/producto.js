@@ -125,7 +125,7 @@ async function cargarBodegasUsuario() {
     const idUsuario = payload.id_usuario;
 
     const response = await fetch(
-      `http://localhost:4000/bode/bodegas-usuario/${idUsuario}`,
+      `http://192.168.1.13:4000/bode/bodegas-usuario/${idUsuario}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -443,7 +443,7 @@ async function transferirProductos() {
         payload.id_bodega_destino === 24 &&
         caracteristicas !== ""
       ) {
-        await fetch("http://localhost:4000/product/actualizar", {
+        await fetch("http://192.168.1.13:4000/product/actualizar", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -456,7 +456,7 @@ async function transferirProductos() {
       const token = localStorage.getItem("token");
 
       // Realizar transferencia
-      const res = await fetch("http://localhost:4000/product/transferencia", {
+      const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
