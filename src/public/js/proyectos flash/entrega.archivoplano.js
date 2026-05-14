@@ -178,95 +178,40 @@ function exportarAExcel() {
   // DEFINIR EL ORDEN EXACTO DE LAS COLUMNAS (SIN REPETICIONES)
   const columnasOrdenadas = [
     // Bloque 1 (Registro 0000)
-    "numero de registro_1",
-    "tipo de registro_1",
-    "subtipo de registro_1",
-    "version del tipo de registro_1",
-    "compañia_1",
     "Linea Fin_1",
     
     // Bloque 2 (Registro 450)
-    "numero de registro_2",
-    "tipo de registro_2",
-    "subtipo de registro_2",
-    "version del tipo de registro_2",
-    "compañia_2",
-    "indica si el numero consecutivo de docto es manual o automatico",
     "Centro de operación",
     "Tipo de documento",
     "Consecutivo de documento",
     "Fecha del documento",
     "Tercero",
     "Clase de documento",
-    "Estado del documento",
-    "Estado de impresión",
     "Notas_1",
     "Concepto",
     "Bodega salida",
     "Bodega entrada",
-    "Documento alterno",
-    "centro de operacion de la tranferencia de salida",
-    "tipo de documento de la transferencia salida",
-    "consecutivo de documento de la transferencia salida",
-    "codigo de vehiculo",
-    "codigo transportador",
-    "codigo sucursal transportador",
-    "codigo conductor",
-    "nombre conductor",
-    "identificacion del conductor",
-    "numero de guia",
-    "cajas bultos",
-    "peso",
-    "volumen",
-    "valor asegurado",
-    "Notas_2",
-    
     // Bloque 3 (Registro 470)
     "Fin de linea",
-    "numero de registro_3",
-    "tipo de registro_3",
-    "subtipo de registro_3",
-    "version del tipo de registro_3",
-    "compañia_3",
     "Centro de operación movimiento",
     "Tipo de documento movimiento",
     "Consecutivo documento movimiento",
     "Numero de registro movimiento",
-    "espacios_1",
     "Bodega",
     "Ubicación",
-    "lote",
     "Concepto movimiento",
     "Motivo",
     "Centro de operación movimiento 2",
-    "espacios_2",
-    "centro de costos movimiento",
-    "proyecto",
     "Unidad de medida",
     "Cantidad base",
-    "cantidad adicional",
-    "costo promedio unitario",
-    "Notas_3",
-    "descripcion",
-    "descripcion del item",
     "Unidad de inventario del item",
-    "ubicacion entrada",
-    "lote entrada",
-    "item",
     "Referencia item",
     "Código de barras",
     "Extension 1",
-    "Extension 2",
     "Unidad de negocio movimiento",
-    "rowid del movto",
     
     // Bloque 4 (Registro 9999)
     "Linea Fin Final",
-    "numero de registro_4",
-    "tipo de registro_4",
-    "subtipo de registro_4",
-    "version del tipo de registro_4",
-    "compañia_4",
     "linea fin_2"
   ];
 
@@ -277,44 +222,11 @@ function exportarAExcel() {
     columnasOrdenadas.forEach(col => {
       switch (col) {
         // ========== BLOQUE 1: REGISTRO 0000 ==========
-        case "numero de registro_1":
-          fila[col] = "1";
-          break;
-        case "tipo de registro_1":
-          fila[col] = "0000";
-          break;
-        case "subtipo de registro_1":
-          fila[col] = "00";
-          break;
-        case "version del tipo de registro_1":
-          fila[col] = "01";
-          break;
-        case "compañia_1":
-          fila[col] = "001";
-          break;
         case "Linea Fin_1":
           fila[col] = 1;
           break;
 
         // ========== BLOQUE 2: REGISTRO 450 ==========
-        case "numero de registro_2":
-          fila[col] = "2";
-          break;
-        case "tipo de registro_2":
-          fila[col] = "450";
-          break;
-        case "subtipo de registro_2":
-          fila[col] = "00";
-          break;
-        case "version del tipo de registro_2":
-          fila[col] = "02";
-          break;
-        case "compañia_2":
-          fila[col] = "001";
-          break;
-        case "indica si el numero consecutivo de docto es manual o automatico":
-          fila[col] = "1";
-          break;
         case "Centro de operación":
           fila[col] = "001";
           break;
@@ -333,12 +245,6 @@ function exportarAExcel() {
         case "Clase de documento":
           fila[col] = 65;
           break;
-        case "Estado del documento":
-          fila[col] = 1;
-          break;
-        case "Estado de impresión":
-          fila[col] = 0;
-          break;
         case "Concepto":
           fila[col] = 605;
           break;
@@ -348,48 +254,11 @@ function exportarAExcel() {
         case "Bodega entrada":
           fila[col] = "BPT01";
           break;
-        case "Notas_1":
-          fila[col] = p.notas || "";
-          break;
 
-        // Campos vacíos del bloque 2
-        case "Documento alterno":
-        case "centro de operacion de la tranferencia de salida":
-        case "tipo de documento de la transferencia salida":
-        case "consecutivo de documento de la transferencia salida":
-        case "codigo de vehiculo":
-        case "codigo transportador":
-        case "codigo sucursal transportador":
-        case "codigo conductor":
-        case "nombre conductor":
-        case "identificacion del conductor":
-        case "numero de guia":
-        case "cajas bultos":
-        case "peso":
-        case "volumen":
-        case "valor asegurado":
-        case "Notas_2":
-          fila[col] = "";
-          break;
 
         // ========== BLOQUE 3: REGISTRO 470 ==========
         case "Fin de linea":
           fila[col] = 1;
-          break;
-        case "numero de registro_3":
-          fila[col] = "3";
-          break;
-        case "tipo de registro_3":
-          fila[col] = "470";
-          break;
-        case "subtipo de registro_3":
-          fila[col] = "0";
-          break;
-        case "version del tipo de registro_3":
-          fila[col] = "06";
-          break;
-        case "compañia_3":
-          fila[col] = "1";
           break;
         case "Centro de operación movimiento":
           fila[col] = "001";
@@ -403,17 +272,11 @@ function exportarAExcel() {
         case "Numero de registro movimiento":
           fila[col] = index + 1;
           break;
-        case "espacios_1":
-          fila[col] = "";
-          break;
         case "Bodega":
           fila[col] = "BPR04";
           break;
         case "Ubicación":
           fila[col] = "0000";
-          break;
-        case "lote":
-          fila[col] = "";
           break;
         case "Concepto movimiento":
           fila[col] = 605;
@@ -424,47 +287,14 @@ function exportarAExcel() {
         case "Centro de operación movimiento 2":
           fila[col] = "001";
           break;
-        case "espacios_2":
-          fila[col] = "";
-          break;
-        case "centro de costos movimiento":
-          fila[col] = "";
-          break;
-        case "proyecto":
-          fila[col] = "";
-          break;
         case "Unidad de medida":
           fila[col] = "PAR";
           break;
         case "Cantidad base":
           fila[col] = Number(p.cantidad).toFixed(4);
           break;
-        case "cantidad adicional":
-          fila[col] = "";
-          break;
-        case "costo promedio unitario":
-          fila[col] = "";
-          break;
-        case "Notas_3":
-          fila[col] = "";
-          break;
-        case "descripcion":
-          fila[col] = "";
-          break;
-        case "descripcion del item":
-          fila[col] = "";
-          break;
         case "Unidad de inventario del item":
           fila[col] = "PAR";
-          break;
-        case "ubicacion entrada":
-          fila[col] = "";
-          break;
-        case "lote entrada":
-          fila[col] = "";
-          break;
-        case "item":
-          fila[col] = "";
           break;
         case "Referencia item":
           fila[col] = "";
@@ -475,34 +305,13 @@ function exportarAExcel() {
         case "Extension 1":
           fila[col] = p.talla || "";
           break;
-        case "Extension 2":
-          fila[col] = "";
-          break;
         case "Unidad de negocio movimiento":
           fila[col] = "001";
-          break;
-        case "rowid del movto":
-          fila[col] = "";
           break;
 
         // ========== BLOQUE 4: REGISTRO 9999 ==========
         case "Linea Fin Final":
           fila[col] = 1;
-          break;
-        case "numero de registro_4":
-          fila[col] = "4";
-          break;
-        case "tipo de registro_4":
-          fila[col] = "9999";
-          break;
-        case "subtipo de registro_4":
-          fila[col] = "00";
-          break;
-        case "version del tipo de registro_4":
-          fila[col] = "01";
-          break;
-        case "compañia_4":
-          fila[col] = "001";
           break;
         case "linea fin_2":
           fila[col] = 1;
