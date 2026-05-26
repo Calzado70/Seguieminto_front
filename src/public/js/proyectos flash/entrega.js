@@ -38,13 +38,26 @@ function agregarProducto() {
     return mostrarAlerta('Responsable y Caja son obligatorios', 'error');
 
   const codigo = codigoInput.value.trim();
+
   if (codigo.length < 13 || codigo.length > 14) {
-  return mostrarAlerta('El código debe tener entre 13 y 14 dígitos', 'error');
-}
+    return mostrarAlerta('El código debe tener entre 13 y 14 dígitos', 'error');
+  }
 
   const responsable = responsableInput.value.trim();
   const caja = cajaInput.value.trim();
-  const talla = codigo.slice(-2);
+
+  // Obtener talla de los últimos 2 dígitos
+  const talla = parseInt(codigo.slice(-2), 10);
+
+  // Validar talla
+  if (talla < 28 || talla > 48) {
+    codigoInput.value = '';
+    codigoInput.focus();
+    return mostrarAlerta(
+      `La talla ${talla} no es válida. Solo se permiten tallas entre 28 y 48.`,
+      'error'
+    );
+  }
 
   let existente = productos.find(p =>
     p.responsable === responsable &&
