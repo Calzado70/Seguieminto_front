@@ -37,7 +37,18 @@ function agregarProducto() {
   return mostrarAlerta('El código debe tener entre 13 y 14 dígitos', 'error');
 }
 
-  const talla = codigo.slice(-2);
+  const talla = parseInt(codigo.slice(-2), 10);
+
+// Validar talla
+if (talla < 28 || talla > 48) {
+  codigoInput.value = '';
+  codigoInput.focus();
+
+  return mostrarAlerta(
+    `La talla ${talla} no es válida. Solo se permiten tallas entre 28 y 48.`,
+    'error'
+  );
+}
 
   let existente = productos.find(p =>
     p.codigo === codigo
