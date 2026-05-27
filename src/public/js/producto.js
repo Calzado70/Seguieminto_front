@@ -220,7 +220,7 @@ function agregarProducto(codigo) {
   }
 
   const cantidadInput = document.getElementById("cantidad_manual");
-  let cantidad = parseInt(cantidadInput.value, 10) || 1;
+  let cantidad = parseInt(cantidadInput.value, 10) || 0.5;
   const usuario = document.getElementById("usuario").value;
   const bodegaOrigen = document.getElementById("bodegaActual").value;
   const bodegaDestinoSelect = document.getElementById("id_bodega");
