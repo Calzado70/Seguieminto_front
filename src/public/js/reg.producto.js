@@ -34,7 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
   codigoProductoInput.focus();
 
   codigoProductoInput.addEventListener("blur", () => {
-  setTimeout(() => codigoProductoInput.focus(), 50);
+  setTimeout(() => {
+    if (document.activeElement !== cantidadInput) {
+      codigoProductoInput.focus();
+    }
+  }, 50);
 });
 
   const idSesionGuardado = localStorage.getItem("id_sesion");
