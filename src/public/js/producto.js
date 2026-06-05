@@ -437,20 +437,31 @@ async function transferirProductos() {
     const caracteristicas = producto.caracteristicas;
 
     try {
-      // Actualizar características si es bodega 6
+
       if (
-        payload.id_bodega_origen === 6 &&
-        payload.id_bodega_destino === 24 &&
-        caracteristicas !== ""
-      ) {
-        await fetch("http://192.168.1.13:4000/product/actualizar", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            codigo_producto: codigo,
-            nueva_caracteristica: caracteristicas,
-          }),
-        });
+  payload.id_bodega_origen === 6 &&
+  caracteristicas?.trim()
+) {
+        const resActualizar = await fetch(
+  "http://192.168.1.13:4000/product/actualizar",
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      codigo_producto: codigo,
+      nueva_caracteristica: caracteristicas,
+    }),
+  }
+);
+
+const dataActualizar = await resActualizar.json();
+
+
+if (!resActualizar.ok) {
+  throw new Error(dataActualizar.error);
+}
       }
 
       const token = localStorage.getItem("token");
