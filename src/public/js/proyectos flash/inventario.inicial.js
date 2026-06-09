@@ -70,16 +70,57 @@ function manejarLecturaCodigo() {
     mostrarErrorCodigo('El código debe tener EXACTAMENTE 13 dígitos');
     return;
   }
-
   setTimeout(() => {
     agregarProductoConCodigo(codigo);
   }, 50);
 }
 
+async function validarCodigo(codigo) {
+
+    try {
+
+        const response = await fetch('http://localhost:4000/product/consultar', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo_barras: codigo
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        return data;
+
+    } catch (error) {
+
+        console.error(error);
+
+        return {
+            ok: false,
+            mensaje: "Error consultando catálogo"
+        };
+
+    }
+}
+
 // ===============================
 // AGREGAR PRODUCTO
 // ===============================
-function agregarProductoConCodigo(codigo) {
+async function agregarProductoConCodigo(codigo) {
+
+  const validacion = await validarCodigo(codigo);
+
+if (!validacion.ok) {
+
+    mostrarErrorCodigo(
+        validacion.mensaje
+    );
+
+    return;
+}
 
   if (!usuarioSelect.value) return mostrarErrorCodigo('Selecciona una pareja');
   if (!conteoSelect.value) return mostrarErrorCodigo('Selecciona un conteo');
@@ -91,6 +132,9 @@ function agregarProductoConCodigo(codigo) {
   const bodega = bodegaSelect.options[bodegaSelect.selectedIndex].text;
   const talla = codigo.slice(-2);
   const fecha = new Date().toLocaleDateString('es-CO');
+  console.log("VALIDACION:", validacion);
+  const sku = validacion.producto.sku;
+  const referencia = validacion.producto.referencia;
 
   const existente = productos.find(p =>
     p.codigo === codigo &&
@@ -110,16 +154,26 @@ function agregarProductoConCodigo(codigo) {
     actualizarFilaExistente(existente, true);
   } else {
     const producto = {
-      id: Date.now() + Math.random(),
-      pareja,
-      conteo,
-      bodega,
-      codigo,
-      talla,
-      cantidad,
-      pares: Math.floor(cantidad),
-      fecha
-    };
+    id: Date.now() + Math.random(),
+
+    pareja,
+    conteo,
+    bodega,
+
+    codigo,
+
+    sku,
+
+    referencia,
+
+    talla,
+
+    cantidad,
+
+    pares: Math.floor(cantidad),
+
+    fecha
+};
 
     productos.unshift(producto);
     agregarFilaTabla(producto, true);
@@ -159,7 +213,11 @@ function agregarFilaTabla(producto, esPrimero = false) {
     <td>${producto.pareja}</td>
     <td>${producto.conteo}</td>
     <td>${producto.bodega}</td>
+
     <td>${producto.codigo}</td>
+    <td>${producto.sku}</td>
+    <td>${producto.referencia}</td>
+
     <td>${producto.talla}</td>
     <td>${producto.fecha}</td>
     <td>
@@ -261,7 +319,7 @@ function exportarAExcel() {
   }
 
   const clave = prompt('Clave para exportar:');
-  if (clave !== '123456789') return;
+  if (clave !== '1234') return;
 
   const confirmacion = confirm(`Vas a exportar ${productos.length} productos. ¿Continuar?`);
   if (!confirmacion) return;
@@ -274,6 +332,8 @@ const datosExcel = productos.map(p => ({
   Pareja: p.pareja,
   Conteo: p.conteo,
   Zona: p.bodega,
+  sku: p.sku,
+  Referencia: p.referencia,
   Codigo: p.codigo,
   Talla: p.talla,
   Cantidad: p.cantidad,
