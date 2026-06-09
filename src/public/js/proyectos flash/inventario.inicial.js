@@ -79,7 +79,7 @@ async function validarCodigo(codigo) {
 
     try {
 
-        const response = await fetch('http://localhost:4000/product/consultar', {
+        const response = await fetch('http://192.168.1.13:4000/product/consultar', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
