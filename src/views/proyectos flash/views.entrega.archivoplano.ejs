@@ -1,77 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="../css/entraga.archivoplano.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <title>Toma Inventario</title>
+  <title>Entrega de Producción</title>
 </head>
-
 <body>
   <div class="container">
+
     <nav class="navbar">
       <div class="navbar-brand">
         <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
       </div>
+      <span class="navbar-module-badge">Producción → Logística</span>
     </nav>
 
-    <div class="content-segundario">
-      <div class="escrito">
-        <h2 class="h2">Entrega de Producción a Logística</h2>
+    <div class="page-wrapper">
 
-        <div class="cont-segun-list">
+      <h1 class="page-title">
+        <i class="ti ti-package-export"></i>
+        Entrega de producción a logística
+      </h1>
 
-          <div class="form-grid">
-            <div class="input-group">
-              <label class="input-label">Código del Producto</label>
-              <input type="text" class="input" id="codigo_producto" minlength="13" maxlength="14" pattern="\d{13,14}" title="El código debe contener entre 13 y 14 dígitos">
-            </div>
+      <!-- Tarjeta de escaneo -->
+      <div class="scan-card">
+        <div class="scan-field">
+          <label class="scan-label" for="codigo_producto">
+            <span class="scan-dot"></span>
+            Escáner de código de barras
+          </label>
+          <div class="input-wrap">
+            <i class="ti ti-barcode input-icon"></i>
+            <input
+              type="text"
+              class="scan-input"
+              id="codigo_producto"
+              placeholder="Escanea o ingresa el código (13–14 dígitos)"
+              minlength="13"
+              maxlength="14"
+              inputmode="numeric"
+              autocomplete="off"
+            >
           </div>
-
-          <div class="cont-segun-list-bot">
-            <button class="button" id="mover-productos">
-              <i class="fas fa-file-export"></i> Exportar a Excel
-            </button>
-          </div>
-
-          <div class="table-container">
-            <!-- HEADER CON TOTAL DE CANTIDADES -->
-            <div class="table-header header-flex">
-              <div class="table-title">Productos Agregados</div>
-
-              <div class="contador-header">
-                <span>Total cantidades:</span>
-                <strong id="totalProductos">0</strong>
-              </div>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Talla</th>
-                  <th>Cantidad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tablaProductos">
-                <tr id="empty-state" style="display:none">
-                  <td colspan="6">
-                    <div class="empty-state">
-                      <i class="fas fa-box-open"></i>
-                      <p>No hay productos agregados aún</p>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
+          <p class="scan-hint">El producto se agrega automáticamente al escanear</p>
         </div>
+
+        <button class="btn-export" id="mover-productos">
+          <i class="ti ti-file-spreadsheet"></i>
+          Exportar a Excel
+        </button>
       </div>
+
+      <!-- Tabla -->
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-head-title">
+            <i class="ti ti-list-check"></i>
+            Productos registrados
+          </div>
+          <div class="total-badge">
+            <span>Total pares:</span>
+            <strong id="totalProductos">0</strong>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>SKU</th>
+              <th>Referencia</th>
+              <th>Talla</th>
+              <th>Cantidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductos">
+            <tr id="empty-state">
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <i class="ti ti-barcode"></i>
+                  </div>
+                  <p>No hay productos registrados</p>
+                  <small>Escanea un código de barras para comenzar</small>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </div>
 

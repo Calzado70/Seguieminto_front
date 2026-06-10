@@ -30,12 +30,83 @@ codigoInput.addEventListener('input', () => {
 botonExportar.addEventListener('click', exportarAExcel);
 
 // =========================
-function agregarProducto() {
+// VALIDAR CODIGO EN CATALOGO
+// =========================
 
-  const codigo = codigoInput.value.trim();
+async function validarCodigo(codigo) {
+
+  try {
+
+    const response = await fetch(
+      "http://192.168.1.13:4000/product/consultar",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          codigo_barras:codigo
+        })
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    return data;
+
+
+  } catch(error){
+
+    console.error(error);
+
+
+    return {
+      ok:false,
+      mensaje:"Error consultando catálogo"
+    };
+
+  }
+
+}
+
+// =========================
+async function agregarProducto() {
+
+
+const codigo = codigoInput.value.trim();
   if (codigo.length < 13 || codigo.length > 14) {
   return mostrarAlerta('El código debe tener entre 13 y 14 dígitos', 'error');
 }
+
+// =========================
+// VALIDAR CATALOGO
+// =========================
+
+const validacion = await validarCodigo(codigo);
+
+
+console.log("RESPUESTA CATALOGO:", validacion);
+
+
+
+if(!validacion.ok){
+
+  codigoInput.value="";
+  codigoInput.focus();
+
+  return mostrarAlerta(
+    validacion.mensaje,
+    "error"
+  );
+
+}
+
+
+const sku = validacion.producto.sku;
+
+const referencia = validacion.producto.referencia;
 
   const talla = parseInt(codigo.slice(-2), 10);
 
@@ -55,17 +126,29 @@ if (talla < 28 || talla > 48) {
   );
 
   if (existente) {
+
     existente.cantidad++;
-    moverFilaInicio(existente.id);
+
     actualizarFila(existente);
-  } else {
+
+} else {
     const nuevo = {
+
       id: Date.now(),
+
       codigo,
+
+      sku,
+
+      referencia,
+
       talla,
-      cantidad: 1,
-      fecha: new Date().toLocaleDateString('es-CO')
-    };
+
+      cantidad:1,
+
+      fecha:new Date().toLocaleDateString('es-CO')
+
+};
 
     productos.unshift(nuevo);
     agregarFilaInicio(nuevo);
@@ -79,29 +162,34 @@ if (talla < 28 || talla > 48) {
 
 // =========================
 function agregarFilaInicio(p) {
+
   emptyState.style.display = 'none';
 
   const tr = document.createElement('tr');
+
   tr.dataset.id = p.id;
   tr.className = 'fade-in';
 
   tr.innerHTML = `
-    <td>${p.codigo}</td>
-    <td>${p.talla}</td>
-    <td>${p.cantidad}</td>
-    <td>
-      <div class="action-buttons">
-        <button class="btn-editar" onclick="editarProducto(${p.id})">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-eliminar" onclick="eliminarProducto(${p.id})">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </td>
-  `;
+  <td class="code-cell">${p.codigo}</td>
+  <td><span class="sku-pill">${p.sku}</span></td>
+  <td>${p.referencia}</td>
+  <td><span class="talla-badge">${p.talla}</span></td>
+  <td><span class="cant-badge">${p.cantidad}</span></td>
+  <td>
+    <div class="action-buttons">
+      <button class="btn-editar" onclick="editarProducto(${p.id})" title="Editar cantidad">
+        <i class="fas fa-pencil"></i>
+      </button>
+      <button class="btn-eliminar" onclick="eliminarProducto(${p.id})" title="Eliminar">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </td>
+`;
 
-  tablaProductos.prepend(tr);
+
+  tablaProductos.appendChild(tr);
 }
 
 function moverFilaInicio(id) {
@@ -110,11 +198,14 @@ function moverFilaInicio(id) {
 }
 
 function actualizarFila(p) {
+
   const fila = document.querySelector(`tr[data-id="${p.id}"]`);
 
   if (!fila) return;
 
-  fila.querySelector('td:nth-child(3)').textContent = p.cantidad;
+
+  fila.querySelector('td:nth-child(5) .cant-badge').textContent = p.cantidad;
+
 }
 
 // =========================
