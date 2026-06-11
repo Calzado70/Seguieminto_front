@@ -57,6 +57,10 @@ export const inventario_supervisor = (req, res) => {
     res.render("views.inventario.supervisor.ejs");
 }
 
+export const catalogo  = (req, res) => {
+    res.render("views.catalogo.ejs");
+}
+
 
 
 export const inventario_inicial = (req, res) => {

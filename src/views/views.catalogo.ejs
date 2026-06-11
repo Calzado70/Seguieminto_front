@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Catálogo | Trost</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/catalogo.css">
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <div class="navbar-logo">
+            <img src="/img/Trost_blanco.png" alt="Trost">
+        </div>
+
+        <div class="sidebar-nav">
+
+            <div class="nav-section">
+                <h3 class="nav-section-title">USUARIOS</h3>
+
+                <select class="nav-select" onchange="navegar(this)">
+                    <option value="">Usuarios</option>
+                    <option value="/usuario">
+                        Admin-usuario
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="nav-section">
+
+                <h3 class="nav-section-title">BODEGAS</h3>
+
+                <select class="nav-select" onchange="navegar(this)">
+
+                    <option value="">
+                        Bodegas
+                    </option>
+
+                    <option value="/crear_bodega">
+                        Crear Bodegas
+                    </option>
+
+                    <option value="/seguimiento">
+                        Seguimiento Bodega
+                    </option>
+
+                    <option value="/inventario">
+                        Inventario de Bodegas
+                    </option>
+
+                    <option value="/catalogo">
+                        Catálogo de productos
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="nav-section">
+
+                <h3 class="nav-section-title">
+                    HISTORIAL
+                </h3>
+
+                <select class="nav-select" onchange="navegar(this)">
+
+                    <option value="">
+                        Historial
+                    </option>
+
+                    <option value="/historial">
+                        Lista de Historial
+                    </option>
+
+                    <option value="/logistica">
+                        Producto en Logística
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+    </nav>
+
+    <div class="container">
+        <!-- Header mejorado -->
+        <header class="topbar">
+            <div class="logo-container">
+                <img src="/img/Trost_blanco.png" class="logo" alt="Trost Logo">
+            </div>
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-boxes"></i>
+                    Catálogo de Productos
+                </h1>
+                <p class="subtitle">Gestión completa de códigos y referencias</p>
+            </div>
+        </header>
+
+        <!-- Card principal con sombra y diseño moderno -->
+        <section class="card">
+            <div class="card-header">
+                <h2>
+                    <i class="fas fa-tags"></i>
+                    Administración de códigos
+                </h2>
+                <div class="stats" id="stats">
+                    <span class="stat-badge">
+                        <i class="fas fa-database"></i>
+                        <span id="totalCount">0</span> productos
+                    </span>
+                </div>
+            </div>
+
+            <!-- Barra de acciones mejorada -->
+            <div class="acciones">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="buscar" placeholder="Buscar por código, SKU o referencia..." class="input-search">
+                    <button id="clearSearch" class="clear-search" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <button class="btn-primary" onclick="abrirModal()">
+                    <i class="fas fa-plus-circle"></i>
+                    Nuevo producto
+                </button>
+            </div>
+
+            <!-- Tabla con diseño moderno -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Referencia</th>
+                            <th>SKU</th>
+                            <th>Código barras</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCatalogo">
+                        <tr class="loading-row">
+                            <td colspan="7">
+                                <div class="loading-spinner"></div>
+                                <span>Cargando productos...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginador moderno -->
+            <div class="pagination-container" id="paginationContainer">
+                <div class="pagination-info">
+                    Mostrando <span id="startRange">0</span> - <span id="endRange">0</span> de <span id="totalItems">0</span> productos
+                </div>
+                <div class="pagination-controls">
+                    <button id="btnFirst" class="page-btn" onclick="irPagina(1)">
+                        <i class="fas fa-angle-double-left"></i>
+                    </button>
+                    <button id="btnPrev" class="page-btn" onclick="paginaAnterior()">
+                        <i class="fas fa-angle-left"></i>
+                    </button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button id="btnNext" class="page-btn" onclick="paginaSiguiente()">
+                        <i class="fas fa-angle-right"></i>
+                    </button>
+                    <button id="btnLast" class="page-btn" onclick="irPagina(totalPaginas)">
+                        <i class="fas fa-angle-double-right"></i>
+                    </button>
+                </div>
+                <div class="page-size-selector">
+                    <label>Mostrar:</label>
+                    <select id="pageSizeSelect">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL mejorado -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModal">
+                    <i class="fas fa-plus-circle"></i>
+                    Nuevo producto
+                </h2>
+                <button class="modal-close" onclick="cerrarModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-hashtag"></i>
+                        Referencia *
+                    </label>
+                    <input id="referencia" class="input-modal" placeholder="Ingrese la referencia" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-barcode"></i>
+                        SKU *
+                    </label>
+                    <input id="sku" class="input-modal" placeholder="Ingrese el SKU" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-qrcode"></i>
+                        Código de barras
+                    </label>
+                    <input id="codigo_barras" class="input-modal" placeholder="Ingrese el código de barras" maxlength="50">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="guardar()" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar
+                </button>
+                <button onclick="cerrarModal()" class="btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notificación -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+
+function navegar(select){
+
+    const ruta = select.value;
+
+    if(ruta){
+        window.location.href = ruta;
+    }
+
+}
+
+</script>
+    <script src="/js/catalogo.js"></script>
+</body>
+
+</html>

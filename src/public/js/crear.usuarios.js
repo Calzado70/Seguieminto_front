@@ -434,6 +434,7 @@ function showToast(message, type = 'info') {
 redirigir('adminUsuario');
 redirigir('bodegas');
 redirigir('historial');
+redirigir('catalogo');
 
 
 document.addEventListener('DOMContentLoaded', cargarBodegas);

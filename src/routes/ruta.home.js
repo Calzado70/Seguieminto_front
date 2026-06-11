@@ -17,7 +17,8 @@ import { alerta,
     seguimiento, 
     session, 
     supervisor, 
-    archivo_plano
+    archivo_plano,
+    catalogo
   } from "../controllers/home.controller.js";
 
 const rutaHome = Router();
@@ -46,6 +47,9 @@ rutaHome.get("/entrega", entrega);
 rutaHome.get("/inicial",inventario_inicial);
 rutaHome.get("/materia", materia);
 
+
+//Catalogo
+rutaHome.get("/catalogo", catalogo);
 
 
 rutaHome.get("/inventario", inventario_view);

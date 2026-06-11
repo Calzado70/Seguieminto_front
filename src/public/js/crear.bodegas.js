@@ -60,6 +60,7 @@ function setupEventListeners() {
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');
+    redirigir('catalogo');
 
 }
 
