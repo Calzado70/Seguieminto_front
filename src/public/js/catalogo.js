@@ -196,10 +196,7 @@ function mostrarTabla(lista) {
                     <button 
                     class="btn-icon btn-toggle"
 
-                    onclick="cambiarEstado(
-                        ${p.id_catalogo},
-                        '${p.estado}'
-                    )">
+                    onclick="cambiarEstado(${p.id_catalogo}, '${p.estado}')">
 
 
                         <i class="fas 
@@ -418,36 +415,64 @@ function editar(id) {
   if (modal) modal.style.display = "flex";
 }
 
-async function cambiarEstado(id, estadoActual) {
-  let url;
+async function cambiarEstado(id, estadoActual){
 
-  if (estadoActual === "ACTIVO") {
-    url = "http://192.168.1.13:4000/catalogo/inhabilitar";
-  } else {
-    url = "http://192.168.1.13:4000/catalogo/activar";
-  }
 
-  try {
-    const res = await fetch(url, {
-      method: "PUT",
+const url = estadoActual === "ACTIVO"
 
-      headers: {
-        "Content-Type": "application/json",
-      },
+?
+"http://192.168.1.13:4000/catalogo/inhabilitar"
 
-      body: JSON.stringify({
-        id_catalogo: id,
-      }),
-    });
+:
 
-    const data = await res.json();
+"http://192.168.1.13:4000/catalogo/activar";
 
-    mostrarToast(data.message || "Estado actualizado");
 
-    cargarCatalogo();
-  } catch (error) {
-    console.error("Error cambiando estado:", error);
 
-    mostrarToast("Error actualizando estado", "error");
-  }
+try{
+
+
+const res = await fetch(url,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+id_catalogo:id
+
+})
+
+
+});
+
+
+
+const data=await res.json();
+
+
+
+alert(data.mensaje);
+
+
+
+cargarCatalogo();
+
+
+
+}catch(error){
+
+
+console.error(error);
+
+
+alert("Error cambiando estado");
+
+
+}
+
+
 }
