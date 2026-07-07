@@ -131,6 +131,8 @@ if (talla < 28 || talla > 48) {
 
     actualizarFila(existente);
 
+    moverFilaInicio(existente.id);
+
 } else {
     const nuevo = {
 
@@ -189,7 +191,7 @@ function agregarFilaInicio(p) {
 `;
 
 
-  tablaProductos.appendChild(tr);
+  tablaProductos.prepend(tr);
 }
 
 function moverFilaInicio(id) {
