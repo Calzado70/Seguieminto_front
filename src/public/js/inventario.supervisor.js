@@ -2,7 +2,7 @@
 // CONFIGURACIÓN GLOBAL
 // ===============================
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = "http://192.168.1.13:4000";
 const ELEMENTOS_POR_PAGINA = 10;
 
 let inventarioCompleto = [];

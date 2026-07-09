@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarCatalogo() {
   mostrarLoading(true);
   try {
-    const res = await fetch("http://localhost:4000/catalogo/listar");
+    const res = await fetch("http://192.168.1.13:4000/catalogo/listar");
     const data = await res.json();
     console.log("Respuesta API:", data);
 
@@ -369,12 +369,12 @@ async function guardar() {
   }
 
   let body = { referencia, sku, codigo_barras };
-  let url = "http://localhost:4000/catalogo/crear";
+  let url = "http://192.168.1.13:4000/catalogo/crear";
   let metodo = "POST";
 
   if (editando) {
     body.id_catalogo = editando;
-    url = "http://localhost:4000/catalogo/actualizar";
+    url = "http://192.168.1.13:4000/catalogo/actualizar";
     metodo = "PUT";
   }
 
@@ -421,11 +421,11 @@ async function cambiarEstado(id, estadoActual){
 const url = estadoActual === "ACTIVO"
 
 ?
-"http://localhost:4000/catalogo/inhabilitar"
+"http://192.168.1.13:4000/catalogo/inhabilitar"
 
 :
 
-"http://localhost:4000/catalogo/activar";
+"http://192.168.1.13:4000/catalogo/activar";
 
 
 

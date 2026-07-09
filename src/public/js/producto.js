@@ -125,7 +125,7 @@ async function cargarBodegasUsuario() {
     const idUsuario = payload.id_usuario;
 
     const response = await fetch(
-      `http://localhost:4000/bode/bodegas-usuario/${idUsuario}`,
+      `http://192.168.1.13:4000/bode/bodegas-usuario/${idUsuario}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -220,7 +220,7 @@ function agregarProducto(codigo) {
   }
 
   const cantidadInput = document.getElementById("cantidad_manual");
-  let cantidad = parseInt(cantidadInput.value, 10) || 0.5;
+  let cantidad = parseInt(cantidadInput.value, 10) || 1;
   const usuario = document.getElementById("usuario").value;
   const bodegaOrigen = document.getElementById("bodegaActual").value;
   const bodegaDestinoSelect = document.getElementById("id_bodega");
@@ -257,6 +257,7 @@ function agregarProducto(codigo) {
   if (productos[clave]) {
     productos[clave].cantidad += cantidad;
     actualizarFilaProducto(clave, productos[clave]);
+    moverFilaInicio(clave);
   } else {
     const talla = obtenerTallaDesdeCodigo(codigo);
 
@@ -353,9 +354,21 @@ function crearFilaProducto(clave, producto) {
         </td>
     `;
 
-  tbody.appendChild(fila);
+  tbody.prepend(fila);
 
   actualizarEstadoVacio();
+}
+
+function moverFilaInicio(clave) {
+  const tbody = document
+    .getElementById("tablaProductos")
+    .getElementsByTagName("tbody")[0];
+
+  const fila = document.querySelector(`tr[data-codigo="${clave}"]`);
+
+  if (fila) {
+    tbody.prepend(fila);
+  }
 }
 
 function actualizarFilaProducto(clave, producto) {
@@ -443,7 +456,7 @@ async function transferirProductos() {
   caracteristicas?.trim()
 ) {
         const resActualizar = await fetch(
-  "http://localhost:4000/product/actualizar",
+  "http://192.168.1.13:4000/product/actualizar",
   {
     method: "PUT",
     headers: {
@@ -467,7 +480,7 @@ if (!resActualizar.ok) {
       const token = localStorage.getItem("token");
 
       // Realizar transferencia
-      const res = await fetch("http://localhost:4000/product/transferencia", {
+      const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

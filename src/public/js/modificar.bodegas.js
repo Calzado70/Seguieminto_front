@@ -39,7 +39,7 @@ async function cargarDatosBodega() {
     }
 
     try {
-        const response = await fetch(`http://localhost:4000/bode/mostrar?id=${idBodega}`, {
+        const response = await fetch(`http://192.168.1.13:4000/bode/mostrar?id=${idBodega}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -98,7 +98,7 @@ async function modificarBodega() {
 
         showToast('Actualizando bodega...', 'info');
 
-        const response = await fetch('http://localhost:4000/bode/modificar', {
+        const response = await fetch('http://192.168.1.13:4000/bode/modificar', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

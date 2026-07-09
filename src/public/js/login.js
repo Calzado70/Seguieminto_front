@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const mensaje = document.getElementById('mensaje');
 
     try {
-        const response = await fetch(`http://localhost:4000/user/loginusuario`, {
+        const response = await fetch(`http://192.168.1.13:4000/user/loginusuario`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
