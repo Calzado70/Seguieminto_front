@@ -29,7 +29,7 @@ function verificarTokenAlCargar() {
 /* ========= CARGAR MOVIMIENTOS ========= */
 async function cargarMovimientos(idBodega = null, fechaInicio = null, fechaFin = null, codigoInteligente = null) {
     const token = localStorage.getItem('token');
-    let url = 'http://192.168.1.13:4000/product/movi';
+    let url = 'http://localhost:4000/product/movi';
     const params = new URLSearchParams();
 
     if (idBodega) params.append('id_bodega', idBodega);
@@ -207,7 +207,7 @@ function mostrarMensaje(texto, tipo = 'info') {
 async function cargarBodegas() {
     const token = localStorage.getItem('token');
     try {
-        const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+        const res = await fetch('http://localhost:4000/bode/mostrar', {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -313,6 +313,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('historial').addEventListener('change', (e) => {
+        if (e.target.value) window.location.href = e.target.value;
+    });
+    
+    document.getElementById('productos').addEventListener('change', (e) => {
         if (e.target.value) window.location.href = e.target.value;
     });
 });

@@ -6,12 +6,28 @@ let totalUnidades = 0;
 
 /* =========================
    CARACTERÍSTICAS VÁLIDAS
+   (cargadas desde la base de datos)
 ========================= */
-const CARACTERISTICAS_VALIDAS = [  "40PP", "41P",  "42P",  "43P",  "44P",  "45P",  "46P",  "47P",  "48P",  "49P",  "50P",  "51P",
-  "52P",  "53P",  "54P",  "55P",  "56P",  "57P",  "58P",  "59P",  "60P",  "61P",  "62P",  "63P",  "64P",  "65P",  "66P",
-  "67P",  "68P",  "69P",  "70P",  "71P",  "72P",  "73P",  "74P",  "75P",  "76P",  "77P",  "78P",  "79P",  "80P",  "81P",
-  "82P",  "83P",  "84P",  "85P",  "86P",  "87P",  "88P",  "89P",  "90P",  "91P",  "92P",  "93P",  "30P",  "95P",  "110P",
-  "120P",  "130P",  "201P",  "215P",  "220P",  "225P",];
+let CARACTERISTICAS_VALIDAS = [];
+
+async function cargarCaracteristicas() {
+  try {
+    const res = await fetch(
+      "http://localhost:4000/caracter/listar?soloActivas=true",
+    );
+    const data = await res.json();
+    CARACTERISTICAS_VALIDAS = (data.body || []).map((c) => c.valor);
+  } catch (err) {
+    console.error("Error al cargar características:", err);
+    CARACTERISTICAS_VALIDAS = [];
+  }
+}
+/* =========================
+   BODEGAS DE TERMINADA
+========================= */
+function esBodegaTerminada(idBodega) {
+  return [6, 24, 25].includes(Number(idBodega));
+}
 
 /* =========================
    PERSISTENCIA LOCAL
@@ -62,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarDatosUsuario();
   cargarBodegasUsuario();
   actualizarFecha();
+  cargarCaracteristicas();
 });
 
 function inicializarApp() {
@@ -125,7 +142,7 @@ async function cargarBodegasUsuario() {
     const idUsuario = payload.id_usuario;
 
     const response = await fetch(
-      `http://192.168.1.13:4000/bode/bodegas-usuario/${idUsuario}`,
+      `http://localhost:4000/bode/bodegas-usuario/${idUsuario}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -173,7 +190,7 @@ function gestionarCampoCaracteristicas() {
 
   if (!select || !container) return;
 
-  if (idBodega === "6" || idBodega === "24") {
+  if (esBodegaTerminada(idBodega)) {
     select.disabled = false;
     container.style.opacity = "1";
     helpText.style.display = "flex";
@@ -212,11 +229,15 @@ function configurarInputCodigo() {
   });
 }
 
-function agregarProducto(codigo) {
+async function agregarProducto(codigo) {
   if (!validarDatosAntesAgregar()) return;
   if (!codigo) {
     mostrarNotificacion("Ingrese un código válido", "warning");
     return;
+  }
+
+  if (CARACTERISTICAS_VALIDAS.length === 0) {
+    await cargarCaracteristicas();
   }
 
   const cantidadInput = document.getElementById("cantidad_manual");
@@ -234,7 +255,7 @@ function agregarProducto(codigo) {
   const idBodegaOrigen = localStorage.getItem("bodega");
 
   // SOLO validar características en estas bodegas
-  if (idBodegaOrigen === "6" || idBodegaOrigen === "24") {
+  if (esBodegaTerminada(idBodegaOrigen)) {
     if (!CARACTERISTICAS_VALIDAS.includes(caracteristicas)) {
       mostrarNotificacion("La característica ingresada no existe", "error");
       caracteristicasInput.focus();
@@ -252,7 +273,7 @@ function agregarProducto(codigo) {
     return;
   }
 
-  const clave = `${codigo}_${bodegaDestinoSelect.value}`;
+  const clave = `${codigo}_${bodegaDestinoSelect.value}_${caracteristicas}`;
 
   if (productos[clave]) {
     productos[clave].cantidad += cantidad;
@@ -440,6 +461,7 @@ async function transferirProductos() {
 
   let transferenciasExitosas = 0;
   let transferenciasFallidas = 0;
+  let codigosFinalizados = [];
 
   for (const fila of filas) {
     const clave = fila.dataset.codigo;
@@ -451,36 +473,48 @@ async function transferirProductos() {
 
     try {
 
-      if (
-  payload.id_bodega_origen === 6 &&
-  caracteristicas?.trim()
-) {
-        const resActualizar = await fetch(
-  "http://192.168.1.13:4000/product/actualizar",
-  {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      codigo_producto: codigo,
-      nueva_caracteristica: caracteristicas,
-    }),
-  }
-);
+      if (esBodegaTerminada(payload.id_bodega_origen) && caracteristicas?.trim()) {
+        const tipoMovimiento = payload.id_bodega_origen === 25 ? "COMPLETO" : "PROCESO";
+        const resFinalizar = await fetch(
+          "http://localhost:4000/product/finalizar-terminada",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              codigo_producto: codigo,
+              caracteristica: caracteristicas,
+              cantidad: producto.cantidad,
+              id_bodega_origen: payload.id_bodega_origen,
+              id_bodega_destino:
+                producto.idBodegaDestino || payload.id_bodega_destino,
+              id_usuario: payload.id_usuario,
+              tipo_movimiento: tipoMovimiento,
+            }),
+          },
+        );
 
-const dataActualizar = await resActualizar.json();
+        const dataFinalizar = await resFinalizar.json();
 
+        if (!resFinalizar.ok) {
+          document.getElementById("mensajeErrorStock").textContent =
+            dataFinalizar.error;
+          document.getElementById("modalErrorStock").style.display = "flex";
+          transferenciasFallidas++;
+          continue;
+        }
 
-if (!resActualizar.ok) {
-  throw new Error(dataActualizar.error);
-}
+        const nuevoCodigo = dataFinalizar.body?.mensaje || "";
+        codigosFinalizados.push(nuevoCodigo);
+        transferenciasExitosas++;
+        continue;
       }
 
       const token = localStorage.getItem("token");
 
       // Realizar transferencia
-      const res = await fetch("http://192.168.1.13:4000/product/transferencia", {
+      const res = await fetch("http://localhost:4000/product/transferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -514,10 +548,17 @@ if (!resActualizar.ok) {
   // Limpiar después de la transferencia
   if (transferenciasExitosas > 0) {
     limpiarLista();
-    mostrarNotificacion(
-      `${transferenciasExitosas} transferencias completadas exitosamente`,
-      "success",
-    );
+
+    let mensajeFinal = `${transferenciasExitosas} transferencias completadas exitosamente`;
+
+    if (codigosFinalizados.length > 0) {
+      mensajeFinal = `${codigosFinalizados.length} producto(s) finalizado(s) en Terminada`;
+      const ultimoCodigo = codigosFinalizados[codigosFinalizados.length - 1];
+      const codigoNuevo = ultimoCodigo.split("Nuevo codigo: ")[1] || "";
+      if (codigoNuevo) mensajeFinal += ` -> Nuevo codigo: ${codigoNuevo}`;
+    }
+
+    mostrarNotificacion(mensajeFinal, "success");
   }
 
   if (transferenciasFallidas > 0) {

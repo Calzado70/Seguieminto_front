@@ -21,6 +21,7 @@ function verificarTokenAlCargar() {
 
 function redirigir(selectId) {
     const selectElement = document.getElementById(selectId);
+    if (!selectElement) return;
     selectElement.addEventListener('change', function() {
         const selectedOption = selectElement.options[selectElement.selectedIndex].value;
         if (selectedOption) {
@@ -34,6 +35,7 @@ function redirigir(selectId) {
 redirigir('adminUsuario');
 redirigir('bodegas');
 redirigir('historial');
+redirigir('productos');
 
 
 // Load users when page loads

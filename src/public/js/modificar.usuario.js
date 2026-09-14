@@ -57,7 +57,7 @@ async function cargarBodegas() {
     try {
         const token = localStorage.getItem('token');
 
-        const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+        const res = await fetch('http://localhost:4000/bode/mostrar', {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -102,7 +102,7 @@ async function modificarUsuario() {
 
         if (!usuarioData.id_bodega) throw new Error('Seleccione una bodega');
 
-        const res = await fetch('http://192.168.1.13:4000/user/modificar', {
+        const res = await fetch('http://localhost:4000/user/modificar', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,4 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('guardar').addEventListener('click', modificarUsuario);
     document.getElementById('cancelar').addEventListener('click', cancelarEdicion);
+
+    ['adminUsuario', 'bodegas', 'historial', 'productos'].forEach(id => {
+        const select = document.getElementById(id);
+        if (select) {
+            select.addEventListener('change', function () {
+                if (this.value) window.location.href = this.value;
+            });
+        }
+    });
 });

@@ -52,7 +52,7 @@ async function consultarInventario() {
 
     try {
         const token = localStorage.getItem('token');
-        let url = `http://192.168.1.13:4000/product/inventario`;
+        let url = `http://localhost:4000/product/inventario`;
         if (nombre_bodega) url += `?nombre_bodega=${encodeURIComponent(nombre_bodega)}`;
 
         const res = await fetch(url, {
@@ -159,7 +159,7 @@ async function cargarBodegas() {
     const select = document.getElementById('nombre_bodega');
     const token = localStorage.getItem('token');
 
-    const res = await fetch('http://192.168.1.13:4000/bode/mostrar', {
+    const res = await fetch('http://localhost:4000/bode/mostrar', {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -173,10 +173,13 @@ async function cargarBodegas() {
 }
 
 function setupNavigation() {
-    ['adminUsuario', 'bodegas', 'historial'].forEach(id => {
-        document.getElementById(id).addEventListener('change', e => {
-            if (e.target.value) window.location.href = e.target.value;
-        });
+    ['adminUsuario', 'bodegas', 'historial', 'productos'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', e => {
+                if (e.target.value) window.location.href = e.target.value;
+            });
+        }
     });
 }
 

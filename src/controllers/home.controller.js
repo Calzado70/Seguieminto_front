@@ -61,6 +61,10 @@ export const catalogo  = (req, res) => {
     res.render("views.catalogo.ejs");
 }
 
+export const caracteristicas  = (req, res) => {
+    res.render("views.caracteristicas.ejs");
+}
+
 
 
 export const inventario_inicial = (req, res) => {

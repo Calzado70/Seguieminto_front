@@ -26,6 +26,7 @@ function verificarTokenAlCargar() {
 
 function redirigir(selectId) {
     const selectElement = document.getElementById(selectId);
+    if (!selectElement) return;
     selectElement.addEventListener('change', function() {
         const selectedOption = selectElement.options[selectElement.selectedIndex].value;
         if (selectedOption) {
@@ -42,7 +43,7 @@ async function cargarHistorial() {
     }
 
     try {
-        const response = await fetch('http://192.168.1.13:4000/hist/historial', {
+        const response = await fetch('http://localhost:4000/hist/historial', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -194,4 +195,5 @@ document.addEventListener('DOMContentLoaded', function() {
     redirigir('adminUsuario');
     redirigir('bodegas');
     redirigir('historial');
+    redirigir('productos');
 });

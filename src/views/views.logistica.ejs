@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/logistica.css">
-    <title>Productos en Logística</title>
+    <title>Consumo a Logística</title>
 </head>
 <body>
     <div class="container">
@@ -12,65 +12,44 @@
         <nav class="navbar">
             <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
             <div class="navbar-options">
-                <select class="select" id="adminUsuario" >
-                    <option>Admin-usuario</option>
-                    <option value="/usuario">Crear usuarios</option>
-                </select>
-                <select class="select" id="bodegas" >
-                    <option>Bodegas</option>
-                    <option value="/crear_bodega">Crear Bodegas</option>
-                    <option value="/seguimiento">Seguimiento Bodega</option>
-                    <option value="/inventario">inventario de Bodegas</option>
-
-                </select>
-                <select class="select" id="historial" >
-                    <option>Historial</option>
-                    <option value="/historial">Lista de Historial</option>
-                    <option value="/logistica" selected>Producto en Logística</option>
-                </select>
+                <button type="button" class="export nav-inventario" id="verInventario">Ver Inventario</button>
             </div>
         </nav>
 
         <!-- Contenido principal -->
         <div class="content-segundario">
-    <div class="cont-segun-formu">
-        <div class="table-header">Filtros</div>
+            <div class="cont-segun-formu">
+                <div class="table-header">Consumo de Terminada Completo a Logística</div>
 
-        <div class="filtros">
-            <!-- <select class="desple" id="filtroBodega">
-                <option value="">Seleccione la Bodega</option>
-                <option value="1">Corte</option>
-                <option value="2">Inyeccion</option>
-                <option value="3">Preparada</option>
-                <option value="4">Montaje</option>
-                <option value="5">Terminada</option>
-                <option value="6">Vulcanizado</option>
-                <option value="8" selected>Logística</option>
-            </select> -->
-            <input type="date" class="date" id="filtroFechaInicio" placeholder="Fecha Inicio">
-            <input type="date" class="date" id="filtroFechaFin" placeholder="Fecha Fin">
-            <button type="button" class="export" id="aplicarFiltros">Aplicar Filtros</button>
-            <button type="button" class="export" id="exportarExcel">Exportar Datos a Excel</button>
-        </div>
+                <!-- Búsqueda por código de barras -->
+                <div class="filtros">
+                    <input type="text" class="input-buscar" id="codigoBarras"
+                        placeholder="Escanee o digite el código de barras" autofocus>
+                    <button type="button" class="export" id="buscarProducto">Buscar</button>
+                </div>
 
-        <div class="table-row1-1">
-            <span>Productos en Logística</span>
-        </div>
+                <!-- Resultado del producto -->
+                <div id="resultadoProducto" class="resultado" style="display: none;">
+                    <div class="resumen-producto">
+                        <div class="campo"><span class="campo-label">Referencia:</span><span id="rReferencia" class="campo-valor">-</span></div>
+                        <div class="campo"><span class="campo-label">SKU:</span><span id="rSku" class="campo-valor">-</span></div>
+                        <div class="campo"><span class="campo-label">Talla:</span><span id="rTalla" class="campo-valor">-</span></div>
+                        <div class="campo"><span class="campo-label">Código:</span><span id="rCodigoProducto" class="campo-valor">-</span></div>
+                        <div class="campo"><span class="campo-label">Stock en Terminada Completo:</span><span id="rStock" class="campo-valor">-</span></div>
+                    </div>
 
-        <div class="table-row1">
-            <span>Nombre</span>
-            <span>Producto SKU</span>
-            <span>Bodega</span>
-            <span>Bodega-entregada</span>
-            <span>Cantidad</span>
-            <span>Tipo</span>
-            <span>Fecha</span>
+                    <div class="filtros">
+                        <input type="number" class="input-buscar" id="cantidadConsumo"
+                            placeholder="Cantidad a consumir" min="1" value="1">
+                        <button type="button" class="export" id="consumirBoton">Consumir a Logística</button>
+                    </div>
+                </div>
+
+                <!-- Mensajes -->
+                <div id="mensajes"></div>
+            </div>
         </div>
-        <div id="historialRows"></div>
     </div>
-</div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="/js/logistica.js"></script>
 </body>
 </html>

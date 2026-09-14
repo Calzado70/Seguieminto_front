@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Bodegas</title>
+    <title>Gestión de Características</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -38,16 +38,15 @@
               <option value="">Bodegas</option>
               <option value="/crear_bodega">Crear Bodegas</option>
               <option value="/seguimiento">Seguimiento Bodega</option>
-              <option value="/inventario">inventario de Bodegas</option>
+              <option value="/inventario">Inventario de Bodegas</option>
               <option value="/catalogo">Catálogo de productos</option>
-
             </select>
           </div>
 
           <div class="nav-section">
             <h3 class="nav-section-title">PRODUCTOS</h3>
             <select class="nav-select" id="productos">
-              <option value="">Productos</option>
+              <option value="">Opción</option>
               <option value="/caracteristicas">Características</option>
             </select>
           </div>
@@ -76,7 +75,7 @@
       <!-- Main Content -->
       <main class="main-content">
         <header class="content-header">
-          <h1><i class="fas fa-warehouse"></i> Gestión de Bodegas</h1>
+          <h1><i class="fas fa-cogs"></i> Gestión de Características</h1>
           <div class="header-actions">
             <button class="notification-btn" onclick="irAVistaAlertas()">
               <i class="fas fa-bell"></i>
@@ -89,53 +88,45 @@
           <!-- Form Section -->
           <section class="form-section card">
             <h2 class="section-title">
-              <i class="fas fa-plus-circle"></i> Crear Nueva Bodega
+              <i class="fas fa-plus-circle"></i> Crear Nueva Característica
             </h2>
 
-            <form id="bodegaForm" class="bodega-form">
+            <form id="caracteristicaForm" class="caracteristica-form">
               <div class="form-group">
-                <label for="nombreBodega">Nombre de Bodega</label>
+                <label for="valorCaracteristica">Valor de Característica</label>
                 <input
                   type="text"
-                  id="nombreBodega"
-                  placeholder="Ej: Bodega Principal"
+                  id="valorCaracteristica"
+                  placeholder="Ej: 30P, 110P, 230P"
+                  maxlength="10"
                   required
                 />
-              </div>
-
-              <div class="form-group">
-                <label for="capacidadBodega">Capacidad</label>
-                <input
-                  type="number"
-                  id="capacidadBodega"
-                  placeholder="Ej: 500"
-                  min="1"
-                  step="0.01"
-                  required
-                />
+                <small style="color: var(--text-tertiary); font-size: 0.8rem;">
+                  Ejemplos: 30P, 40P, 110P, 230P
+                </small>
               </div>
 
               <div class="form-actions">
                 <button type="submit" class="btn-primary">
-                  <i class="fas fa-save"></i> Guardar Bodega
+                  <i class="fas fa-save"></i> Guardar Característica
                 </button>
               </div>
             </form>
           </section>
 
-          <!-- Bodegas Table Section -->
+          <!-- Caracteristicas Table Section -->
           <section class="table-section card">
             <div class="table-header">
               <h2 class="section-title">
-                <i class="fas fa-list"></i> Listado de Bodegas
+                <i class="fas fa-list"></i> Listado de Características
               </h2>
               <div class="table-controls">
                 <div class="search-box">
                   <i class="fas fa-search"></i>
                   <input
                     type="text"
-                    placeholder="Buscar bodega..."
-                    id="bodegaSearch"
+                    placeholder="Buscar característica..."
+                    id="caracteristicaSearch"
                   />
                 </div>
               </div>
@@ -145,71 +136,49 @@
               <table class="bodegas-table">
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Capacidad</th>
+                    <th>ID</th>
+                    <th>Valor</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
-                <tbody id="bodegasTableBody">
-                  <!-- Las filas de bodegas se insertarán aquí dinámicamente -->
+                <tbody id="caracteristicasTableBody">
+                  <!-- Las filas se insertarán aquí dinámicamente -->
                 </tbody>
               </table>
             </div>
-
-            <div class="table-footer">
-              <div class="pagination-info" id="page-info">
-                Mostrando 1-5 de 15 bodegas
-              </div>
-
-              <div class="pagination-controls">
-                <button class="pagination-btn" id="prev-page" disabled>
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="page-numbers" id="page-numbers"></div>
-                <button class="pagination-btn" id="next-page">
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </div>
-            </div>
           </section>
         </div>
-        <!-- Permisos de Bodegas -->
-<section class="card">
-  <h2 class="section-title">
-    <i class="fas fa-user-lock"></i> Asignar Permisos de Bodegas
-  </h2>
-
-  <div class="form-group">
-    <label for="usuarioSelect">Seleccionar Usuario</label>
-    <select id="usuarioSelect">
-      <option value="">Seleccione un usuario</option>
-    </select>
-  </div>
-
-  <div class="table-responsive">
-    <table class="bodegas-table">
-      <thead>
-        <tr>
-          <th>Bodega</th>
-          <th>Permiso</th>
-        </tr>
-      </thead>
-      <tbody id="tablaPermisosBodegas">
-        <!-- Se llena dinámicamente -->
-      </tbody>
-    </table>
-  </div>
-
-  <div class="form-actions">
-    <button class="btn-primary" onclick="guardarPermisosBodega()">
-      <i class="fas fa-save"></i> Guardar Permisos
-    </button>
-  </div>
-</section>
       </main>
     </div>
 
-    <script src="/js/crear.bodegas.js"></script>
+    <!-- Modal para editar -->
+    <div id="modalEditar" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="modal-close" onclick="cerrarModal()">&times;</span>
+        <h2><i class="fas fa-edit"></i> Editar Característica</h2>
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label for="editarValor">Valor</label>
+          <input type="text" id="editarValor" maxlength="10" />
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="editarEstado">Estado</label>
+          <select id="editarEstado">
+            <option value="ACTIVA">Activa</option>
+            <option value="INACTIVA">Inactiva</option>
+          </select>
+        </div>
+        <div class="form-actions" style="margin-top: 1.5rem;">
+          <button class="btn-primary" onclick="guardarEdicion()">
+            <i class="fas fa-save"></i> Guardar Cambios
+          </button>
+          <button class="btn-secondary" style="margin-left: 0.5rem;" onclick="cerrarModal()">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/crear.caracteristicas.js"></script>
   </body>
 </html>

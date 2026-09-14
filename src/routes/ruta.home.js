@@ -18,7 +18,8 @@ import { alerta,
     session, 
     supervisor, 
     archivo_plano,
-    catalogo
+    catalogo,
+    caracteristicas
   } from "../controllers/home.controller.js";
 
 const rutaHome = Router();
@@ -50,6 +51,9 @@ rutaHome.get("/materia", materia);
 
 //Catalogo
 rutaHome.get("/catalogo", catalogo);
+
+//Caracteristicas
+rutaHome.get("/caracteristicas", caracteristicas);
 
 
 rutaHome.get("/inventario", inventario_view);
