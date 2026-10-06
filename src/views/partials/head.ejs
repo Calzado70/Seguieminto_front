@@ -1,0 +1,46 @@
+<%
+/*
+ * partials/head.ejs — Head común (Fase 3.2)
+ *
+ * Uso desde una vista:
+ *   include('partials/head', { title: 'Mi pagina | Trost', css: ['/css/mi.css'] })
+ *
+ * Opciones:
+ *   title       - texto del title
+ *   css         - array de hojas propias, por ejemplo ['/css/inventario.css']
+ *   fuentes     - true para cargar Google Fonts (Open Sans)
+ *   auth        - false en login, 404 y vistas flash; por defecto true
+ *   backendUrl  - URL del backend; la inyecta server.js desde el .env
+ *
+ * Centraliza lo que estaba duplicado en las 23 vistas:
+ * charset, viewport, Font Awesome 6.4.0, tokens.css, api.js, auth.js,
+ * toast.js y xlsx.js. Cada vista conserva su navbar/sidebar y sus
+ * scripts propios.
+ */
+%><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<% if (typeof title !== 'undefined' && title) { %>
+<title><%= title %></title>
+<% } %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<% if (typeof fuentes !== 'undefined' && fuentes) { %>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<% } %>
+<link rel="stylesheet" href="/css/tokens.css">
+<% if (typeof css !== 'undefined' && css && css.length) { %>
+<% css.forEach(function (hoja) { %>
+<link rel="stylesheet" href="<%= hoja %>">
+<% }); %>
+<% } %>
+<%# api.js siempre: login y las vistas flash usan apiFetch sin auth.js %>
+<script>window.__BACKEND_URL__ = <%- JSON.stringify((typeof backendUrl !== 'undefined' && backendUrl) || 'http://localhost:4000') %>;</script>
+<script src="/js/api.js"></script>
+<% if (typeof auth === 'undefined' || auth) { %>
+<script src="/js/auth.js"></script>
+<% } %>
+<script src="/js/toast.js"></script>
+<%# xlsx.js siempre: exportarXlsx() carga SheetJS del CDN bajo demanda,
+    así que basta con que el helper esté disponible en las 6 vistas
+    que exportan. Antes solo historial.ejs traía el CDN y las otras
+    cinco dependían del orden de carga. %>
+<script src="/js/xlsx.js"></script>

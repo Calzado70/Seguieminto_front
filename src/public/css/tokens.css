@@ -1,0 +1,171 @@
+/* ============================================================
+   TROST — Sistema de diseño (tokens)
+   Fuente única de verdad de color, tipografía, espaciado,
+   radios, sombras y breakpoints.
+   Se carga ANTES del CSS de cada vista; cualquier :root local
+   puede sobrescribir un token puntual sin romper el resto.
+   ============================================================ */
+
+/* ---------- Breakpoints estándar ----------
+   480px  → móvil grande
+   768px  → tableta
+   1024px → escritorio
+   (no se declaran aquí: en media queries no son variables CSS) */
+
+/* ---------- Marca ---------- */
+:root {
+  --brand: #13302e;
+  --brand-light: #1a403d;
+  --brand-dark: #0a1f1e;
+
+  /* Alias de marca hacia los nombres genéricos más usados */
+  --primary-color: #13302e;
+  --primary: #13302e;
+  --primary-dark: #0a1f1e;
+  --primary-light: #1a403d;
+
+  --secondary-color: #e0ff00;
+  --secondary-hover: #c8f000;
+  --secondary-light: #f0ff80;
+}
+
+/* ---------- Acentos y estados ---------- */
+:root {
+  --accent-color: #4361ee;
+  --accent: #c8f000;
+  --accent-light: #6c8eff;
+  --accent-d: #3148b0;
+  --accent-dim: #d9e85a;
+
+  --success-color: #2ed573;
+  --success: #22c55e;
+  --error-color: #ef4444;
+  --error: #ef4444;
+  --danger-color: #ff4757;
+  --warning-color: #ff9f43;
+  --info-color: #2e86de;
+}
+
+/* ---------- Texto ---------- */
+:root {
+  --text-primary: #1f2933;
+  --text-dark: #1f2933;
+  --text-color: #1f2933;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+  --text-gray: #64748b;
+  --text-1: #1f2933;
+  --text-2: #64748b;
+  --text-light: #ffffff;
+  --light: #ffffff;
+}
+
+/* ---------- Superficies ---------- */
+:root {
+  --bg-color: #f5f7f6;
+  --bg: #f5f7f6;
+  --bg-gray: #f5f7f6;
+  --bg-light: #f8f9fa;
+  --bg-card: #ffffff;
+  --surface: #ffffff;
+  --surface-color: #ffffff;
+  --surface-2: #f8faf9;
+  --surface-hover: #f1f5f3;
+  --card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-dark: #2f3542;
+  --bg-primary: #13302e;
+  --bg-secondary: #e6f0ee;
+  --bg-tertiary: #f1f5f3;
+  --light-bg: #f8faf9;
+}
+
+/* ---------- Bordes ---------- */
+:root {
+  --border-color: #dfe6e4;
+  --border: #dfe6e4;
+  --border-light: #e6ecea;
+  --border-medium: #cbd5d1;
+}
+
+/* ---------- Radios ---------- */
+:root {
+  --border-radius-sm: 6px;
+  --border-radius: 12px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 20px;
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+/* ---------- Sombras ---------- */
+:root {
+  --shadow-sm: 0 2px 8px rgba(19, 48, 46, 0.08);
+  --shadow-md: 0 4px 16px rgba(19, 48, 46, 0.12);
+  --shadow-lg: 0 8px 32px rgba(19, 48, 46, 0.15);
+  --shadow-xl: 0 20px 25px rgba(19, 48, 46, 0.12);
+  --shadow: 0 4px 16px rgba(19, 48, 46, 0.12);
+  --box-shadow: 0 4px 16px rgba(19, 48, 46, 0.12);
+  --card-shadow: 0 2px 8px rgba(19, 48, 46, 0.08);
+}
+
+/* ---------- Tipografía ---------- */
+:root {
+  --font-family: "Corbel", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font: "Corbel", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* ---------- Layout ---------- */
+:root {
+  --sidebar-width: 280px;
+  --scan-glow: 0 0 0 3px rgba(224, 255, 0, 0.35);
+  --gray-1: #94a3b8;
+}
+
+/* ---------- Transiciones ---------- */
+:root {
+  --transition-fast: all 0.15s ease;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.35s ease;
+}
+
+/* ============================================================
+   Utilidades base (aplican a todas las vistas)
+   ============================================================ */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-primary);
+}
+
+/* Tablas anchas con scroll horizontal en móvil (3.5) */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sidebar dibujable en móvil (3.5) */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    transition: left 0.25s ease;
+  }
+  .sidebar:not(.active) {
+    left: calc(-1 * var(--sidebar-width));
+  }
+  .sidebar.active {
+    left: 0;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.25);
+  }
+}
