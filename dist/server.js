@@ -19,7 +19,7 @@ app.set("views", path.join(__dirname, "views"));
 // que es lo que consume public/js/api.js. Asi el JS del cliente deja de
 // hardcodear http://localhost:4000 (Fase 4.1) y el .env sigue sin
 // exponerse entero al navegador.
-const BACKEND_URL = (process.env.BACKEND_URL || "http://localhost:4000").replace(
+const BACKEND_URL = (process.env.BACKEND_URL || "http://192.168.1.13:4000").replace(
     /\/+$/,
     ""
 );
