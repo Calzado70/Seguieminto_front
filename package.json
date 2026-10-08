@@ -1,38 +1,39 @@
 {
-    "name":  "sistem_seguimiento_wed",
-    "version":  "1.0.0",
-    "description":  "sistema para el seguimeinto del producto interno de la empresa C70",
-    "main":  "index.js",
-    "type":  "module",
-    "scripts":  {
-                    "dev":  "nodemon src/index.js --exec babel-node",
-                    "build":  "babel src --out-dir dist \u0026\u0026 copyfiles -u 1 src/**/* dist",
-                    "start":  "node dist/index.js",
-                    "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1"
-                },
-    "author":  "gian carlos giraldo",
-    "license":  "ISC",
-    "dependencies":  {
-                         "cookie-parser":  "^1.4.7",
-                         "dotenv":  "^16.4.7",
-                         "ejs":  "^3.1.10",
-                         "express":  "^4.21.2",
-                         "path":  "^0.12.7",
-                         "smb2":  "^0.2.11",
-                         "url":  "^0.11.4"
-                     },
-    "devDependencies":  {
-                            "@babel/cli":  "^7.26.4",
-                            "@babel/core":  "^7.26.0",
-                            "@babel/node":  "^7.26.0",
-                            "@babel/plugin-transform-modules-systemjs":  "^7.29.7",
-                            "@babel/plugin-transform-runtime":  "^7.25.9",
-                            "@babel/preset-env":  "^7.26.0",
-                            "copyfiles":  "^1.0.0",
-                            "ejs-lint":  "^2.0.1",
-                            "nodemon":  "^3.1.7"
-                        },
-    "overrides":  {
-                      "proxy-addr":  "2.0.8"
-                  }
+    "name": "sistem_seguimiento_wed",
+    "version": "1.0.0",
+    "description": "sistema para el seguimeinto del producto interno de la empresa C70",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "nodemon src/index.js --exec babel-node",
+        "build": "babel src --out-dir dist && copyfiles -u 1 src/**/* dist",
+        "start": "node dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "gian carlos giraldo",
+    "license": "ISC",
+    "dependencies": {
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^16.4.7",
+        "ejs": "^3.1.10",
+        "express": "^4.21.2",
+        "helmet": "^8.3.0",
+        "path": "^0.12.7",
+        "smb2": "^0.2.11",
+        "url": "^0.11.4"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.26.4",
+        "@babel/core": "^7.26.0",
+        "@babel/node": "^7.26.0",
+        "@babel/plugin-transform-modules-systemjs": "^7.29.7",
+        "@babel/plugin-transform-runtime": "^7.25.9",
+        "@babel/preset-env": "^7.26.0",
+        "copyfiles": "^1.0.0",
+        "ejs-lint": "^2.0.1",
+        "nodemon": "^3.1.7"
+    },
+    "overrides": {
+        "proxy-addr": "2.0.8"
+    }
 }
