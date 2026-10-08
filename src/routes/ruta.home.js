@@ -35,7 +35,6 @@ rutaHome.get("/seguimiento", seguimiento);
 rutaHome.get("/logistica", logistica);
 rutaHome.get("/consumo-terminada-completo", consumoTerminadaCompleto);
 rutaHome.get("/inventario_supervisor", inventario_supervisor);
-rutaHome.get("/plano", archivo_plano);
 // rutaHome.get("/inyeccion",producto_inyec);
 
 //LOGIN
@@ -44,6 +43,7 @@ rutaHome.get("/login", login);
 
 
 //Packing List O Ineventario
+rutaHome.get("/plano", archivo_plano);
 rutaHome.get("/packing", packing_list);
 rutaHome.get("/entrega", entrega);
 rutaHome.get("/inicial",inventario_inicial);

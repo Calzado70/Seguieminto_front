@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <%- include('../partials/head', { title: 'Packing List', css: ['/css/packing.list.css'], auth: false }) %>
@@ -29,17 +29,17 @@
             
             <div class="input-group">
               <label class="input-label" for="pedidoInput">Pedido</label>
-              <input type="text" class="input" id="pedidoInput" placeholder="Número de pedido" />
+              <input type="text" class="input" id="pedidoInput" placeholder="NÃºmero de pedido" />
             </div>
             
             <div class="input-group">
               <label class="input-label" for="cajaInput">Caja</label>
-              <input type="text" class="input" id="cajaInput" placeholder="Número de caja" />
+              <input type="text" class="input" id="cajaInput" placeholder="NÃºmero de caja" />
             </div>
             
             <div class="input-group">
-              <label class="input-label" for="codigo_producto">Código del Producto</label>
-              <input type="text" class="input" id="codigo_producto" placeholder="Ingresa el código" />
+              <label class="input-label" for="codigo_producto">CÃ³digo del Producto</label>
+              <input type="text" class="input" id="codigo_producto" placeholder="Ingresa el cÃ³digo" />
             </div>
           </div>
 
@@ -61,7 +61,7 @@
                   <th>Responsable</th>
                   <th>Pedido</th>
                   <th>Caja</th>
-                  <th>Código</th>
+                  <th>CÃ³digo</th>
                   <th>Talla</th>
                   <th>Cantidad</th>
                   <th>Acciones</th>
@@ -72,7 +72,7 @@
                   <td colspan="7">
                     <div class="empty-state">
                       <i class="fas fa-box-open"></i>
-                      <p>No hay productos agregados aún</p>
+                      <p>No hay productos agregados aÃºn</p>
                     </div>
                   </td>
                 </tr>
@@ -80,7 +80,7 @@
             </table>
 
             <div class="contador-productos">
-              <strong>Total productos únicos:</strong>
+              <strong>Total productos Ãºnicos:</strong>
               <span id="totalProductos">0</span>
             </div>
           </div>
@@ -89,14 +89,17 @@
     </div>
   </div>
 
-  <!-- Modal de confirmación -->
+  <!-- Modal de confirmaciÃ³n -->
   <div id="modalConfirmacion" class="modal-confirmacion">
     <div class="modal-contenido">
       <i class="fas fa-check-circle icono-exito"></i>
-      <h3>¡Exportación completada!</h3>
+      <h3>Â¡ExportaciÃ³n completada!</h3>
       <p>Los registros fueron limpiados correctamente.</p>
     </div>
   </div>
 
+  <script src="/js/proyectos flash/packing.list.js"></script>
 </body>
 </html>
+
+

@@ -1,0 +1,17 @@
+﻿:root {
+  --bg:#f7f9fc; --card:#fff; --primary:#13302e; --text:#111827; --muted:#6b7280; --border:#e5e7eb; --radius:10px; --shadow:0 10px 30px rgba(2,6,23,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);line-height:1.6}
+.navbar{background:var(--primary);color:#fff;padding:.75rem 1.25rem;display:flex;align-items:center;box-shadow:var(--shadow)}
+.navbar-brand .logo{height:36px}
+.container{max-width:1100px;margin:0 auto;padding:1.25rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem}
+.h2{margin:.25rem 0 1rem;font-size:1.25rem;font-weight:600}
+.btn{background:var(--primary);color:#fff;border:0;padding:.6rem .9rem;border-radius:8px;cursor:pointer;font-weight:500}
+.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table th,.table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.92rem}
+.table th{background:#f8fafc;font-weight:600;color:var(--muted)}
+.input,select{padding:.55rem .6rem;border:1px solid var(--border);border-radius:8px;font-size:.9rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}

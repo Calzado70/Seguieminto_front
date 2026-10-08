@@ -1,6 +1,6 @@
-<%
+﻿<%
 /*
- * partials/head.ejs — Head común (Fase 3.2)
+ * partials/head.ejs â€” Head comÃºn (Fase 3.2)
  *
  * Uso desde una vista:
  *   include('partials/head', { title: 'Mi pagina | Trost', css: ['/css/mi.css'] })
@@ -26,7 +26,7 @@
 <% if (typeof fuentes !== 'undefined' && fuentes) { %>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <% } %>
-<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/app.unified.css">
 <% if (typeof css !== 'undefined' && css && css.length) { %>
 <% css.forEach(function (hoja) { %>
 <link rel="stylesheet" href="<%= hoja %>">
@@ -40,7 +40,8 @@
 <% } %>
 <script src="/js/toast.js"></script>
 <%# xlsx.js siempre: exportarXlsx() carga SheetJS del CDN bajo demanda,
-    así que basta con que el helper esté disponible en las 6 vistas
-    que exportan. Antes solo historial.ejs traía el CDN y las otras
-    cinco dependían del orden de carga. %>
+    asÃ­ que basta con que el helper estÃ© disponible en las 6 vistas
+    que exportan. Antes solo historial.ejs traÃ­a el CDN y las otras
+    cinco dependÃ­an del orden de carga. %>
 <script src="/js/xlsx.js"></script>
+
