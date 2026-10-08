@@ -31,7 +31,7 @@
     var BASE = String(
         typeof window.__BACKEND_URL__ === "string" && window.__BACKEND_URL__
             ? window.__BACKEND_URL__
-            : "http://localhost:4000"
+            : "http://192.168.1.13:4000"
     ).replace(/\/+$/, "");
 
     var DEFAULT_TIMEOUT_MS = 15000;
