@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import ruta from "./routes/index.js";
+import flashRoutes from "./routes/flash.routes.js"; // <-- NUEVO
 import { requiereAutenticacion } from "./middleware/auth.js";
 config();
 
@@ -35,6 +36,7 @@ app.set("port", process.env.PORT || 3000);
 
 app.use(cookieParser());
 
+app.use("/", flashRoutes);
 app.use("/", requiereAutenticacion, ruta);
 
 // Middleware para manejar rutas no encontradas (404).
