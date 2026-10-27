@@ -33,7 +33,7 @@
 <% }); %>
 <% } %>
 <%# api.js siempre: login y las vistas flash usan apiFetch sin auth.js %>
-<script>window.__BACKEND_URL__ = <%- JSON.stringify((typeof backendUrl !== 'undefined' && backendUrl) || 'http://localhost:4000') %>;</script>
+<script>window.__BACKEND_URL__ = <%- JSON.stringify(String((typeof backendUrl !== 'undefined' && backendUrl) || 'http://localhost:4000').trim().replace(/\/+$/, '')) %>;</script>
 <script src="/js/api.js"></script>
 <% if (typeof auth === 'undefined' || auth) { %>
 <script src="/js/auth.js"></script>

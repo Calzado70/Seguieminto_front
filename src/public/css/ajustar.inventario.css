@@ -1,0 +1,96 @@
+/* ============================================================
+ * ajustar.inventario.css — Toma física / Ajuste de inventario
+ * Complementa inventario.css para la vista /ajustar-inventario.
+ * ============================================================ */
+
+.ayuda-ajuste {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.req {
+  color: var(--error-color);
+  font-weight: 700;
+}
+
+/* Celdas numéricas */
+.data-table th.num,
+.data-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.input-fisico {
+  width: 6.5rem;
+  padding: 0.4rem 0.6rem;
+  text-align: right;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.input-fisico:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(19, 48, 46, 0.15);
+}
+
+/* Diferencia */
+.celda-diff {
+  font-weight: 600;
+}
+
+.diff-pos {
+  color: var(--success-color);
+}
+
+.diff-neg {
+  color: var(--error-color);
+}
+
+.diff-cero {
+  color: var(--text-secondary);
+}
+
+/* Barra de aplicar */
+.barra-aplicar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.resumen-ajuste {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.btn-success {
+  padding: 0.75rem 1.5rem;
+  background: var(--success-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: filter 0.2s ease;
+}
+
+.btn-success:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

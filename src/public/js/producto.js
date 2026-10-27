@@ -53,9 +53,10 @@ function restaurarListaDesdeLocalStorage() {
   if (!productosGuardados) return;
 
   productos = JSON.parse(productosGuardados);
-  totalUnidades = parseInt(totalGuardado) || 0;
+  totalUnidades = normalizarCantidad(totalGuardado) || 0;
 
   Object.keys(productos).forEach((clave) => {
+    productos[clave].cantidad = normalizarCantidad(productos[clave].cantidad);
     crearFilaProducto(clave, productos[clave]);
   });
 
@@ -103,7 +104,8 @@ function inicializarApp() {
 
 /* =========================
    TOKEN Y AUTENTICACIÓN
-========================= *//* =========================
+========================= */
+/* =========================
    CARGA DE DATOS
 ========================= */
 function cargarDatosUsuario() {
@@ -213,9 +215,7 @@ async function agregarProducto(codigo) {
   if (CARACTERISTICAS_VALIDAS.length === 0) {
     await cargarCaracteristicas();
   }
-
-  const cantidadInput = document.getElementById("cantidad_manual");
-  let cantidad = parseInt(cantidadInput.value, 10) || 1;
+m 
   const usuario = document.getElementById("usuario").value;
   const bodegaOrigen = document.getElementById("bodegaActual").value;
   const bodegaDestinoSelect = document.getElementById("id_bodega");
@@ -226,6 +226,17 @@ async function agregarProducto(codigo) {
   // un barcode: resolverlo al producto real y consumir uno por uno
   const idBodegaOrigen = Number(localStorage.getItem("bodega"));
   let codigoResuelto = codigo;
+
+  const cantidadInput = document.getElementById("cantidad_manual");
+  let cantidad;
+  if (idBodegaOrigen === 25) {
+    // Desde Terminada Completo se cuenta el par completo: 1 por lectura
+    cantidad = 1;
+  } else {
+    // Por defecto cada lectura suma media unidad (una lengua de zapato).
+    cantidad = normalizarCantidad(cantidadInput.value);
+    if (cantidad <= 0) cantidad = 0.5;
+  }
 
   if (idBodegaOrigen === 25) {
     const resuelto = await resolverProductoTerminada(codigo);
@@ -257,7 +268,17 @@ async function agregarProducto(codigo) {
   const fecha = formatearFechaCompleta();
 
   // Validar que no se exceda el stock disponible
-  if (!(await validarStockDisponible(codigoResuelto, cantidad))) {
+  const stockDisponible = await validarStockDisponible(codigoResuelto, cantidad);
+
+  if (stockDisponible === null) {
+    mostrarNotificacion(
+      "No se pudo verificar el stock (servidor ocupado o sin conexión). Intente de nuevo.",
+      "error",
+    );
+    return;
+  }
+
+  if (!stockDisponible) {
     mostrarNotificacion("Stock insuficiente para este producto", "error");
     return;
   }
@@ -265,7 +286,9 @@ async function agregarProducto(codigo) {
   const clave = `${codigoResuelto}_${bodegaDestinoSelect.value}_${caracteristicas}`;
 
   if (productos[clave]) {
-    productos[clave].cantidad += cantidad;
+    productos[clave].cantidad = normalizarCantidad(
+      productos[clave].cantidad + cantidad,
+    );
     actualizarFilaProducto(clave, productos[clave]);
     moverFilaInicio(clave);
   } else {
@@ -288,7 +311,7 @@ async function agregarProducto(codigo) {
     crearFilaProducto(clave, productos[clave]);
   }
 
-  totalUnidades += cantidad;
+  totalUnidades = normalizarCantidad(totalUnidades + cantidad);
   actualizarEstadisticas();
   cantidadInput.value = "";
 
@@ -345,9 +368,21 @@ async function validarStockDisponible(codigo, cantidad) {
       (s) => (s.bodega || "").toLowerCase() === bodegaAConsultar.toLowerCase(),
     );
 
-    return stock ? stock.cantidad_disponible >= cantidad : false;
-  } catch {
-    return false;
+    if (!stock) return false;
+
+    // cantidad_disponible viene de MySQL como cadena DECIMAL("19999.5");
+    // sin Number() la comparación podía fallar o comparar texto.
+    return Number(stock.cantidad_disponible) >= Number(cantidad);
+  } catch (error) {
+    // El endpoint responde 404 cuando el producto no tiene ninguna fila de
+    // inventario: eso sí es "sin stock". Cualquier otro fallo (429 del
+    // limitador, timeout, 500) NO debe disfrazarse de "Stock insuficiente";
+    // se devuelve null para que el llamador avise el motivo real.
+    if (error && error.status === 404) {
+      return false;
+    }
+
+    return null;
   }
 }
 
@@ -373,7 +408,7 @@ function crearFilaProducto(clave, producto) {
         <td class="cantidad">
             <div class="quantity-control">
                 <button class="qty-btn minus" data-codigo="${escapeHtml(clave)}">-</button>
-                <span>${escapeHtml(producto.cantidad)}</span>
+                <span>${escapeHtml(formatearCantidad(producto.cantidad))}</span>
                 <button class="qty-btn plus" data-codigo="${escapeHtml(clave)}">+</button>
             </div>
         </td>
@@ -419,7 +454,7 @@ function actualizarFilaProducto(clave, producto) {
   if (fila) {
     const cantidadElement = fila.querySelector(".cantidad span");
     if (cantidadElement) {
-      cantidadElement.textContent = producto.cantidad;
+      cantidadElement.textContent = formatearCantidad(producto.cantidad);
     }
   }
 }
@@ -427,7 +462,7 @@ function actualizarFilaProducto(clave, producto) {
 function eliminarProducto(codigo) {
   if (!productos[codigo]) return;
 
-  totalUnidades -= productos[codigo].cantidad;
+  totalUnidades = normalizarCantidad(totalUnidades - productos[codigo].cantidad);
   delete productos[codigo];
 
   const fila = document.querySelector(`tr[data-codigo="${codigo}"]`);
@@ -446,7 +481,7 @@ function actualizarEstadisticas() {
   document.getElementById("totalProductos").textContent = totalProductos;
   document.getElementById("totalItems").textContent = `${totalProductos} items`;
   document.getElementById("totalQuantity").textContent =
-    `${totalUnidades} unidades`;
+    `${formatearCantidad(totalUnidades)} pares`;
   actualizarEstadoVacio();
 }
 
@@ -638,6 +673,19 @@ function limpiarLista() {
 /* =========================
    UTILIDADES
 ========================= */
+// La transferencia cuenta medias unidades (0.5 = una lengua de zapato;
+// dos lenguas = 1 par). Se normaliza siempre a 1 decimal.
+function normalizarCantidad(valor) {
+  const n = Number(valor);
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n * 10) / 10;
+}
+
+function formatearCantidad(valor) {
+  const n = normalizarCantidad(valor);
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
 function formatearFechaCompleta() {
   const fecha = new Date();
   return fecha.toLocaleDateString("es-ES", {
@@ -771,9 +819,9 @@ function configurarEventos() {
     if (target.closest(".qty-btn")) {
       const btn = target.closest(".qty-btn");
       if (btn.classList.contains("minus")) {
-        modificarCantidad(codigo, -1);
+        modificarCantidad(codigo, -0.5);
       } else if (btn.classList.contains("plus")) {
-        modificarCantidad(codigo, 1);
+        modificarCantidad(codigo, 0.5);
       }
     }
   });
@@ -798,14 +846,14 @@ function configurarEventos() {
 function modificarCantidad(codigo, cambio) {
   if (!productos[codigo]) return;
 
-  const nuevaCantidad = productos[codigo].cantidad + cambio;
-  if (nuevaCantidad < 1) {
+  const nuevaCantidad = normalizarCantidad(productos[codigo].cantidad + cambio);
+  if (nuevaCantidad <= 0) {
     eliminarProducto(codigo);
     return;
   }
 
   productos[codigo].cantidad = nuevaCantidad;
-  totalUnidades += cambio;
+  totalUnidades = normalizarCantidad(totalUnidades + cambio);
   actualizarFilaProducto(codigo, productos[codigo]);
   actualizarEstadisticas();
   guardarListaEnLocalStorage();
@@ -822,10 +870,11 @@ async function editarProducto(codigo) {
     textoConfirmar: "Actualizar",
   });
 
-  if (nuevaCantidad && !isNaN(nuevaCantidad) && parseInt(nuevaCantidad) > 0) {
-    const cambio = parseInt(nuevaCantidad) - producto.cantidad;
-    productos[codigo].cantidad = parseInt(nuevaCantidad);
-    totalUnidades += cambio;
+  const cantidadNormalizada = normalizarCantidad(nuevaCantidad);
+  if (nuevaCantidad && !isNaN(nuevaCantidad) && cantidadNormalizada > 0) {
+    const cambio = cantidadNormalizada - producto.cantidad;
+    productos[codigo].cantidad = cantidadNormalizada;
+    totalUnidades = normalizarCantidad(totalUnidades + cambio);
     actualizarFilaProducto(codigo, productos[codigo]);
     actualizarEstadisticas();
     guardarListaEnLocalStorage();

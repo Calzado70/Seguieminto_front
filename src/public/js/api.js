@@ -64,8 +64,17 @@
         if (typeof cuerpo === "string" && cuerpo.trim()) return cuerpo.trim();
 
         if (typeof cuerpo === "object") {
-            if (cuerpo.error) return cuerpo.error;
-            if (cuerpo.message) return cuerpo.message;
+            // El limitador responde { error: true, message: "..." }: hay que
+            // mirar `message` ANTES que `error`, porque si no se devolvía el
+            // booleano true y el usuario veía "true" en vez del aviso.
+            if (typeof cuerpo.message === "string" && cuerpo.message.trim()) {
+                return cuerpo.message.trim();
+            }
+
+            if (typeof cuerpo.error === "string" && cuerpo.error.trim()) {
+                return cuerpo.error.trim();
+            }
+
             if (Array.isArray(cuerpo.errores) && cuerpo.errores.length) {
                 return cuerpo.errores.join("; ");
             }

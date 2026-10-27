@@ -6,6 +6,7 @@ import { crear_bodegas,
     inventario_inicial, 
     inventario_supervisor, 
     inventario_view, 
+    ajustar_inventario,
     login, 
     logistica,  
     materia,
@@ -19,7 +20,9 @@ import { crear_bodegas,
     archivo_plano,
     catalogo,
     caracteristicas,
-    consumoTerminadaCompleto
+    consumoTerminadaCompleto,
+    importacion,
+    productos
   } from "../controllers/home.controller.js";
 
 const rutaHome = Router();
@@ -56,8 +59,15 @@ rutaHome.get("/catalogo", catalogo);
 //Caracteristicas
 rutaHome.get("/caracteristicas", caracteristicas);
 
+//Importación masiva de datos
+rutaHome.get("/importar", importacion);
+
+//Lista de productos (tabla productos)
+rutaHome.get("/productos", productos);
+
 
 rutaHome.get("/inventario", inventario_view);
+rutaHome.get("/ajustar-inventario", ajustar_inventario);
 rutaHome.get("/sesion", session);
 
 export default rutaHome;

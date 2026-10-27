@@ -179,4 +179,5 @@ document.addEventListener('DOMContentLoaded', function() {
     redirigir('bodegas');
     redirigir('historial');
     redirigir('productos');
+    redirigir('importarNav');
 });

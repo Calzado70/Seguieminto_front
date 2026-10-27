@@ -46,8 +46,12 @@
                         Seguimiento Bodega
                     </option>
 
-                    <option value="/inventario">
+<option value="/inventario">
                         Inventario de Bodegas
+                    </option>
+
+                    <option value="/ajustar-inventario">
+                        Ajuste de Inventario
                     </option>
 
                     <option value="/catalogo">
@@ -69,6 +73,10 @@
 
                     <option value="">
                         Productos
+                    </option>
+
+                    <option value="/productos">
+                        Lista de productos
                     </option>
 
                     <option value="/caracteristicas">
@@ -102,6 +110,26 @@
 
                     <option value="/consumo-terminada-completo">
                         Consumo a Terminada Completo
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="nav-section">
+
+                <h3 class="nav-section-title">
+                    IMPORTAR
+                </h3>
+
+                <select class="nav-select" onchange="if (this.value) window.location.href = this.value">
+
+                    <option value="">
+                        Importar
+                    </option>
+
+                    <option value="/importar">
+                        Carga masiva
                     </option>
 
                 </select>

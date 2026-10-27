@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <%- include('partials/head', { title: 'Ajuste de Inventario', css: ['/css/inventario.css', '/css/ajustar.inventario.css'], fuentes: true }) %>
+</head>
+<body>
+
+<div class="admin-container">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-container">
+      <img src="/img/Trost_blanco.png" class="logo">
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">USUARIOS</h3>
+        <select class="nav-select" id="adminUsuario">
+          <option value="">Admin-usuario</option>
+          <option value="/usuario">Crear usuarios</option>
+        </select>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">BODEGAS</h3>
+        <select class="nav-select" id="bodegas">
+          <option value="">Bodegas</option>
+          <option value="/crear_bodega">Crear Bodegas</option>
+          <option value="/seguimiento">Seguimiento Bodega</option>
+          <option value="/inventario">Inventario de Bodegas</option>
+          <option value="/ajustar-inventario">Ajuste de Inventario</option>
+          <option value="/catalogo">Catálogo de productos</option>
+        </select>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">PRODUCTOS</h3>
+        <select class="nav-select" id="productos">
+          <option value="">Productos</option>
+          <option value="/productos">Lista de productos</option>
+          <option value="/caracteristicas">Características</option>
+        </select>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">HISTORIAL</h3>
+        <select class="nav-select" id="historial">
+          <option value="">Historial</option>
+          <option value="/historial">Lista de Historial</option>
+          <option value="/logistica">Producto en Logística</option>
+          <option value="/consumo-terminada-completo">Consumo a Terminada Completo</option>
+        </select>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">IMPORTAR</h3>
+        <select class="nav-select" onchange="if (this.value) window.location.href = this.value">
+          <option value="">Importar</option>
+          <option value="/importar">Carga masiva</option>
+        </select>
+      </div>
+
+    </nav>
+
+    <div class="user-profile">
+      <i class="fas fa-user-circle"></i>
+      <div>
+        <span id="currentUserName">Usuario</span><br>
+        <span id="currentUserRole">Rol</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="main-content">
+
+    <header class="content-header">
+      <h1><i class="fas fa-clipboard-check"></i> Ajuste de Inventario (Toma Física)</h1>
+    </header>
+
+    <section class="inventory-section card">
+
+      <div class="inventory-controls">
+
+        <div class="form-group">
+          <label>Bodega</label>
+          <select id="bodegaAjuste" class="form-control">
+            <option value="">-- Seleccione --</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="flex: 2;">
+          <label>Motivo del ajuste <span class="req">*</span></label>
+          <input
+            type="text"
+            id="motivoAjuste"
+            class="form-control"
+            placeholder="Ej: Toma física mensual, diferencia conteo"
+          />
+        </div>
+
+        <button class="btn-primary" id="btnCargar" type="button">
+          <i class="fas fa-search"></i> Cargar inventario
+        </button>
+
+      </div>
+
+      <p class="ayuda-ajuste">
+        Escribe la <strong>cantidad contada en físico</strong> por producto. Las filas que
+        dejes vacías no se ajustan. Solo se aplican las diferencias frente al sistema.
+      </p>
+
+      <div class="table-container">
+        <table id="tablaAjuste" class="data-table" style="display:none;">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Característica</th>
+              <th class="num">Sistema</th>
+              <th class="num">Físico</th>
+              <th class="num">Diferencia</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div id="empty-state" class="empty-state">
+          <i class="fas fa-warehouse"></i>
+          <p>Seleccione una bodega y cargue el inventario</p>
+        </div>
+      </div>
+
+      <div class="barra-aplicar">
+        <span id="resumenAjuste" class="resumen-ajuste"></span>
+        <button class="btn-success" id="btnAplicarAjuste" type="button" disabled>
+          <i class="fas fa-check"></i> Aplicar ajustes
+        </button>
+      </div>
+
+      <div id="mensajeInventario"></div>
+
+    </section>
+  </main>
+
+</div>
+
+<script src="/js/ajustar.inventario.js"></script>
+</body>
+</html>

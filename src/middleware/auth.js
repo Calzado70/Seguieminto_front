@@ -53,6 +53,15 @@ async function validarConBackend(token) {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    // 429 o error del servidor: el token puede seguir siendo válido, solo que
+    // el backend no puede comprobarlo ahora. Cerrar sesión aquí secuestraba al
+    // usuario (cookie borrada + redirección a /login en bucle) por algo que
+    // no era culpa de sus credenciales, así que se deja pasar y se confía en
+    // la validación real que hará cada endpoint protegido.
+    if (respuesta.status === 429 || respuesta.status >= 500) {
+      return { usuario: null, degradado: true };
+    }
+
     if (!respuesta.ok) return null;
 
     const datos = await respuesta.json();

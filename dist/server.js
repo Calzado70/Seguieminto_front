@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import ruta from "./routes/index.js";
+import flashRoutes from "./routes/flash.routes.js"; // <-- NUEVO
 import { requiereAutenticacion } from "./middleware/auth.js";
 config();
 
@@ -19,7 +20,7 @@ app.set("views", path.join(__dirname, "views"));
 // que es lo que consume public/js/api.js. Asi el JS del cliente deja de
 // hardcodear http://localhost:4000 (Fase 4.1) y el .env sigue sin
 // exponerse entero al navegador.
-const BACKEND_URL = (process.env.BACKEND_URL || "http://192.168.1.13:4000").replace(
+const BACKEND_URL = (process.env.BACKEND_URL || " http://localhost:4000").replace(
     /\/+$/,
     ""
 );
@@ -35,6 +36,7 @@ app.set("port", process.env.PORT || 3000);
 
 app.use(cookieParser());
 
+app.use("/", flashRoutes);
 app.use("/", requiereAutenticacion, ruta);
 
 // Middleware para manejar rutas no encontradas (404).

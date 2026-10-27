@@ -49,6 +49,11 @@ export const inventario_view = (req, res) => {
 }
 
 
+export const ajustar_inventario = (req, res) => {
+    res.render("views.ajustar.inventario.ejs");
+}
+
+
 export const session = (req, res) => {
     res.render("views.sesion.ejs");
 }
@@ -63,6 +68,14 @@ export const catalogo  = (req, res) => {
 
 export const caracteristicas  = (req, res) => {
     res.render("views.caracteristicas.ejs");
+}
+
+export const importacion  = (req, res) => {
+    res.render("views.importar.ejs");
+}
+
+export const productos  = (req, res) => {
+    res.render("views.productos.ejs");
 }
 
 

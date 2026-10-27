@@ -28,6 +28,7 @@
                         <option value="/crear_bodega">Crear Bodegas</option>
                         <option value="/seguimiento">Seguimiento Bodega</option>
                         <option value="/inventario">inventario de Bodegas</option>
+          <option value="/ajustar-inventario">Ajuste de Inventario</option>
                         <option value="/catalogo">Catálogo de productos</option>
 
                     </select>
@@ -37,6 +38,7 @@
                     <h3 class="nav-section-title">PRODUCTOS</h3>
                     <select class="nav-select" id="productos">
                         <option value="">Productos</option>
+                        <option value="/productos">Lista de productos</option>
                         <option value="/caracteristicas">Características</option>
                     </select>
                 </div>
@@ -48,6 +50,14 @@
                         <option value="/historial">Lista de Historial</option>
                         <option value="/logistica">Producto en Logistica</option>
                         <option value="/consumo-terminada-completo">Consumo a Terminada Completo</option>
+                    </select>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">IMPORTAR</h3>
+                    <select class="nav-select" onchange="if (this.value) window.location.href = this.value">
+                        <option value="">Importar</option>
+                        <option value="/importar">Carga masiva</option>
                     </select>
                 </div>
             </nav>

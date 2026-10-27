@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <%- include('partials/head', { title: 'Importación de Datos | Trost', css: ['/css/importar.css'] }) %>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Barra de navegación -->
+    <nav class="app-navbar">
+      <div class="navbar-brand">
+        <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
+        <span class="app-name">Gestión de Inventario</span>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="dropdown">
+          <select class="dropdown-select" id="adminUsuario">
+            <option value="" selected disabled>Admin-usuario</option>
+            <option value="/usuario">Crear usuarios</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+
+        <div class="dropdown">
+          <select class="dropdown-select" id="bodegas">
+            <option value="" selected disabled>Bodegas</option>
+            <option value="/crear_bodega">Crear Bodegas</option>
+            <option value="/seguimiento">Seguimiento Bodega</option>
+            <option value="/ajustar-inventario">Ajuste de Inventario</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+
+        <div class="dropdown">
+          <select class="dropdown-select" id="historial">
+            <option value="" selected disabled>Historial</option>
+            <option value="/historial">Lista de Historial</option>
+            <option value="/logistica">Producto en Logística</option>
+            <option value="/consumo-terminada-completo">Consumo a Terminada Completo</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+
+        <div class="dropdown">
+          <select class="dropdown-select" id="productos">
+            <option value="" selected disabled>Productos</option>
+            <option value="/productos">Lista de productos</option>
+            <option value="/caracteristicas">Características</option>
+            <option value="/catalogo">Catálogo</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+
+        <div class="dropdown">
+          <select class="dropdown-select" id="importarNav">
+            <option value="" selected disabled>Importar</option>
+            <option value="/importar">Carga masiva</option>
+          </select>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="app-content">
+      <section class="import-section">
+        <div class="section-header">
+          <h2><i class="fas fa-file-import"></i> Importación de datos</h2>
+          <p class="section-subtitle">
+            Carga masiva de productos, saldos iniciales, transferencias y consumos.
+            Si una fila es inválida no se aplica <strong>ninguna</strong> y se detallan los errores para corregirlos.
+          </p>
+        </div>
+
+        <!-- Paso 1: tipo de importación -->
+        <div class="import-card">
+          <div class="card-title"><span class="step-num">1</span> Elige el tipo de carga</div>
+          <div class="tipo-selector" id="tipoSelector"></div>
+        </div>
+
+        <!-- Paso 2: plantilla y archivo -->
+        <div class="import-card">
+          <div class="card-title"><span class="step-num">2</span> Descarga la plantilla y sube tu archivo</div>
+          <div class="acciones-archivo">
+            <button class="btn btn-secundario" id="btnPlantilla">
+              <i class="fas fa-download"></i> Descargar plantilla (.xlsx)
+            </button>
+            <label class="btn btn-primario" for="inputArchivo">
+              <i class="fas fa-file-excel"></i> Seleccionar archivo (.xlsx / .csv)
+            </label>
+            <input type="file" id="inputArchivo" accept=".xlsx,.csv" hidden>
+            <span class="archivo-nombre" id="archivoNombre">Ningún archivo seleccionado</span>
+            <button class="btn btn-fantasma" id="btnLimpiar" hidden>
+              <i class="fas fa-times"></i> Quitar
+            </button>
+          </div>
+          <p class="ayuda" id="columnasAyuda"></p>
+        </div>
+
+        <!-- Paso 3: previsualización y resultado -->
+        <div class="import-card" id="paso3" hidden>
+          <div class="card-title"><span class="step-num">3</span> Revisa la previsualización</div>
+
+          <div class="resumen" id="resumen" hidden></div>
+
+          <!-- Errores -->
+          <div class="errores" id="bloqueErrores" hidden>
+            <div class="errores-titulo">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span id="erroresTitulo">Se encontraron errores</span>
+            </div>
+            <div class="tabla-scroll">
+              <table class="tabla-errores">
+                <thead>
+                  <tr><th>Fila</th><th>Columna</th><th>Tipo</th><th>Error</th></tr>
+                </thead>
+                <tbody id="erroresBody"></tbody>
+              </table>
+            </div>
+            <p class="errores-pie">
+              Corrige estas filas en tu archivo y vuelve a subirlo. No se cargó ningún dato.
+            </p>
+          </div>
+
+          <!-- Previsualización de filas -->
+          <div class="tabla-scroll" id="previewScroll" hidden>
+            <table class="tabla-preview" id="tablaPreview">
+              <thead id="previewHead"></thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+          </div>
+
+          <div class="acciones-finales" id="accionesFinales" hidden>
+            <button class="btn btn-primario btn-grande" id="btnAplicar" disabled>
+              <i class="fas fa-check"></i> Aplicar carga
+            </button>
+            <span class="nota-aplicar" id="notaAplicar"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/importar.js"></script>
+</body>
+</html>
