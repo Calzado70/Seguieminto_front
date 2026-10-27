@@ -15,9 +15,10 @@
  * evita un round-trip por cada clic del menú manteniendo la validación real.
  */
 
-const BACKEND_URL = (process.env.BACKEND_URL || "http://localhost:4000")
-  .trim()
-  .replace(/\/+$/, "");
+const BACKEND_URL = (process.env.BACKEND_URL || "http://192.168.1.13:4000").replace(
+  /\/+$/,
+  ""
+);
 
 const RUTAS_PUBLICAS = new Set(["/", "/login"]);
 

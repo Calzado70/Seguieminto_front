@@ -215,7 +215,7 @@ async function agregarProducto(codigo) {
   if (CARACTERISTICAS_VALIDAS.length === 0) {
     await cargarCaracteristicas();
   }
-m 
+
   const usuario = document.getElementById("usuario").value;
   const bodegaOrigen = document.getElementById("bodegaActual").value;
   const bodegaDestinoSelect = document.getElementById("id_bodega");
