@@ -9,7 +9,8 @@ function obtenerTalla(codigoBarras) {
     return talla.padStart(2, '0');
 }
 
-/* ========= TOKEN ========= *//* ========= CARGAR MOVIMIENTOS ========= */
+/* ========= TOKEN ========= */
+/* ========= CARGAR MOVIMIENTOS ========= */
 async function cargarMovimientos(idBodega = null, fechaInicio = null, fechaFin = null, codigoInteligente = null) {
     const token = localStorage.getItem('token');
     let url = '/product/movi';

@@ -104,6 +104,50 @@
             store.setItem("id_usuario", payload.id_usuario);
         }
 
+        
+        
+try {
+    if (!document.getElementById("btnCerrarSesionGlobal")) {
+        var btn = document.createElement("button");
+
+        btn.id = "btnCerrarSesionGlobal";
+        btn.type = "button";
+        btn.title = "Cerrar sesión";
+        btn.setAttribute("aria-label", "Cerrar sesión");
+
+        btn.innerHTML =
+            '<i class="fas fa-sign-out-alt" aria-hidden="true"></i>';
+
+        btn.addEventListener("click", function () {
+            window.cerrarSesionTrost();
+            window.location.href = "/login";
+        });
+
+        // Insertar únicamente el icono en el navbar existente
+        var navbar =
+            document.querySelector(".navbar-options") ||
+            document.querySelector(".navbar-actions") ||
+            document.querySelector(".navbar") ||
+            document.querySelector(".app-navbar") ||
+            document.querySelector(".top-header") ||
+            document.querySelector(".top-nav");
+
+        if (navbar) {
+            navbar.appendChild(btn);
+        } else {
+            var sidebarNav = document.querySelector(".sidebar-nav");
+
+            if (sidebarNav) {
+                sidebarNav.appendChild(btn);
+            }
+        }
+    }
+} catch (error) {
+    console.error("Error al agregar el botón de cerrar sesión:", error);
+}
+
+
+
         return payload;
     };
 
