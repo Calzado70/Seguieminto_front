@@ -7,41 +7,36 @@
 
 <body>
     <div class="container">
-        <!-- Navbar Moderna -->
+        <!-- Navbar -->
         <nav class="navbar">
-            <div class="navbar-brand">
-                <img src="/img/Trost_blanco.png" alt="Logo" class="logo">
-                <span class="app-name">Gestión de Movimientos</span>
+            <div class="navbar-left">
+                <a class="navbar-brand" href="/supervisor" aria-label="Trost">
+                    <img src="/img/Trost_blanco.png" alt="Logo Trost" class="logo">
+                </a>
+
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Consultas</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="/inventario_supervisor"><i class="fas fa-boxes"></i> Inventario</a>
+                        <a href="#"><i class="fas fa-chart-pie"></i> Stock por Producto</a>
+                        <a href="#"><i class="fas fa-history"></i> Historial</a>
+                    </div>
+                </div>
             </div>
-            <div class="navbar-menu">
-                <div class="navbar-options">
-                    <div class="dropdown">
-                        <button class="dropdown-toggle" type="button">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Consultas</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a href="/inventario_supervisor"><i class="fas fa-boxes"></i> Inventario</a>
-                            <a href="#"><i class="fas fa-chart-pie"></i> Stock por Producto</a>
-                            <a href="#"><i class="fas fa-history"></i> Historial</a>
-                        </div>
-                    </div>
 
-                    <button class="nav-btn primary" id="sesion" value="/sesion">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Iniciar Sesión</span>
-                    </button>
+            <div class="navbar-options">
+                <button class="nav-btn accent" id="transferencia" value="/supervisor">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transferencias</span>
+                </button>
 
-                    <button class="nav-btn accent" id="transferencia" value="/supervisor">
-                        <i class="fas fa-exchange-alt"></i>
-                        <span>Transferencias</span>
-                    </button>
-
-                    <div class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span id="current-user"></span>
-                    </div>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="current-user"></span>
                 </div>
             </div>
         </nav>
@@ -105,7 +100,7 @@
         <div class="modal-overlay" id="modalErrorStock" style="display: none">
             <div class="modal-card error">
                 <div class="modal-header error">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Error de Stock</h3>
+                    <h3><i class="fas fa-exclamation-triangle"></i> <span id="tituloModalErrorStock">Error de Stock</span></h3>
                 </div>
                 <div class="modal-body">
                     <div class="error-icon">
@@ -124,33 +119,51 @@
         <!-- Contenido Principal -->
         <main class="main-content">
             <!-- Encabezado con estadísticas -->
-            <div class="content-header">
+            <header class="content-header">
                 <div class="header-left">
-                    <h1><i class="fas fa-warehouse"></i> Gestión de Movimientos</h1>
-                    <p class="subtitle">Realiza transferencias, consumos y movimientos entre bodegas</p>
+                    <i class="fas fa-warehouse header-icon" aria-hidden="true"></i>
+                    <div class="header-text">
+                        <h1>Gestión de Movimientos</h1>
+                        <p class="subtitle">Realiza transferencias, consumos y movimientos entre bodegas</p>
+                    </div>
                 </div>
+
                 <div class="header-stats">
-                    <div class="stat-card">
+                    <div class="stat-card stat-products">
                         <i class="fas fa-box-open"></i>
                         <div>
                             <span class="stat-value" id="totalProductos">0</span>
                             <span class="stat-label">Productos</span>
                         </div>
                     </div>
-                    <div class="stat-card">
+
+                    <div class="stat-card stat-date">
                         <i class="fas fa-calendar-day"></i>
                         <div>
                             <span class="stat-value" id="currentDate">-</span>
                             <span class="stat-label">Fecha Actual</span>
                         </div>
                     </div>
+
+                    <div class="stat-card stat-timer"
+                        title="Transferencia automática cada 2 horas con los productos de la lista.">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="stat-value" id="autoTransferCountdown">02:00:00</span>
+                            <span class="stat-label">Próxima transferencia</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
 
             <!-- Panel de Control -->
             <div class="control-panel">
-                <div class="panel-section">
-                    <h3><i class="fas fa-sliders-h"></i> Configuración del Movimiento</h3>
+                <!-- Configuración -->
+                <section class="panel-section config-panel">
+                    <h3>
+                        <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                        <span>Configuración del Movimiento</span>
+                    </h3>
 
                     <div class="form-grid">
                         <div class="form-group">
@@ -176,7 +189,9 @@
                                 <i class="fas fa-qrcode"></i>
                                 <input type="text" class="form-control" id="codigo_producto"
                                     placeholder="Escanee o ingrese el código" />
-                                <button class="input-action" id="scanBtn" title="Escanear código"></button>
+                                <button class="input-action" id="scanBtn" type="button" title="Escanear código">
+                                    <i class="fas fa-barcode"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -213,7 +228,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group" id="caracteristicas-container">
+                        <div class="form-group full-width" id="caracteristicas-container">
                             <label for="caracteristicas">
                                 <i class="fas fa-cogs"></i> Características
                             </label>
@@ -227,27 +242,33 @@
                             </small>
                         </div>
 
-                        <div class="form-group full-width">
-                            <button class="btn btn-success" id="mover-productos">
+                        <div class="form-actions">
+                            <button class="btn btn-success btn-transfer" id="mover-productos" type="button">
                                 <i class="fas fa-paper-plane"></i>
                                 <span>Realizar Transferencia</span>
                             </button>
-                            <button class="btn btn-outline" id="limpiar-lista">
-                                <i class="fas fa-trash-alt"></i>
-                                <span>Limpiar Lista</span>
-                            </button>
-                            <button class="btn btn-info" id="agregar-manual">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>Agregar Manual</span>
-                            </button>
+
+                            <div class="form-actions-row">
+                                <button class="btn btn-danger" id="limpiar-lista" type="button">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Limpiar Lista</span>
+                                </button>
+                                <button class="btn btn-info" id="agregar-manual" type="button">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Agregar Manual</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Panel de Productos Agregados -->
-                <div class="panel-section">
+                <!-- Productos Agregados -->
+                <section class="panel-section products-panel">
                     <div class="section-header">
-                        <h3><i class="fas fa-clipboard-list"></i> Productos en Lista</h3>
+                        <h3>
+                            <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                            <span>Productos en Lista</span>
+                        </h3>
                         <div class="section-actions">
                             <span class="badge" id="totalItems">0 items</span>
                             <span class="badge badge-primary" id="totalQuantity">0 unidades</span>
@@ -259,7 +280,7 @@
                             <table class="modern-table" id="tablaProductos">
                                 <thead>
                                     <tr>
-                                        <th><i class="fas fa-user"></i> Usuario</th>
+                                        <th class="col-user" title="Usuario"><i class="fas fa-user"></i></th>
                                         <th><i class="fas fa-arrow-up"></i> Origen</th>
                                         <th><i class="fas fa-arrow-down"></i> Destino</th>
                                         <th><i class="fas fa-boxes"></i> Cantidad</th>
@@ -272,7 +293,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Filas se agregarán dinámicamente -->
+                                    <!-- Filas se agregan dinámicamente -->
                                 </tbody>
                             </table>
                         </div>
@@ -284,12 +305,12 @@
                             <p>Agrega productos escaneando códigos o ingresándolos manualmente</p>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
         </main>
 
-        <!-- Footer -->
-        <footer class="app-footer">
+        <!-- Footer (oculto en el diseño, conserva los ids usados por el JS) -->
+        <footer class="app-footer" aria-hidden="true">
             <div class="footer-content">
                 <div class="footer-logo">
                     <img src="/img/Trost_blanco.png" alt="Logo" class="footer-logo-img">

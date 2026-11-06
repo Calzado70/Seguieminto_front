@@ -5,6 +5,17 @@ let productos = {};
 let totalUnidades = 0;
 
 /* =========================
+   TEMPORIZADOR DE TRANSFERENCIA AUTOMÁTICA
+   Tiempo fijo definido por el sistema: 2 horas.
+========================= */
+const TIEMPO_TRANSFERENCIA_AUTOMATICA_MS = 2 * 60 * 60 * 1000;
+const CLAVE_TEMPORIZADOR_TRANSFERENCIA = "transferencia_automatica_deadline_2h";
+
+let temporizadorTransferencia = null;
+let segundosRestantesTransferencia = TIEMPO_TRANSFERENCIA_AUTOMATICA_MS / 1000;
+let transferenciaEnProceso = false;
+
+/* =========================
    CARACTERÍSTICAS VÁLIDAS
    (cargadas desde la base de datos)
 ========================= */
@@ -100,6 +111,7 @@ function inicializarApp() {
   restaurarListaDesdeLocalStorage();
   restaurarBodegasUsadas();
   restaurarDatosFormulario();
+  iniciarTemporizadorTransferencia();
 }
 
 /* =========================
@@ -182,7 +194,7 @@ function gestionarCampoCaracteristicas() {
 
 /* =========================
    GESTIÓN DE PRODUCTOS
-========================= */
+====================5===== */
 function configurarInputCodigo() {
   const input = document.getElementById("codigo_producto");
   if (!input) return;
@@ -401,7 +413,10 @@ function crearFilaProducto(clave, producto) {
   fila.classList.add(producto.tipoMovimiento.toLowerCase());
 
   fila.innerHTML = `
-        <td>${escapeHtml(producto.usuario)}</td>
+        <td class="col-user" title="Usuario: ${escapeHtml(producto.usuario)}">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span class="visually-hidden">${escapeHtml(producto.usuario)}</span>
+        </td>
         <td>${escapeHtml(producto.bodegaOrigen)}</td>
         <td>${escapeHtml(producto.bodegaDestino)}</td>
 
@@ -481,7 +496,7 @@ function actualizarEstadisticas() {
   document.getElementById("totalProductos").textContent = totalProductos;
   document.getElementById("totalItems").textContent = `${totalProductos} items`;
   document.getElementById("totalQuantity").textContent =
-    `${formatearCantidad(totalUnidades)} pares`;
+    `${formatearCantidad(totalUnidades)} unidades`;
   actualizarEstadoVacio();
 }
 
@@ -502,11 +517,32 @@ function actualizarEstadoVacio() {
    TRANSFERENCIA
 ========================= */
 async function transferirProductos() {
+  if (transferenciaEnProceso) {
+    mostrarNotificacion(
+      "Ya hay una transferencia en proceso. Espere a que termine.",
+      "warning",
+    );
+    return;
+  }
+
+  transferenciaEnProceso = true;
+
+  try {
+    await transferirProductosInterno();
+  } finally {
+    transferenciaEnProceso = false;
+  }
+}
+
+async function transferirProductosInterno() {
   const filas = document.querySelectorAll("#tablaProductos tbody tr");
   if (filas.length === 0) {
     mostrarNotificacion("No hay productos para transferir", "warning");
     return;
   }
+
+  const tituloErrorStock = document.getElementById("tituloModalErrorStock");
+  if (tituloErrorStock) tituloErrorStock.textContent = "Error de Stock";
 
   const payload = {
     id_bodega_origen: +localStorage.getItem("bodega"),
@@ -649,6 +685,131 @@ async function transferirProductos() {
   }
 }
 
+/* =========================
+   TRANSFERENCIA AUTOMÁTICA (2 HORAS)
+========================= */
+function claveTemporizadorTransferencia() {
+  const idUsuario = localStorage.getItem("id_usuario") || "anonimo";
+  return `${CLAVE_TEMPORIZADOR_TRANSFERENCIA}_${idUsuario}`;
+}
+
+function programarNuevaHoraTransferencia() {
+  const limite = Date.now() + TIEMPO_TRANSFERENCIA_AUTOMATICA_MS;
+  localStorage.setItem(claveTemporizadorTransferencia(), String(limite));
+  return limite;
+}
+
+function iniciarTemporizadorTransferencia(reiniciar = false) {
+  detenerTemporizadorTransferencia();
+
+  const ahora = Date.now();
+  const clave = claveTemporizadorTransferencia();
+  let limite = Number(localStorage.getItem(clave));
+
+  // Sin vencimiento válido o con reinicio explícito: nueva hora.
+  if (reiniciar || !Number.isFinite(limite) || limite <= 0) {
+    limite = programarNuevaHoraTransferencia();
+  }
+
+  segundosRestantesTransferencia = Math.max(
+    0,
+    Math.ceil((limite - ahora) / 1000),
+  );
+
+  // Si la hora venció mientras la página estaba cerrada, se empieza una
+  // nueva en lugar de transferir sin que el usuario lo vea.
+  if (segundosRestantesTransferencia <= 0) {
+    limite = programarNuevaHoraTransferencia();
+    segundosRestantesTransferencia = TIEMPO_TRANSFERENCIA_AUTOMATICA_MS / 1000;
+  }
+
+  actualizarTemporizadorTransferencia();
+
+  temporizadorTransferencia = setInterval(() => {
+    // Se calcula contra la hora límite (no acumulando) para que el
+    // navegador no se desfase si la pestaña queda en segundo plano.
+    segundosRestantesTransferencia = Math.max(
+      0,
+      Math.ceil((limite - Date.now()) / 1000),
+    );
+    actualizarTemporizadorTransferencia();
+
+    if (segundosRestantesTransferencia <= 0) {
+      detenerTemporizadorTransferencia();
+      ejecutarTransferenciaAutomatica();
+    }
+  }, 1000);
+}
+
+function detenerTemporizadorTransferencia() {
+  if (temporizadorTransferencia) {
+    clearInterval(temporizadorTransferencia);
+    temporizadorTransferencia = null;
+  }
+}
+
+function actualizarTemporizadorTransferencia() {
+  const contador = document.getElementById("autoTransferCountdown");
+  if (!contador) return;
+
+  const total = Math.max(0, segundosRestantesTransferencia);
+  const horas = String(Math.floor(total / 3600)).padStart(2, "0");
+  const minutos = String(Math.floor((total % 3600) / 60)).padStart(2, "0");
+  const segundos = String(total % 60).padStart(2, "0");
+
+  contador.textContent = `${horas}:${minutos}:${segundos}`;
+}
+
+function mostrarErrorTransferenciaAutomatica(mensaje) {
+  const titulo = document.getElementById("tituloModalErrorStock");
+  const texto = document.getElementById("mensajeErrorStock");
+  const modal = document.getElementById("modalErrorStock");
+
+  if (titulo) titulo.textContent = "Transferencia automática";
+  if (texto) texto.textContent = mensaje;
+
+  if (modal) {
+    modal.style.display = "flex";
+    return;
+  }
+
+  mostrarNotificacion(mensaje, "error");
+}
+
+async function ejecutarTransferenciaAutomatica() {
+  if (transferenciaEnProceso) {
+    iniciarTemporizadorTransferencia(true);
+    return;
+  }
+
+  const filas = document.querySelectorAll("#tablaProductos tbody tr");
+
+  if (filas.length === 0) {
+    mostrarErrorTransferenciaAutomatica(
+      "No hay productos ni registros para realizar la transferencia automática. Escanee o agregue al menos un producto antes de que se cumpla la hora.",
+    );
+    iniciarTemporizadorTransferencia(true);
+    return;
+  }
+
+  mostrarNotificacion(
+    `Tiempo cumplido. Ejecutando transferencia automática de ${filas.length} producto(s)...`,
+    "info",
+  );
+
+  try {
+    await transferirProductos();
+  } catch (error) {
+    console.error("Error en la transferencia automática:", error);
+    mostrarNotificacion(
+      `La transferencia automática falló: ${error.message}`,
+      "error",
+    );
+  } finally {
+    iniciarTemporizadorTransferencia(true);
+  }
+}
+
 function limpiarLista() {
   productos = {};
   totalUnidades = 0;
@@ -703,7 +864,7 @@ function actualizarFecha() {
     "es-ES",
     {
       day: "2-digit",
-      month: "short",
+      month: "2-digit",
       year: "numeric",
     },
   );
@@ -834,9 +995,12 @@ function configurarEventos() {
     });
 
   // Redirecciones del navbar
-  document.getElementById("sesion").addEventListener("click", () => {
-    window.location.href = "/sesion";
-  });
+  const sesionBtn = document.getElementById("sesion");
+  if (sesionBtn) {
+    sesionBtn.addEventListener("click", () => {
+      window.location.href = "/sesion";
+    });
+  }
 
   document.getElementById("transferencia").addEventListener("click", () => {
     window.location.href = "/supervisor";

@@ -61,10 +61,11 @@ async function consumirTerminadaCompleto() {
         return;
     }
 
-    const cantidad = parseInt(document.getElementById('cantidadConsumo').value, 10);
-    const max = productoConsultado.stock_disponible;
+    const cantidadInput = document.getElementById('cantidadConsumo').value;
+    const cantidad = Math.round(Number(cantidadInput) * 10) / 10;
+    const max = Number(productoConsultado.stock_disponible);
 
-    if (!cantidad || cantidad <= 0) {
+    if (!cantidad || cantidad <= 0 || isNaN(cantidad)) {
         mostrarMensaje('Ingrese una cantidad válida', 'error');
         return;
     }
